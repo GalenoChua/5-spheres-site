@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply for a place | Human Intelligence</title>
+<meta name="description" content="Apply for a place in Human Intelligence, the founding cohort. Empathy is the one thing AI can't replace.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1d2a52; --paper:#faf6ef; --paper-warm:#f3ecdf;
+    --ember:#e8862e; --text:#2a2f3d; --muted:#6b6f7c; --line:#e0d9c9;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Source Sans 3',sans-serif; background:var(--ink); color:var(--text);
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before, body::after{ content:""; position:fixed; border-radius:50%; border:1.5px solid rgba(250,246,239,.10); pointer-events:none; }
+  body::before{ width:520px; height:520px; top:-160px; left:-140px; }
+  body::after{ width:340px; height:340px; bottom:-120px; right:-100px; border-color:rgba(232,134,46,.20); }
+  .card{ position:relative; z-index:1; width:100%; max-width:480px; background:var(--paper); border-radius:20px; padding:44px 40px 36px; box-shadow:0 30px 70px -30px rgba(0,0,0,.5); }
+  .kicker{ font-size:.74rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ember); margin-bottom:14px; }
+  h1{ font-family:'Fraunces',serif; font-weight:600; color:var(--ink); font-size:1.95rem; line-height:1.1; margin-bottom:14px; }
+  .sub{ font-size:1.02rem; color:var(--text); margin-bottom:26px; }
+  .sub b{ color:var(--ink); font-weight:600; }
+  .field{ margin-bottom:13px; }
+  .field label{ display:block; font-size:.9rem; font-weight:600; color:var(--ink); margin-bottom:5px; }
+  .field input, .field textarea{
+    width:100%; padding:13px 15px; font-size:1rem; font-family:inherit;
+    border:1.5px solid rgba(29,42,82,.25); border-radius:10px; background:#fff; color:var(--text); resize:vertical;
+  }
+  .field textarea{ min-height:96px; line-height:1.5; }
+  .field input:focus, .field textarea:focus{ outline:2px solid var(--ember); border-color:transparent; }
+  .btn{ width:100%; text-align:center; font-weight:600; font-size:1.02rem; font-family:inherit; background:var(--ink); color:var(--paper); padding:15px 24px; border-radius:10px; border:none; cursor:pointer; transition:background .2s ease; margin-top:6px; }
+  .btn:hover{ background:var(--ember); }
+  .fineprint{ font-size:.82rem; color:var(--muted); margin-top:14px; text-align:center; }
+  .row-success{ text-align:center; padding:10px 0 4px; }
+  .row-success h3{ font-family:'Fraunces',serif; color:var(--ink); font-size:1.5rem; margin-bottom:8px; }
+  .row-success p{ color:var(--text); }
+  .foot{ position:relative; z-index:1; text-align:center; margin-top:20px; font-size:.8rem; color:rgba(250,246,239,.55); font-family:'Fraunces',serif; font-style:italic; }
+  .wrapper{ display:flex; flex-direction:column; align-items:center; }
+  .back{ position:fixed; top:20px; left:24px; z-index:10; font-size:.92rem; font-weight:600; color:var(--paper); text-decoration:none; }
+  .back:hover{ color:var(--ember); }
+</style>
+</head>
+<body>
+<a class="back" href="/">&larr; Back to site</a>
+<div class="wrapper">
+  <div class="card">
+    <div id="mlb2-42395190" class="ml-subscribe-form ml-subscribe-form-42395190">
+      <div class="row-form">
+        <div class="kicker">Human Intelligence · Founding cohort</div>
+        <h1>Apply for a place</h1>
+        <p class="sub">The first cohort is small and chosen by hand. Tell me a little and I'll be in touch personally. A <b>deposit holds your place</b> once we've spoken.</p>
+        <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/189808223124980825/subscribe" method="post" target="_blank">
+          <div class="field">
+            <label for="hi-name">First name</label>
+            <input id="hi-name" type="text" name="fields[name]" autocomplete="given-name" placeholder="Your name">
+          </div>
+          <div class="field">
+            <label for="hi-email">Email</label>
+            <input id="hi-email" type="email" name="fields[email]" autocomplete="email" placeholder="you@email.com" required>
+          </div>
+          <div class="field">
+            <label for="hi-why">Why now?</label>
+            <textarea id="hi-why" name="fields[why_now]" placeholder="What's making you look at this, at this point in your work or life?" required></textarea>
+          </div>
+          <input type="hidden" name="ml-submit" value="1">
+          <button type="submit" class="btn">Send my application</button>
+          <input type="hidden" name="anticsrf" value="true">
+        </form>
+        <p class="fineprint">This isn't a payment. It's the start of a conversation.</p>
+      </div>
+      <div class="row-success" style="display:none">
+        <h3>Your application's in.</h3>
+        <p>I read every one, and I'll be in touch personally. — G</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot">5spheresofempathy.com</div>
+</div>
+<script>
+  function ml_webform_success_42395190(){
+    var $ = ml_jQuery || jQuery;
+    $('.ml-subscribe-form-42395190 .row-success').show();
+    $('.ml-subscribe-form-42395190 .row-form').hide();
+  }
+</script>
+<script src="https://groot.mailerlite.com/js/w/webforms.min.js?v83147fa8ce2d95cb73ece7f28b469519" type="text/javascript"></script>
+<script>
+  fetch("https://assets.mailerlite.com/jsonp/2409610/forms/189808223124980825/takel")
+</script>
+</body>
+</html>
