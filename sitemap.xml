@@ -2,18 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://5spheresofempathy.com/</loc>
-    <lastmod>2026-06-29</lastmod>
+    <lastmod>2026-06-30</lastmod>
   </url>
   <url>
-    <loc>https://5spheresofempathy.com/resources.html</loc>
-    <lastmod>2026-06-29</lastmod>
+    <loc>https://5spheresofempathy.com/resources/</loc>
+    <lastmod>2026-06-30</lastmod>
+  </url>
+  <url>
+    <loc>https://5spheresofempathy.com/resources/prompt-chain/</loc>
+    <lastmod>2026-06-30</lastmod>
+  </url>
+  <url>
+    <loc>https://5spheresofempathy.com/resources/four-tenets/</loc>
+    <lastmod>2026-06-30</lastmod>
+  </url>
+  <url>
+    <loc>https://5spheresofempathy.com/resources/pme-sensing-quad/</loc>
+    <lastmod>2026-06-30</lastmod>
+  </url>
+  <url>
+    <loc>https://5spheresofempathy.com/resources/pitch-checklist/</loc>
+    <lastmod>2026-06-30</lastmod>
+  </url>
+  <url>
+    <loc>https://5spheresofempathy.com/resources/unsaid-protocol/</loc>
+    <lastmod>2026-06-30</lastmod>
+  </url>
+  <url>
+    <loc>https://5spheresofempathy.com/resources/dummy-circle/</loc>
+    <lastmod>2026-06-30</lastmod>
+  </url>
+  <url>
+    <loc>https://5spheresofempathy.com/resources/sphere-1-self-audit/</loc>
+    <lastmod>2026-06-30</lastmod>
   </url>
   <url>
     <loc>https://5spheresofempathy.com/apply.html</loc>
-    <lastmod>2026-06-29</lastmod>
-  </url>
-  <url>
-    <loc>https://5spheresofempathy.com/assets/the-pitch-checklist.pdf</loc>
-    <lastmod>2026-06-29</lastmod>
+    <lastmod>2026-06-30</lastmod>
   </url>
 </urlset>
