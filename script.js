@@ -17,6 +17,31 @@ var GATE_DOWNLOADS = true;
   }
 })();
 
+/* ── MailerLite Universal: reveal download after form success ── */
+(function () {
+  var gates = document.querySelectorAll('.gate-section .ml-embedded');
+  if (!gates.length) return;
+
+  gates.forEach(function (embed) {
+    var section = embed.closest('.gate-section');
+    if (!section) return;
+    var revealed = false;
+
+    var mo = new MutationObserver(function () {
+      if (revealed) return;
+      var el = embed.querySelector('[class*="success"]');
+      if (el && el.clientHeight > 0) {
+        revealed = true;
+        var dl = section.querySelector('.gate-download');
+        if (dl) dl.style.display = 'block';
+        mo.disconnect();
+      }
+    });
+
+    mo.observe(embed, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+  });
+})();
+
 /* copy-to-clipboard for prompt blocks */
 function copyPrompt(btn) {
   var text = btn.parentElement.querySelector('.q').innerText.replace(/^\u201c|\u201d$/g, '').replace(/^"|"$/g, '');
