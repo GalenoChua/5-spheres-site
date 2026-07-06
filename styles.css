@@ -407,3 +407,51 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
   .atd-page header { padding: 56px 0 48px; }
   .atd-page section { padding: 52px 0; }
 }
+
+/* ── The Method page ── */
+.method-page { font-size: 17px; line-height: 1.6; }
+.method-page section { padding: 72px 0; }
+.method-page header { padding: 80px 0 64px; position: relative; overflow: hidden; }
+
+/* dark sections */
+.method-dark { background: var(--ink); color: var(--paper); }
+.method-dark .kicker { color: var(--ember-soft); }
+.method-dark h2 { color: var(--paper); max-width: 24ch; }
+.method-dark .prose-body { color: rgba(250,246,239,.85); max-width: 54ch; }
+.method-dark .deco { position: absolute; border-radius: 50%; border: 1.5px solid rgba(232,134,46,.22); width: 300px; height: 300px; top: -110px; right: -80px; pointer-events: none; }
+
+/* hero */
+.method-page header h1 { font-family: 'Fraunces', serif; font-weight: 700; color: var(--paper); font-size: clamp(2.2rem, 4.8vw, 3.4rem); line-height: 1.1; margin-bottom: 16px; max-width: 20ch; }
+.method-page header .sub { font-size: 1.15rem; color: rgba(250,246,239,.9); max-width: 48ch; margin-bottom: 24px; }
+.method-page header .prose-body { margin-top: 0; }
+
+/* light & warm */
+.method-light { background: var(--paper); }
+.method-warm { background: var(--paper-warm); }
+.method-light .prose-body, .method-warm .prose-body { color: var(--text); max-width: 54ch; margin-bottom: 16px; }
+
+/* sphere entries */
+.sphere-entry { display: flex; gap: 22px; padding: 28px 0; border-top: 1px solid var(--line); }
+.sphere-entry:last-child { border-bottom: 1px solid var(--line); }
+.sphere-num { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.8rem; color: var(--ember); min-width: 36px; line-height: 1.2; }
+.sphere-content h3 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink); font-size: 1.2rem; margin-bottom: 6px; }
+.sphere-question { font-family: 'Fraunces', serif; font-style: italic; color: var(--ember); font-size: 1.02rem; margin-bottom: 8px; }
+.sphere-content p { max-width: 54ch; font-size: .96rem; }
+
+/* body of work links */
+.method-links { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+.method-link { font-weight: 600; font-size: .95rem; color: var(--ember); text-decoration: none; }
+.method-link:hover { color: var(--ink); }
+
+/* CTA buttons */
+.method-cta .method-buttons { margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap; }
+.method-dark .btn { background: var(--paper); color: var(--ink); }
+.method-dark .btn:hover { background: var(--ember); color: var(--paper); }
+.method-dark .btn.ghost { background: transparent; color: var(--paper); border: 1.5px solid rgba(250,246,239,.5); margin-left: 0; }
+.method-dark .btn.ghost:hover { background: var(--paper); color: var(--ink); }
+
+/* method responsive */
+@media (max-width: 860px) {
+  .method-page header { padding: 56px 0 48px; }
+  .method-page section { padding: 52px 0; }
+}
