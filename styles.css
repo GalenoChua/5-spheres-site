@@ -450,6 +450,9 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
 .method-dark .btn.ghost { background: transparent; color: var(--paper); border: 1.5px solid rgba(250,246,239,.5); margin-left: 0; }
 .method-dark .btn.ghost:hover { background: var(--paper); color: var(--ink); }
 
+/* proof line */
+.method-proof { font-size: .92rem; color: rgba(250,246,239,.6); font-style: italic; margin-top: 22px; max-width: 54ch; }
+
 /* method responsive */
 @media (max-width: 860px) {
   .method-page header { padding: 56px 0 48px; }
