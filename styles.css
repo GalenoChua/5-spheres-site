@@ -337,6 +337,28 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
 .atd-event-box .event-date { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.15rem; color: var(--paper); margin-bottom: 4px; }
 .atd-event-box .event-venue { font-size: .95rem; color: rgba(250,246,239,.7); max-width: 48ch; }
 
+/* upcoming tables list (hero + register) */
+.atd-next { margin-bottom: 32px; }
+.atd-next .next-label { font-size: .78rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ember-soft); margin-bottom: 14px; }
+.atd-next .next-item { border-top: 1px solid rgba(250,246,239,.18); padding: 14px 0; max-width: 48ch; }
+.atd-next .next-item:last-child { border-bottom: 1px solid rgba(250,246,239,.18); }
+.atd-next .next-date { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.12rem; color: var(--paper); }
+.atd-next .next-venue { font-size: .95rem; color: rgba(250,246,239,.7); }
+
+/* ways in (light sections) */
+.atd-ways { margin-top: 30px; }
+.atd-way { border-top: 1px solid var(--line); padding: 22px 0; max-width: 58ch; }
+.atd-way:last-child { border-bottom: 1px solid var(--line); }
+.atd-way h3 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.12rem; color: var(--ink); margin-bottom: 6px; }
+.atd-way p { font-size: .96rem; color: var(--text); margin-bottom: 8px; }
+.atd-way a { font-size: .92rem; font-weight: 600; color: var(--ember); text-decoration: none; }
+.atd-way a:hover { color: var(--ink); }
+
+/* full-width photo band */
+.atd-photo { width: 100%; border-radius: 12px; display: block; margin-top: 30px; }
+.atd-photo-caption { font-size: .88rem; color: var(--muted); margin-top: 10px; }
+.atd-dark .atd-photo-caption { color: rgba(250,246,239,.6); }
+
 /* premise h2 override */
 .atd-light h2, .atd-warm h2 { max-width: 28ch; }
 
