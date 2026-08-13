@@ -1,0 +1,41 @@
+# The published site is only what lives under version control here. Source
+# material can sit in this folder for convenience without being deployed.
+# Anything meant to go live belongs in /assets/ (documents) or /images/
+# (photography), committed under a clean lowercase name.
+
+# Local tooling state
+.netlify/
+.claude/
+.vscode/
+.idea/
+
+# OS and shell cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+nul
+
+# Source archives and working folders. These hold the originals the site is
+# built from, including multi-hundred-megabyte photo sets that GitHub rejects.
+/5 Spheres of Empathy/
+/5 Spheres of Empathy Books/
+/Global Sustainability Tours/
+
+# Working documents, wherever they end up
+*.docx
+*.xlsx
+*.pptx
+*.key
+*.zip
+
+# Loose originals dropped at the repo root. The published copies of these
+# already exist under /assets/ and /images/ with clean names.
+/*.pdf
+/*.jpg
+/*.jpeg
+/*.png
+!/og.png
+!/Mr_G_headshots_ZuzannaGerulewiczPhotography_06.jpg
+
+# Source PDFs parked in page directories rather than /assets/
+/field-notes/*.pdf
