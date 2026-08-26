@@ -39,3 +39,8 @@ nul
 
 # Source PDFs parked in page directories rather than /assets/
 /field-notes/*.pdf
+
+# Extracted course content. This repo is PUBLIC and Netlify serves the repo
+# root, so anything committed here is world-readable. The BSFP course is
+# meant to be member-gated, so its content must never be committed.
+/course-export/
