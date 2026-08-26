@@ -241,6 +241,19 @@ button[type="submit"]:hover { background: var(--orange-soft); }
   max-width: 44ch;
 }
 
+/* ── Tool figure ── */
+.tool { margin: 38px 0 0; }
+.tool img {
+  display: block; width: 100%; max-width: 520px; height: auto;
+  margin: 0 auto; border-radius: 10px;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 30px rgba(0,44,69,.10);
+}
+.tool figcaption {
+  margin: 16px auto 0; max-width: 52ch;
+  font-size: .88rem; line-height: 1.5; color: var(--muted); text-align: center;
+}
+
 /* ── Close line ── */
 .close {
   padding: 54px 0 64px;
@@ -441,6 +454,11 @@ footer a:hover { color: var(--orange-soft); }
       <li>A simple daily practice you can keep using.</li>
       <li>The anonymised before-and-after from the whole room, sent to everyone who attends.</li>
     </ul>
+
+    <figure class="tool">
+      <img src="/assets/pme-sensing-quad.png" alt="The PME Sensing Quad worksheet: a physical, mental and emotional scan, then four questions scored one to five, with the lowest score becoming a ninety day focus" loading="lazy">
+      <figcaption>The PME Sensing Quad, the sheet you will score yourself on. Physical, mental and emotional on the scan, then four questions on how well you sensed and were sensed.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -509,15 +527,58 @@ footer a:hover { color: var(--orange-soft); }
 </footer>
 
 <script>
-  function ml_webform_success_45237941() {
-    var $ = ml_jQuery || jQuery;
-    $('.ml-subscribe-form-45237941 .row-success').show();
-    $('.ml-subscribe-form-45237941 .row-form').hide();
+/* Sign-up handling.
+
+   We deliberately do NOT use MailerLite's webforms.min.js here. That script
+   locates a form by an id of the form mlb2-<id>, and this page shows the same
+   MailerLite form twice, which would mean two elements sharing one id. So we
+   post it ourselves and swap in the success state.
+
+   The POST is a CORS "simple request" (form-encoded, no custom headers), so it
+   needs no preflight. The response is opaque under no-cors, which is fine: the
+   subscriber is created either way. Without JavaScript the form still submits
+   natively via target="_blank". */
+(function () {
+  var ACTION = "https://assets.mailerlite.com/jsonp/2409610/forms/196872740626498737/subscribe";
+
+  function showSuccess() {
+    document.querySelectorAll('.row-form').forEach(function (el) { el.style.display = 'none'; });
+    document.querySelectorAll('.row-success').forEach(function (el) { el.style.display = 'block'; });
   }
+
+  document.querySelectorAll('form.ml-block-form').forEach(function (form) {
+    var sending = false;
+
+    form.addEventListener('submit', function (e) {
+      if (sending) { return; }               /* native fallback submit, let it through */
+      if (!form.checkValidity()) { form.reportValidity(); e.preventDefault(); return; }
+      e.preventDefault();
+
+      var btn = form.querySelector('button[type="submit"]');
+      var label = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Reserving...'; }
+
+      fetch(ACTION, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form)).toString()
+      }).then(function () {
+        showSuccess();
+        var wrap = form.closest('.signup');
+        if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }).catch(function () {
+        /* Network failure: submit natively so the sign-up is not silently lost. */
+        if (btn) { btn.disabled = false; btn.textContent = label; }
+        sending = true;
+        form.submit();
+      });
+    });
+  });
+})();
 </script>
-<script src="https://groot.mailerlite.com/js/w/webforms.min.js?v83147fa8ce2d95cb73ece7f28b469519" type="text/javascript"></script>
 <script>
-  fetch("https://assets.mailerlite.com/jsonp/2409610/forms/196872740626498737/takel")
+  fetch("https://assets.mailerlite.com/jsonp/2409610/forms/196872740626498737/takel").catch(function(){});
 </script>
 
 </body>
