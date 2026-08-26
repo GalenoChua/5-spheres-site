@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://5spheresofempathy.com/</loc>
-    <lastmod>2026-06-30</lastmod>
+    <lastmod>2026-08-26</lastmod>
   </url>
   <url>
     <loc>https://5spheresofempathy.com/resources/</loc>
@@ -63,5 +63,21 @@
   <url>
     <loc>https://5spheresofempathy.com/apply.html</loc>
     <lastmod>2026-06-30</lastmod>
+  </url>
+  <url>
+    <loc>https://5spheresofempathy.com/community/</loc>
+    <lastmod>2026-08-26</lastmod>
+  </url>
+  <url>
+    <loc>https://5spheresofempathy.com/sustainability-tours/</loc>
+    <lastmod>2026-08-26</lastmod>
+  </url>
+  <url>
+    <loc>https://5spheresofempathy.com/events/</loc>
+    <lastmod>2026-08-26</lastmod>
+  </url>
+  <url>
+    <loc>https://5spheresofempathy.com/events/the-sensing-drill/</loc>
+    <lastmod>2026-08-26</lastmod>
   </url>
 </urlset>
