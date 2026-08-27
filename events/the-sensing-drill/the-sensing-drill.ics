@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//The 5 Spheres of Empathy//Sensing Drill//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:sensing-drill-2026-09-17@5spheresofempathy.com
+DTSTAMP:20260827T000000Z
+DTSTART:20260917T070000Z
+DTEND:20260917T083000Z
+SUMMARY:Human Intelligence: The Sensing Drill
+DESCRIPTION:A 90-minute live session on training the one skill underneath 
+ every hard conversation: reading what is actually happening\, in yourself
+  and in the person in front of you.\n\nCome with a real working relations
+ hip or decision in mind.\n\nDetails: https://5spheresofempathy.com/events
+ /the-sensing-drill/
+LOCATION:Zoom
+URL:https://5spheresofempathy.com/events/the-sensing-drill/
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:The Sensing Drill starts in an hour
+END:VALARM
+END:VEVENT
+END:VCALENDAR
