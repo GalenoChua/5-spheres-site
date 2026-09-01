@@ -35,14 +35,37 @@
     background: rgba(250,246,239,.92); backdrop-filter: blur(8px);
     border-bottom: 1px solid rgba(29,42,82,.12);
   }
-  nav .wrap { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; padding-bottom: 16px; gap: 16px; flex-wrap: wrap; }
+  nav .wrap { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; padding-bottom: 14px; gap: 16px; flex-wrap: wrap; }
   .mark { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.05rem; color: var(--ink); letter-spacing: .01em; text-decoration: none; }
   .mark span { color: var(--ember); }
+
+  /* Nav items are quiet type, not buttons. Only one thing in the bar is a
+     button, and it is the one we actually want clicked. Filling every item
+     the way .btn is filled left nothing to lead the eye. */
+  .nav-links { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
   nav a.cta {
-    font-size: .92rem; font-weight: 600; color: var(--paper); background: var(--ink);
-    padding: 9px 20px; border-radius: 99px; text-decoration: none; transition: background .2s ease;
+    font-size: .93rem; font-weight: 600; color: var(--ink); background: none;
+    padding: 8px 0; border-radius: 0; text-decoration: none;
+    transition: color .18s ease;
   }
-  nav a.cta:hover { background: var(--ember); }
+  nav a.cta:hover { background: none; color: var(--ember); }
+
+  /* The single primary action. Matches .btn so the site has one button style. */
+  nav a.cta.nav-primary {
+    color: var(--paper); background: var(--ink);
+    padding: 9px 20px; border-radius: 99px;
+    transition: background .2s ease;
+  }
+  nav a.cta.nav-primary:hover { background: var(--ember); color: var(--paper); }
+
+  /* Text links carry no shape of their own, so keyboard focus needs to be
+     drawn explicitly rather than left to the browser default. */
+  nav a.cta:focus-visible,
+  .nav-menu a:focus-visible,
+  .mark:focus-visible {
+    outline: 2px solid var(--ember); outline-offset: 4px; border-radius: 4px;
+  }
+  nav a.cta.nav-primary:focus-visible { outline-offset: 3px; border-radius: 99px; }
 
   /* hero */
   header { padding: 96px 0 80px; position: relative; overflow: hidden; }
