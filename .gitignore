@@ -44,3 +44,7 @@ nul
 # root, so anything committed here is world-readable. The BSFP course is
 # meant to be member-gated, so its content must never be committed.
 /course-export/
+
+# Blank certificate templates. These are fillable and must never be published at
+# usable resolution; only the small previews in /bsfp-accelerator/ go live.
+/bsfp-accelerator/Certificates/
