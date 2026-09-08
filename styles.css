@@ -519,7 +519,12 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
      No JS. On desktop the menu opens on hover or keyboard focus.
      On touch, where hover does not exist, tapping Community goes
      to /community/ which lists the same three destinations. ── */
-  .nav-group { position: relative; display: inline-block; }
+  /* A flex container, not inline-block. As inline-block the anchor inside
+     stayed inline, so its vertical padding built no line box and it sat on a
+     text baseline: 3.5px shorter than its siblings and 2.4px lower. The
+     plain links are flex items of .nav-links and get blockified, which is
+     what this makes the dropdown labels do too, so all four sit level. */
+  .nav-group { position: relative; display: flex; align-items: center; }
   .nav-group > .cta::after { content: " \25BE"; font-size: .78em; opacity: .8; }
 
   .nav-menu {
