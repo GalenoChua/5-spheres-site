@@ -1,0 +1,47 @@
+# Security headers for the whole site. Netlify reads this file from the publish
+# root and applies it to every response, so a static site gets the same baseline
+# protection a server-rendered one would.
+#
+# The allowlists below name every third party the site actually talks to today:
+# MailerLite for the email forms, YouTube for the course videos, and Google Docs
+# and Drive for the quizzes and worksheets. MailerLite's webforms script pulls its
+# own jQuery from assets.mlcdn.com at runtime, so that host has to be listed too;
+# it appears in no page source and only shows up when a form actually loads. Fonts are self-hosted in /fonts/, so
+# no Google font host appears here. If a new embed is ever added, its origin has
+# to be added here too or the browser will silently block it.
+
+/*
+  # The one header worth testing after a deploy. Content-Security-Policy tells the
+  # browser which origins may serve script, styles, frames and form posts, which
+  # is what turns a stray injected <script> into a no-op. 'unsafe-inline' is here
+  # because pages carry inline <script> and style attributes; tightening that to
+  # hashes is a later job and needs the inline blocks to stop changing first.
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline' https://*.mailerlite.com https://assets.mlcdn.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://i.ytimg.com https://*.ytimg.com https://*.mailerlite.com; font-src 'self'; connect-src 'self' https://*.mailerlite.com; frame-src https://www.youtube-nocookie.com https://www.youtube.com https://docs.google.com https://drive.google.com; form-action 'self' https://*.mailerlite.com; upgrade-insecure-requests
+
+  # Refuse to be framed by anyone. frame-ancestors above is the modern version;
+  # this stays for older browsers that never learned it.
+  X-Frame-Options: DENY
+
+  # Stop the browser guessing a file is script when we served it as something else.
+  X-Content-Type-Options: nosniff
+
+  # Send the full URL to ourselves, only the bare origin to anyone else, and
+  # nothing at all when downgrading to http.
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Powerful features nothing on this site uses. The YouTube embeds keep the
+  # motion sensors they ask for in their allow attribute.
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), browsing-topics=()
+
+  # Once a browser sees this it refuses plain http for a year. Correct here
+  # because Netlify already serves the whole site over https, but note it is
+  # sticky: a browser that has seen it will not go back before it expires.
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+  # Keep cross-origin windows from reaching back into ours.
+  Cross-Origin-Opener-Policy: same-origin
+
+# Fonts are content-hashed in their filenames, so they can be cached hard and
+# forever. A weight change produces a new filename rather than a stale cache.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
