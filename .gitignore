@@ -41,9 +41,21 @@ nul
 /field-notes/*.pdf
 
 # Extracted course content. This repo is PUBLIC and Netlify serves the repo
-# root, so anything committed here is world-readable. The BSFP course is
-# meant to be member-gated, so its content must never be committed.
+# root, so anything committed here is world-readable. The lesson pages under
+# /bsfp-accelerator/ are deliberately public and indexed; what stays out is the
+# raw extraction the pages were built from, which is not fit to publish.
 /course-export/
+
+# Carousel and social artwork. Source art for LinkedIn, sized and cropped for
+# that feed rather than for the site, and heavy. The published copies of any
+# image used in a field note live in /images/field-notes/ under a clean
+# lowercase name; this folder is where they were cut from.
+/field-notes/*carousel*/
+
+# Client-facing pitch pages. These are written for one organisation and shared
+# by direct link, not published. Committing one puts it on the live site and
+# into the public git history for good.
+/pah-pitch/
 
 # Blank certificate templates. These are fillable and must never be published at
 # usable resolution; only the small previews in /bsfp-accelerator/ go live.
