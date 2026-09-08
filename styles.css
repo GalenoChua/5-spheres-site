@@ -505,7 +505,30 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
 }
 
 /* Field Notes feed */
-.feed-entry { border-top: 1px solid var(--line); padding: 28px 0; }
+/* Two columns: a fixed thumbnail and the text beside it. The image is
+     decorative, so it is hidden from screen readers and taken out of the tab
+     order; the heading link beside it is the real destination, and announcing
+     the same link twice is noise. */
+  .feed-entry {
+    border-top: 1px solid var(--line); padding: 28px 0;
+    display: grid; grid-template-columns: 200px 1fr; gap: 26px; align-items: start;
+  }
+  .feed-thumb {
+    display: block; border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--line); background: var(--paper-warm);
+  }
+  .feed-thumb img {
+    display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover;
+    transition: transform .3s ease;
+  }
+  .feed-thumb:hover img { transform: scale(1.03); }
+  .feed-thumb:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+
+  /* Below this the thumbnail stops earning its column and sits above instead. */
+  @media (max-width: 640px) {
+    .feed-entry { grid-template-columns: 1fr; gap: 16px; }
+    .feed-thumb { max-width: 320px; }
+  }
 .feed-entry:last-child { border-bottom: 1px solid var(--line); }
 .feed-date { font-size: .85rem; color: var(--muted); margin-bottom: 4px; }
 .feed-entry .kicker { margin-bottom: 4px; }
