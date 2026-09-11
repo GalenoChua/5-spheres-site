@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill Drills | The 5 Spheres of Empathy</title>
+<meta name="description" content="Ninety minutes on one skill, in a small group, with a hot seat. Then ninety days practising it. Drop in when you can. The board shows what is booked, what is queued, and what is still blank.">
+<meta property="og:title" content="Skill Drills | The 5 Spheres of Empathy">
+<meta property="og:description" content="Ninety minutes on one skill, then ninety days practising it. Drop in when you can.">
+<meta property="og:image" content="https://5spheresofempathy.com/og.png">
+<meta property="og:url" content="https://5spheresofempathy.com/skilldrills/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://5spheresofempathy.com/skilldrills/">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* ── Skill Drills board ──────────────────────────────────────
+     Three levels of certainty on one wall: booked, queued, blank.
+     Each one is meant to look like what it is. ── */
+
+  .drill-hero { padding: 72px 0 26px; }
+  .drill-hero h1 { max-width: 18ch; }
+  .drill-hero .lede { margin-bottom: 26px; }
+  .for-who {
+    border-left: 3px solid var(--ember); padding: 4px 0 4px 18px;
+    max-width: 58ch; color: var(--text); font-size: 1.04rem;
+  }
+
+  /* how it works */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 26px; }
+  .step .n {
+    font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 700; color: var(--ember);
+    border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px;
+  }
+  .step h3 { font-family: 'Fraunces', serif; color: var(--ink); font-size: 1.12rem; margin-bottom: 7px; }
+  .step p { font-size: .97rem; color: var(--text); }
+  .step .cost { display: inline-block; margin-top: 10px; font-size: .85rem; font-weight: 600;
+                color: var(--ink); background: var(--paper-warm); padding: 3px 11px; border-radius: 99px; }
+
+  /* booked: decided, so it looks decided */
+  .booked { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .dcard {
+    border: 1.5px solid var(--ink); border-radius: 14px; padding: 19px 21px;
+    display: flex; gap: 16px; align-items: flex-start; position: relative; background: var(--paper);
+  }
+  .dcard .when { flex: 0 0 60px; text-align: center; border-right: 1px solid var(--line); padding-right: 14px; }
+  .dcard .when .d { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.85rem; color: var(--ink); line-height: .95; }
+  .dcard .when .m { font-size: .7rem; font-weight: 700; letter-spacing: .14em; color: var(--muted); margin-top: 4px; }
+  .dcard h3 { font-family: 'Fraunces', serif; color: var(--ink); font-size: 1.06rem; margin-bottom: 3px; }
+  .dcard .meta { font-size: .89rem; color: var(--muted); }
+  .dcard .book { display: inline-block; margin-top: 11px; font-size: .88rem; font-weight: 600;
+                 text-decoration: none; color: var(--ember); }
+  .dcard .book:hover { color: var(--ink); }
+  .dcard .tagp { position: absolute; top: 15px; right: 17px; font-size: .84rem; font-weight: 600; color: var(--muted); }
+  .dcard .tagp.free { color: var(--paper); background: var(--ink); padding: 2px 10px; border-radius: 99px; }
+
+  /* ── the board ──
+     The pin, the tilt and the curl shadows all live on .pinned. The paper itself
+     is never transformed: a transform creates a stacking context, and a shadow
+     on the painted element cannot then sit behind that element's background —
+     it draws across the front of the note instead. ── */
+  .board { display: flex; flex-wrap: wrap; gap: 30px 24px; padding-top: 10px; }
+  .pinned { position: relative; width: 214px; transition: transform .18s ease; }
+  .pinned:nth-child(4n+1) { transform: rotate(-1.6deg); }
+  .pinned:nth-child(4n+2) { transform: rotate(1.1deg); }
+  .pinned:nth-child(4n+3) { transform: rotate(-.6deg); }
+  .pinned:nth-child(4n)   { transform: rotate(1.7deg); }
+  .pinned:hover { transform: rotate(0) translateY(-4px); }
+
+  /* the lift: the paper bows away from the wall at both bottom corners */
+  .pinned::before, .pinned::after {
+    content: ''; position: absolute; bottom: 7px; height: 22px; width: 46%;
+    box-shadow: 0 15px 12px rgba(29, 42, 82, .30);
+  }
+  .pinned::before { left: 5px; transform: skew(-9deg) rotate(-3.2deg); }
+  .pinned::after  { right: 5px; transform: skew(9deg) rotate(3.2deg); }
+
+  .sticky {
+    position: relative; min-height: 158px; padding: 26px 17px 13px;
+    background: linear-gradient(#f8f1e0 0%, #f5ecd8 72%, #efe3c9 100%);
+    display: flex; flex-direction: column;
+    /* square at the top where the pin holds it, bowed along the bottom edge */
+    border-radius: 2px 2px 18px 18px / 2px 2px 8px 8px;
+    box-shadow: 0 1px 2px rgba(29, 42, 82, .16);
+  }
+  .pinned:nth-child(3n) .sticky { background: linear-gradient(#f6eeda 0%, #f2e8d1 72%, #ece0c4 100%); }
+
+  /* the thumbtack */
+  .pin { position: absolute; top: -8px; left: 50%; margin-left: -9px; width: 18px; height: 18px;
+         border-radius: 50%; z-index: 2;
+         background: radial-gradient(circle at 34% 30%, #f4a85a 0%, #e8862e 42%, #b45f14 100%);
+         box-shadow: 0 3px 4px rgba(29, 42, 82, .34), inset 0 -1px 2px rgba(0, 0, 0, .22); }
+  .pin::after { content: ''; position: absolute; top: 3.5px; left: 4.5px; width: 5.5px; height: 4px;
+                border-radius: 50%; background: rgba(255, 255, 255, .62); }
+  .pinned:nth-child(even) .pin { background: radial-gradient(circle at 34% 30%, #7fa9c4 0%, #3f6f92 42%, #24465e 100%); }
+
+  /* the folded bottom corner */
+  .fold { position: absolute; bottom: 0; right: 0; width: 26px; height: 26px;
+          border-radius: 0 0 4px 0;
+          background: linear-gradient(135deg, transparent 0 50%, rgba(29, 42, 82, .15) 50% 100%); }
+  .fold::after { content: ''; position: absolute; inset: 0;
+                 background: linear-gradient(315deg, var(--paper) 0 50%, transparent 50%); }
+
+  .sticky .t { font-family: 'Caveat', cursive; font-weight: 600; font-size: 1.42rem;
+               line-height: 1.1; color: var(--ink); }
+  .sticky .s { font-size: .82rem; color: var(--muted); margin-top: 8px; line-height: 1.4; }
+  .sticky .foot { margin-top: auto; padding-top: 14px; display: flex; align-items: center;
+                  justify-content: space-between; }
+  .want { font-family: inherit; font-size: .78rem; font-weight: 600; color: var(--ink);
+          background: rgba(29, 42, 82, .07); border: none; border-radius: 99px;
+          padding: 4px 11px; cursor: pointer; }
+  .want:hover { background: var(--ember); color: var(--paper); }
+  .tag { font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--s); }
+
+  /* blanks are paper too — pinned up empty, with the space for a drill ruled on them */
+  .pinned.blank .sticky { justify-content: flex-start; }
+  .pinned.blank .slot { border: 1.5px dashed rgba(29, 42, 82, .28); border-radius: 6px;
+                      padding: 13px 12px; text-align: center; margin-top: 4px; }
+  .pinned.blank .slot .plus { font-family: 'Caveat', cursive; font-size: 1.9rem; line-height: 1;
+                            color: var(--ember); }
+  .pinned.blank .slot .cap { font-size: .82rem; font-weight: 600; color: var(--muted); margin-top: 2px; }
+  .pinned.blank .rules { margin-top: 11px; }
+  .pinned.blank .rules i { display: block; height: 1px; background: rgba(29, 42, 82, .13); margin-bottom: 9px; }
+  .pinned.blank .rules i:nth-child(2) { width: 78%; }
+  .pinned.blank .rules i:nth-child(3) { width: 54%; }
+
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 30px; font-size: .8rem; color: var(--muted); }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .board-note { margin-top: 18px; font-size: .97rem; color: var(--muted); max-width: 64ch; }
+
+  @media (max-width: 560px) {
+    .board { gap: 26px 18px; justify-content: center; }
+    .pinned { width: 100%; max-width: 300px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="mark" href="/">The 5 Spheres<span>.</span></a>
+    <div class="nav-links">
+      <a class="cta" href="/the-method/">The Method</a>
+      <div class="nav-group">
+        <a class="cta" href="/community/">Community</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/skilldrills/">Skill Drills<span>Ninety minutes on one skill</span></a>
+            <a href="/agree-to-disagree/">Agree to Disagree<span>The live leadership roundtable</span></a>
+            <a href="/sustainability-tours/">Sustainability Tours<span>Behind the scenes, in person and virtual</span></a>
+            <a href="/events/">Events<span>Live sessions on the method</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta" href="/field-notes/">Field Notes</a>
+      <div class="nav-group">
+        <a class="cta" href="/resources/">Resources</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/resources/">Tools and downloads<span>Worksheets, checklists and reference sheets</span></a>
+            <a href="/bsfp-accelerator/">Business Sustainability<span>Free eighteen lesson course</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta nav-primary" href="/#begin">Start here</a>
+    </div>
+  </div>
+</nav>
+
+<header class="drill-hero">
+  <div class="wrap">
+    <div class="kicker">Skill Drills</div>
+    <h1>One skill, ninety minutes, then ninety days.</h1>
+    <p class="lede">Empathy is a skill, and skills are not acquired by being explained to you.
+      Each drill takes one of them and you practise it — in a small group, with a hot seat, scoring
+      yourself before and after. Drop in when you can. There is no order you have to follow.</p>
+    <p class="for-who">For the founder, leader or professional who knows something isn't working
+      but can't quite name it. You don't need to have read the book, and you don't need to come
+      to all of them.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="label">How a drill works</div>
+    <h2>Ninety minutes is the session. Ninety days is the point.</h2>
+    <div class="prose" style="margin-bottom:32px">
+      <p>Most training ends when the call does, which is why most training changes nothing.
+        A drill is built the other way round: the session exists to find the one thing you should
+        work on, and then you go and work on it.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="n">01</div>
+        <h3>The ninety minutes</h3>
+        <p>A short piece of what the research says, stated with its limits. Then you practise in a
+          small group and take the hot seat. You score yourself on the skill before and after, so
+          the change is yours rather than my claim.</p>
+        <span class="cost">&euro;50 a session</span>
+      </div>
+      <div class="step">
+        <div class="n">02</div>
+        <h3>The ninety days</h3>
+        <p>You leave with your lowest score, a simple daily practice, and the anonymised
+          before-and-after from the whole room. Ninety days is how long it takes for a practice to
+          stop being a thing you remember to do. That's the work, and it's free.</p>
+        <span class="cost">Included</span>
+      </div>
+      <div class="step">
+        <div class="n">03</div>
+        <h3>Supervision, if you want it</h3>
+        <p>Send me recordings of yourself using the skill with real people. We design an activity
+          around a real situation of yours, and we go through it one to one. This is how you find
+          out whether you can actually do it, rather than whether you understood it.</p>
+        <span class="cost">&euro;200</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--paper-warm)">
+  <div class="wrap">
+    <div class="label">Next up</div>
+    <h2 style="margin-bottom:24px">Booked and happening</h2>
+    <div class="booked">
+      <div class="dcard">
+        <div class="when"><div class="d">17</div><div class="m">SEP</div></div>
+        <div>
+          <h3>The Sensing Drill</h3>
+          <div class="meta">09:00 CEST &middot; Zoom &middot; 90 min</div>
+          <a class="book" href="/events/the-sensing-drill/">Take a place &rarr;</a>
+        </div>
+        <span class="tagp free">Free</span>
+      </div>
+      <div class="dcard">
+        <div class="when"><div class="d">&mdash;</div><div class="m">TBC</div></div>
+        <div>
+          <h3>The Empathy Map</h3>
+          <div class="meta">date to be confirmed</div>
+          <a class="book" href="#queue">Tell me when suits &rarr;</a>
+        </div>
+        <span class="tagp">&euro;50</span>
+      </div>
+      <div class="dcard">
+        <div class="when"><div class="d">&mdash;</div><div class="m">TBC</div></div>
+        <div>
+          <h3>Active Listening &amp; The Unsaid</h3>
+          <div class="meta">date to be confirmed</div>
+          <a class="book" href="#queue">Tell me when suits &rarr;</a>
+        </div>
+        <span class="tagp">&euro;50</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="queue">
+  <div class="wrap">
+    <div class="label">In the queue</div>
+    <h2>No date yet. Tell me which you want, and where.</h2>
+    <p class="prose" style="margin-top:10px">I run these when I run them. I would rather the order
+      came from the people turning up than from me guessing, so the board is public and you can
+      push things up it.</p>
+
+    <div class="board">
+      <div class="pinned" style="--s:#e20000"><div class="pin"></div><div class="sticky">
+        <div class="t">The Sphere 1 Self-Audit</div><div class="s">naming what you actually value</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">S1</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#ff0000"><div class="pin"></div><div class="sticky">
+        <div class="t">Your Cup</div><div class="s">capacity, inputs, and the story you stir</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">S2</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#e20000"><div class="pin"></div><div class="sticky">
+        <div class="t">The Four Tenets of Compassion</div><div class="s">where the method started</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">S1</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#ff4900"><div class="pin"></div><div class="sticky">
+        <div class="t">Bodystorming</div><div class="s">physical empathy, and what it costs</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">S3</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#ff4900"><div class="pin"></div><div class="sticky">
+        <div class="t">People Journey Mapping</div><div class="s">the map before the solution</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">S3</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#ff4900"><div class="pin"></div><div class="sticky">
+        <div class="t">Defensive Energy</div><div class="s">lowering the walls</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">S3</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#ff6500"><div class="pin"></div><div class="sticky">
+        <div class="t">The Pre-Mortem</div><div class="s">the harm you haven't thought of yet</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">S4</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#ff6500"><div class="pin"></div><div class="sticky">
+        <div class="t">The Silent Stakeholder</div><div class="s">the environment has no seat</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">S4</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#ff8400"><div class="pin"></div><div class="sticky">
+        <div class="t">Cathedral Thinking</div><div class="s">building for people you'll never meet</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">S5</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#1d2a52"><div class="pin"></div><div class="sticky">
+        <div class="t">Giving Feedback</div><div class="s">so it lands, and so it keeps the relationship</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">Craft</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#1d2a52"><div class="pin"></div><div class="sticky">
+        <div class="t">Relationship Design</div><div class="s">agreeing how you'll work before you need to</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">Craft</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#1d2a52"><div class="pin"></div><div class="sticky">
+        <div class="t">Boundaries Around Behaviours</div><div class="s">not around people</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">Craft</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#1d2a52"><div class="pin"></div><div class="sticky">
+        <div class="t">The Unsaid Protocol</div><div class="s">surfacing what the room is avoiding</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">Craft</span></div>
+        <div class="fold"></div></div></div>
+
+      <div class="pinned" style="--s:#1d2a52"><div class="pin"></div><div class="sticky">
+        <div class="t">Disagreeing Without Contempt</div><div class="s">the Agree to Disagree hot seat</div>
+        <div class="foot"><button class="want" type="button">I want this</button><span class="tag">Craft</span></div>
+        <div class="fold"></div></div></div>
+    </div>
+
+    <div class="legend">
+      <span><i style="background:#e20000"></i> Sphere 1</span>
+      <span><i style="background:#ff0000"></i> Sphere 2</span>
+      <span><i style="background:#ff4900"></i> Sphere 3</span>
+      <span><i style="background:#ff6500"></i> Sphere 4</span>
+      <span><i style="background:#ff8400"></i> Sphere 5</span>
+      <span><i style="background:#1d2a52"></i> Coaching craft</span>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--paper-warm)">
+  <div class="wrap">
+    <div class="label">Blank</div>
+    <h2>Drills I'm still drafting, or ones you think are missing.</h2>
+    <p class="prose" style="margin-top:10px">Empty notes are already on the wall. Put something on one.</p>
+    <div class="board">
+      <div class="pinned blank"><div class="pin"></div><div class="sticky">
+        <div class="slot"><div class="plus">+</div><div class="cap">Propose a drill</div></div>
+        <div class="rules"><i></i><i></i><i></i></div>
+        <div class="fold"></div></div></div>
+      <div class="pinned blank"><div class="pin"></div><div class="sticky">
+        <div class="slot"><div class="plus">+</div><div class="cap">Propose a drill</div></div>
+        <div class="rules"><i></i><i></i><i></i></div>
+        <div class="fold"></div></div></div>
+      <div class="pinned blank"><div class="pin"></div><div class="sticky">
+        <div class="slot"><div class="plus">+</div><div class="cap">Propose a drill</div></div>
+        <div class="rules"><i></i><i></i><i></i></div>
+        <div class="fold"></div></div></div>
+    </div>
+    <p class="board-note">The board is public on purpose. If a skill you need isn't up there,
+      that's useful to know — write to <a href="mailto:hello@5spheresofempathy.com">hello@5spheresofempathy.com</a>.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
+    <div><a href="/">Home</a> &nbsp;&middot;&nbsp; <a href="/events/">Events</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@5spheresofempathy.com">Get in touch</a></div>
+  </div>
+</footer>
+
+</body>
+</html>
