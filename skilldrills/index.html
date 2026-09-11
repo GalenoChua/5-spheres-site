@@ -26,6 +26,32 @@
     max-width: 58ch; color: var(--text); font-size: 1.04rem;
   }
 
+  /* A bare arrow only says there is more. Naming the sections says what the
+     more is, and lets someone skip straight to it — most people arriving here
+     want the dates, not the argument. The chevron carries the same signal for
+     anyone scanning rather than reading. */
+  /* This is a <nav>, and styles.css styles the element itself — the site header
+     is sticky with a border-bottom and a blur. Left alone, the jump row picked
+     all of that up: a rule stretching the width of the page, and a second
+     sticky bar. Kept as a nav for the landmark, with those four reset. */
+  .jump { position: static; background: none; backdrop-filter: none; border-bottom: 0;
+          display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 30px; }
+  .jump a { font-size: .92rem; font-weight: 600; color: var(--ink); text-decoration: none;
+            border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .jump a:hover { color: var(--ember); border-bottom-color: var(--ember); }
+  .chev { width: 13px; height: 13px; border-right: 2px solid var(--ember);
+          border-bottom: 2px solid var(--ember); transform: rotate(45deg);
+          margin-right: 2px; animation: nudge 2.1s ease-in-out infinite; }
+  @keyframes nudge {
+    0%, 62%, 100% { transform: rotate(45deg) translate(0, 0); }
+    78%           { transform: rotate(45deg) translate(3px, 3px); }
+  }
+  /* Motion is decoration here, so it goes away for anyone who has asked it to. */
+  @media (prefers-reduced-motion: reduce) { .chev { animation: none; } }
+
+  /* Anchored sections need to clear the sticky nav when jumped to. */
+  #next-up, #how, #queue, #blank { scroll-margin-top: 76px; }
+
   /* The schedule sits directly under the hero. It is what someone came for;
      the explainer below is for the people who still need convincing. */
   .next-up { background: var(--paper-warm); padding: 38px 0 52px; }
@@ -198,10 +224,17 @@
       your theory and your hours practised towards certification.</p>
     <p class="for-who">For the founder, leader or professional who can't commit to an entire six
       or eight week course, but wants to sustain periodic practice.</p>
+
+    <nav class="jump" aria-label="On this page">
+      <span class="chev" aria-hidden="true"></span>
+      <a href="#next-up">What's on next</a>
+      <a href="#how">How a drill works</a>
+      <a href="#queue">The queue</a>
+    </nav>
   </div>
 </header>
 
-<section class="next-up">
+<section class="next-up" id="next-up">
   <div class="wrap">
     <div class="label">Next up</div>
     <h2 style="margin-bottom:24px">Booked and happening</h2>
@@ -237,7 +270,7 @@
   </div>
 </section>
 
-<section class="how">
+<section class="how" id="how">
   <div class="wrap">
     <div class="label">How a drill works</div>
     <h2>The session is the easy part.</h2>
@@ -372,7 +405,7 @@
   </div>
 </section>
 
-<section style="background:var(--paper-warm)">
+<section id="blank" style="background:var(--paper-warm)">
   <div class="wrap">
     <div class="label">Blank</div>
     <h2>Drills I'm still drafting, or ones you think are missing.</h2>
