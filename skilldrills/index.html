@@ -26,22 +26,31 @@
     max-width: 58ch; color: var(--text); font-size: 1.04rem;
   }
 
-  /* how it works */
+  /* ── how a drill works ──
+     On ink, because on paper it ran straight out of the hero with nothing to
+     say a new section had started — the eye read it as more hero. The site
+     already uses a dark band this way on the homepage. ── */
+  .how { background: var(--ink); color: rgba(250, 246, 239, .82); padding: 66px 0 72px; }
+  .how .label { color: var(--ember-soft); }
+  .how h2 { color: var(--paper); }
+  .how .prose p { color: rgba(250, 246, 239, .82); font-size: 1.08rem; }
+
   .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 26px; }
   .step .n {
-    font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 700; color: var(--ember);
-    border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px;
+    font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 700; color: var(--ember-soft);
+    border-bottom: 1px solid rgba(250, 246, 239, .22); padding-bottom: 8px; margin-bottom: 12px;
   }
-  .step h3 { font-family: 'Fraunces', serif; color: var(--ink); font-size: 1.12rem; margin-bottom: 7px; }
-  .step p { font-size: .97rem; color: var(--text); }
-  .step .cost { display: inline-block; margin-top: 10px; font-size: .85rem; font-weight: 600;
-                color: var(--ink); background: var(--paper-warm); padding: 3px 11px; border-radius: 99px; }
+  .step h3 { font-family: 'Fraunces', serif; color: var(--paper); font-size: 1.12rem; margin-bottom: 7px; }
+  .step p { font-size: .97rem; color: rgba(250, 246, 239, .82); }
+  .step .cost { display: inline-block; margin-top: 12px; font-size: .85rem; font-weight: 600;
+                color: var(--paper); background: rgba(250, 246, 239, .13);
+                padding: 3px 11px; border-radius: 99px; }
   /* 02 and 03 are one piece of work, not two products: the practice is what
      supervision supervises. Tying them visually stops 03 reading as an upsell
      that could be bought instead of 02. */
-  .step.paired .n { color: var(--ink); border-bottom-color: var(--ember); }
+  .step.paired .n { border-bottom-color: var(--ember); }
   .step .dep { font-family: 'Source Sans 3', sans-serif; font-size: .8rem; font-weight: 600;
-               color: var(--muted); letter-spacing: 0; }
+               color: rgba(250, 246, 239, .6); letter-spacing: 0; }
 
   /* booked: decided, so it looks decided */
   .booked { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
@@ -178,30 +187,33 @@
   <div class="wrap">
     <div class="kicker">Skill Drills</div>
     <h1>One skill, ninety minutes, then ninety days.</h1>
-    <p class="lede">Empathy is a skill, and skills are not acquired by being explained to you.
-      Each drill takes one of them and you practise it — in a small group, with a hot seat, scoring
-      yourself before and after. Drop in when you can. There is no order you have to follow.</p>
+    <p class="lede">Empathy is a skill. And like other skills, it is not acquired by being
+      explained to you. Each drill takes one empathetic skill for you to practise — in a small
+      group, with a hot seat, scoring yourself before and after. Drop in when you can, and log
+      your theory and your hours practised towards certification.</p>
     <p class="for-who">For the founder, leader or professional who can't commit to an entire six
       or eight week course, but wants to sustain periodic practice.</p>
   </div>
 </header>
 
-<section>
+<section class="how">
   <div class="wrap">
     <div class="label">How a drill works</div>
     <h2>The session is the easy part.</h2>
-    <div class="prose" style="margin-bottom:32px">
-      <p>Most training ends when the call does, which is why most training changes nothing.
+    <div class="prose" style="margin-bottom:34px">
+      <p>Most training ends at the end of the session, which is why most training changes nothing.
         A drill is built the other way round: the session exists to find the one thing you should
-        work on, and then you go and work on it.</p>
+        work on, and then you go and work on it. Which means the end of the session is where your
+        training begins.</p>
     </div>
     <div class="steps">
       <div class="step">
         <div class="n">01</div>
         <h3>The ninety minutes</h3>
         <p>A short piece of what the research says, stated with its limits. Then you practise in a
-          small group and take the hot seat. You score yourself on the skill before and after, so
-          the change is yours rather than my claim.</p>
+          small group and take the hot seat. You score yourself on the skill before and after, and
+          we record it at the start and end of every session, so there is data to work with rather
+          than a feeling about how it went.</p>
         <span class="cost">&euro;50 a session</span>
       </div>
       <div class="step paired">
@@ -209,17 +221,18 @@
         <h3>The ninety days</h3>
         <p>You leave with your lowest score, a simple daily practice, and the anonymised
           before-and-after from the whole room. Ninety days is roughly how long it takes for a
-          practice to stop being a thing you have to remember to do. Nobody can do this part
-          for you.</p>
-        <span class="cost">That one is on you</span>
+          practice to stop being a thing you have to remember to do. If it helps, we can set you
+          up with an accountability buddy from your group.</p>
+        <span class="cost">Your time</span>
       </div>
       <div class="step paired">
         <div class="n">03 <span class="dep">&mdash; needs 02</span></div>
         <h3>Supervision, if you want it</h3>
         <p>Without the practice there is nothing to supervise, so this only works on top of the
-          ninety days. Send me recordings of yourself using the skill with real people. We design
-          an activity around a real situation of yours and go through it one to one. This is how
-          you find out whether you can do it, rather than whether you understood it.</p>
+          ninety days. Send me recordings of yourself using the skill with real people, in real
+          situations. If you can't record at work or at home, we design a real-life activity
+          instead, and go through that one to one. This is how you find out whether you can do it,
+          rather than whether you understood it.</p>
         <span class="cost">&euro;200</span>
       </div>
     </div>
