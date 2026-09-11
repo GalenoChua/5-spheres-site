@@ -18,13 +18,18 @@
      Three levels of certainty on one wall: booked, queued, blank.
      Each one is meant to look like what it is. ── */
 
-  .drill-hero { padding: 72px 0 26px; }
+  .drill-hero { padding: 54px 0 20px; }
   .drill-hero h1 { max-width: 18ch; }
   .drill-hero .lede { margin-bottom: 26px; }
   .for-who {
     border-left: 3px solid var(--ember); padding: 4px 0 4px 18px;
     max-width: 58ch; color: var(--text); font-size: 1.04rem;
   }
+
+  /* The schedule sits directly under the hero. It is what someone came for;
+     the explainer below is for the people who still need convincing. */
+  .next-up { background: var(--paper-warm); padding: 38px 0 52px; }
+  .next-up h2 { font-size: 1.5rem; }
 
   /* ── how a drill works ──
      On ink, because on paper it ran straight out of the hero with nothing to
@@ -196,6 +201,42 @@
   </div>
 </header>
 
+<section class="next-up">
+  <div class="wrap">
+    <div class="label">Next up</div>
+    <h2 style="margin-bottom:24px">Booked and happening</h2>
+    <div class="booked">
+      <div class="dcard">
+        <div class="when"><div class="d">17</div><div class="m">SEP</div></div>
+        <div>
+          <h3>The Sensing Drill</h3>
+          <div class="meta">09:00 CEST &middot; Zoom &middot; 90 min</div>
+          <a class="book" href="/events/the-sensing-drill/">Take a place &rarr;</a>
+        </div>
+        <span class="tagp free">Free</span>
+      </div>
+      <div class="dcard">
+        <div class="when"><div class="d">&mdash;</div><div class="m">TBC</div></div>
+        <div>
+          <h3>The Empathy Map</h3>
+          <div class="meta">date to be confirmed</div>
+          <a class="book" href="#queue">Tell me when suits &rarr;</a>
+        </div>
+        <span class="tagp">&euro;50</span>
+      </div>
+      <div class="dcard">
+        <div class="when"><div class="d">&mdash;</div><div class="m">TBC</div></div>
+        <div>
+          <h3>Active Listening &amp; The Unsaid</h3>
+          <div class="meta">date to be confirmed</div>
+          <a class="book" href="#queue">Tell me when suits &rarr;</a>
+        </div>
+        <span class="tagp">&euro;50</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="how">
   <div class="wrap">
     <div class="label">How a drill works</div>
@@ -239,41 +280,6 @@
   </div>
 </section>
 
-<section style="background:var(--paper-warm)">
-  <div class="wrap">
-    <div class="label">Next up</div>
-    <h2 style="margin-bottom:24px">Booked and happening</h2>
-    <div class="booked">
-      <div class="dcard">
-        <div class="when"><div class="d">17</div><div class="m">SEP</div></div>
-        <div>
-          <h3>The Sensing Drill</h3>
-          <div class="meta">09:00 CEST &middot; Zoom &middot; 90 min</div>
-          <a class="book" href="/events/the-sensing-drill/">Take a place &rarr;</a>
-        </div>
-        <span class="tagp free">Free</span>
-      </div>
-      <div class="dcard">
-        <div class="when"><div class="d">&mdash;</div><div class="m">TBC</div></div>
-        <div>
-          <h3>The Empathy Map</h3>
-          <div class="meta">date to be confirmed</div>
-          <a class="book" href="#queue">Tell me when suits &rarr;</a>
-        </div>
-        <span class="tagp">&euro;50</span>
-      </div>
-      <div class="dcard">
-        <div class="when"><div class="d">&mdash;</div><div class="m">TBC</div></div>
-        <div>
-          <h3>Active Listening &amp; The Unsaid</h3>
-          <div class="meta">date to be confirmed</div>
-          <a class="book" href="#queue">Tell me when suits &rarr;</a>
-        </div>
-        <span class="tagp">&euro;50</span>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section id="queue">
   <div class="wrap">
