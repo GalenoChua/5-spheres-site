@@ -170,6 +170,25 @@
   .pinned.blank .rules i:nth-child(2) { width: 78%; }
   .pinned.blank .rules i:nth-child(3) { width: 54%; }
 
+  /* the request form */
+  .request { margin-top: 44px; border-top: 1px solid var(--line); padding-top: 32px; max-width: 760px; }
+  .request h3 { font-family: 'Fraunces', serif; color: var(--ink); font-size: 1.28rem; margin-bottom: 6px; }
+  .request > p { color: var(--muted); margin-bottom: 20px; max-width: 56ch; }
+  .rgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px 20px; }
+  .rgrid label { display: block; font-size: .85rem; font-weight: 600; color: var(--ink); }
+  .rgrid .opt { font-weight: 400; color: var(--muted); }
+  .rgrid select, .rgrid input {
+    width: 100%; margin-top: 6px; padding: 11px 13px; font-size: .97rem; font-family: inherit;
+    border: 1.5px solid rgba(29, 42, 82, .25); border-radius: 10px; background: #fff; color: var(--text);
+  }
+  .rgrid select:focus, .rgrid input:focus { outline: 2px solid var(--ember); border-color: transparent; }
+  .request .btn { margin-top: 20px; }
+  .request .fineprint { font-size: .84rem; color: var(--muted); margin-top: 12px; text-align: left; }
+  /* Netlify's honeypot: a real person never sees it, a bot fills it in. */
+  .hp { position: absolute; left: -9999px; }
+  .flash { background: var(--paper-warm); border-left: 3px solid var(--ember);
+           padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 18px; font-size: .95rem; }
+
   .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 30px; font-size: .8rem; color: var(--muted); }
   .legend span { display: flex; align-items: center; gap: 6px; }
   .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
@@ -402,6 +421,66 @@
       <span><i style="background:#ff8400"></i> Sphere 5</span>
       <span><i style="background:#1d2a52"></i> Coaching craft</span>
     </div>
+
+    <!-- Netlify picks this up by parsing the deployed HTML, so it works on a
+         site with no build step. Submissions land in the project's Forms tab.
+         Deliberately not MailerLite: a vote should not make someone a
+         subscriber, and these are two different consents. -->
+    <div class="request" id="request">
+      <h3>Push one up the board</h3>
+      <p>Tell me which drill you want and where you'd want it. I'll let you know when it's dated.</p>
+      <form name="drill-requests" method="POST" data-netlify="true"
+            netlify-honeypot="bot-field" action="/skilldrills/thanks/">
+        <input type="hidden" name="form-name" value="drill-requests">
+        <p class="hp"><label>Leave this empty <input name="bot-field"></label></p>
+        <div class="rgrid">
+          <label>Which drill
+            <select name="drill" id="drill-select" required>
+              <option value="">Choose one…</option>
+              <optgroup label="The five spheres">
+                <option>The Sphere 1 Self-Audit</option>
+                <option>Your Cup</option>
+                <option>The Four Tenets of Compassion</option>
+                <option>Bodystorming</option>
+                <option>People Journey Mapping</option>
+                <option>Defensive Energy</option>
+                <option>The Pre-Mortem</option>
+                <option>The Silent Stakeholder</option>
+                <option>Cathedral Thinking</option>
+              </optgroup>
+              <optgroup label="Coaching craft">
+                <option>Giving Feedback</option>
+                <option>Relationship Design</option>
+                <option>Boundaries Around Behaviours</option>
+                <option>The Unsaid Protocol</option>
+                <option>Disagreeing Without Contempt</option>
+              </optgroup>
+              <optgroup label="Not on the board">
+                <option>Something else &mdash; I'll say below</option>
+              </optgroup>
+            </select>
+          </label>
+          <label>Where
+            <select name="where">
+              <option>Online, any time zone</option>
+              <option>Online, European hours</option>
+              <option>In person, Warsaw</option>
+              <option>In person, somewhere else</option>
+            </select>
+          </label>
+          <label>Your email
+            <input type="email" name="email" id="drill-email" required
+                   autocomplete="email" placeholder="you@example.com">
+          </label>
+          <label>Anything else <span class="opt">optional</span>
+            <input type="text" name="note" placeholder="A drill that's missing, a time that works…">
+          </label>
+        </div>
+        <button class="btn" type="submit">Send it</button>
+        <p class="fineprint">This puts you on the list for that one drill. It does not sign you
+          up to anything else.</p>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -436,5 +515,33 @@
   </div>
 </footer>
 
+<script>
+  /* "I want this" fills the request form rather than firing a silent vote.
+     An anonymous tally tells me what people want but gives me no way to tell
+     them when it happens, which is the thing they actually asked for. The
+     form works on its own if this never runs. */
+  (function () {
+    var select = document.getElementById('drill-select');
+    var email = document.getElementById('drill-email');
+    var target = document.getElementById('request');
+    if (!select || !target) return;
+
+    document.querySelectorAll('.want').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var card = btn.closest('.sticky');
+        var title = card && card.querySelector('.t');
+        if (title) {
+          var wanted = title.textContent.trim();
+          for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].text.trim() === wanted) { select.selectedIndex = i; break; }
+          }
+        }
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        /* focus after the scroll settles, or the browser jumps the page again */
+        setTimeout(function () { if (email) email.focus({ preventScroll: true }); }, 500);
+      });
+    });
+  })();
+</script>
 </body>
 </html>
