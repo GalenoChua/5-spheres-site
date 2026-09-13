@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The pathway | The 5 Spheres of Empathy</title>
-<meta name="description" content="How the books, the drills, the cohort and the two coach certifications fit together. What is open now, and what is still being designed.">
+<meta name="description" content="One method, five spheres. How the books, the drills, the cohort and the two coach certifications fit together — and why sustainability is the far end of the method rather than a second subject.">
 <meta property="og:title" content="The pathway | The 5 Spheres of Empathy">
-<meta property="og:description" content="Two certifications, one shared craft. How every piece fits together, and what is open now.">
+<meta property="og:description" content="One method, five spheres, two ways to be certified in it. How every piece fits together, and what is open now.">
 <meta property="og:image" content="https://5spheresofempathy.com/og.png">
 <meta property="og:url" content="https://5spheresofempathy.com/pathway/">
 <meta property="og:type" content="website">
@@ -15,13 +15,16 @@
 <link rel="stylesheet" href="/styles.css">
 <style>
   /* ── The pathway ──────────────────────────────────────────────
-     A map of everything that exists, on two tracks that share a
-     middle. The page has one argument to make — that the overlap
-     between the tracks is craft, not subject matter — so the
-     motion is all in service of that: the tracks visibly merge at
-     the shared rungs and split again afterwards, and the filter
-     lets you watch one track fade while the shared rungs stay
-     lit. Nothing here animates for its own sake. ── */
+     A map of everything that exists. It is one method, and the
+     page has to look like one method: everything descends from a
+     single card at the top, and the line splits only where the
+     depth of study differs, never because there are two subjects.
+     An earlier draft drew two rails converging, which asserted
+     two separate origins — exactly the thing that is not true.
+     The motion is all in service of the one-ness: the trunk, the
+     splits that rejoin, and a filter that fades a destination
+     while everything shared stays lit. Nothing animates for its
+     own sake. ── */
 
   /* ── hero ── */
   .path-hero { padding: 62px 0 34px; position: relative; overflow: hidden; }
@@ -37,9 +40,10 @@
   }
   .path-hero .s5.drawn { opacity: .9; }
 
-  /* ── track filter ── */
-  /* Not decoration. Switching to one track is how you see that Skill Drills
-     and the craft core never go dark, which is the whole claim of the page. */
+  /* ── destination filter ── */
+  /* Not decoration. Picking either certification is how you see that the
+     method, the drills and the craft never go dark — which is the claim the
+     page is making, shown rather than asserted. */
   .filter { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
             padding: 22px 0 4px; }
   .filter .flabel { font-size: .78rem; font-weight: 600; letter-spacing: .12em;
@@ -78,6 +82,31 @@
   .tier.lit .node { background: var(--ember); border-color: var(--ember);
                     color: var(--paper); transform: scale(1.12); }
 
+  /* The trunk carries no number, so its node is a plain filled cap: the point
+     where the spine starts rather than a rung you climb. */
+  .node.is-origin { width: 20px; height: 20px; top: 15px; left: -39px;
+                    border-width: 3px; }
+  .tier.origin.lit .node { transform: scale(1); }
+  .tier.origin { padding-top: 0; }
+
+  /* the five spheres, inside the trunk card */
+  .spheres { list-style: none; counter-reset: sph; margin: 16px 0 0; }
+  .spheres li { counter-increment: sph; position: relative; padding-left: 30px;
+                font-size: .95rem; color: var(--text); margin-bottom: 6px; }
+  .spheres li::before {
+    content: counter(sph); position: absolute; left: 0; top: 1px;
+    width: 21px; height: 21px; border-radius: 50%;
+    border: 1.5px solid var(--line); background: var(--paper);
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: .74rem;
+    color: var(--muted); display: flex; align-items: center; justify-content: center; }
+  /* Four and five are marked because that is the whole correction this page
+     exists to make: sustainability is not beside the method, it is its far end. */
+  .spheres li:nth-child(4)::before,
+  .spheres li:nth-child(5)::before { border-color: var(--ember); color: var(--ember); }
+  .spheres li b { font-weight: 600; color: var(--ink); }
+  .spheres li span { color: var(--ember); font-size: .85rem; font-style: italic;
+                     margin-left: 6px; white-space: nowrap; }
+
   .tier-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
                margin-bottom: 14px; }
   .tier-head h2 { font-size: 1.42rem; margin-bottom: 0; max-width: none; }
@@ -100,8 +129,9 @@
                   text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
                   padding-right: 96px; }
 
-  /* The shared rungs are the argument, so they are drawn as the argument:
-     an ink border, and they are the only cards the filter never dims. */
+  /* The shared rungs — the method itself, the drills, the craft — are the
+     argument, so they are drawn as the argument: an ink border, and they are
+     the only cards the filter never dims. */
   .pcard.shared { border-color: var(--ink); border-width: 2px; }
   .pcard.shared .track { color: var(--ember); }
 
@@ -134,8 +164,9 @@
   @keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
 
   /* ── the join between tiers ── */
-  /* Two lines merging into one and splitting again. This is the only
-     illustration on the page and it carries the argument on its own. */
+  /* One line splitting and rejoining. It always starts from the trunk above,
+     never from two separate origins, because the two routes are two depths of
+     one method and the drawing has to say so. */
   .join { height: 76px; position: relative; }
   .join svg { width: 100%; height: 100%; display: block; overflow: visible; }
   /* No dash is declared here on purpose. The viewBox is stretched hard to the
@@ -288,26 +319,63 @@
   <div class="sphere-deco s5" data-ring="0"></div>
   <div class="wrap">
     <span class="kicker reveal">How it fits together</span>
-    <h1 class="reveal">Two certifications, <em>one shared craft</em>.</h1>
-    <p class="lede reveal">Everything I teach sits on two tracks. One is empathy, one is
-      sustainability. The material is genuinely different, but the skill underneath is the
-      same skill &mdash; so it is taught once, and it counts for both. This is the whole map:
-      what is open now, and what I am still building.</p>
+    <h1 class="reveal">One method, <em>five spheres</em>, two ways to be certified in it.</h1>
+    <p class="lede reveal">The spheres run from the self you bring to work out to the people
+      who come after you. Business Sustainability First Principles is not a second subject:
+      it is spheres four and five written out in full, empathy substantiated inside an
+      organisation. Same method, same craft. There are two certifications at the end because
+      what you have to evidence is different, not because the thinking is.</p>
   </div>
 </header>
 
 <section id="map" class="map-section">
   <div class="wrap">
 
+    <!-- Filtering by destination rather than by "track". There is one method
+         here; what differs is which certification you are walking towards. -->
     <div class="filter reveal">
-      <span class="flabel">Show</span>
-      <button class="fbtn" type="button" data-track="all" aria-pressed="true">Both tracks</button>
-      <button class="fbtn" type="button" data-track="empathy" aria-pressed="false">Empathy</button>
-      <button class="fbtn" type="button" data-track="sustainability" aria-pressed="false">Sustainability</button>
+      <span class="flabel">Show the route to</span>
+      <button class="fbtn" type="button" data-track="all" aria-pressed="true">Everything</button>
+      <button class="fbtn" type="button" data-track="five" aria-pressed="false">5 Spheres Coach</button>
+      <button class="fbtn" type="button" data-track="bsfp" aria-pressed="false">BSFP Coach</button>
     </div>
 
     <div class="map">
       <div class="spine" aria-hidden="true"><div class="spine-fill"></div></div>
+
+      <!-- The trunk. Unnumbered on purpose: the method is not a step you take,
+           it is the thing every step below is inside. Everything descends from
+           this card, which is the point the layout has to make on its own. -->
+      <div class="tier origin" id="t0">
+        <div class="node is-origin" aria-hidden="true"></div>
+        <div class="row one">
+          <div class="pcard shared reveal" data-track="both">
+            <div class="track">The whole thing</div>
+            <h3>The method</h3>
+            <p>Empathy is intelligence about people, and it starts with you. The five spheres
+              are the same intelligence at increasing distance &mdash; from the self nobody
+              sees, out to the people who get no vote because they are not born yet.</p>
+            <ol class="spheres">
+              <li><b>The Vulnerable Self</b></li>
+              <li><b>The Conscious and Physical Self</b></li>
+              <li><b>The Direct Stakeholder</b></li>
+              <li><b>Affected Indirect Stakeholders</b> <span>sustainability begins here</span></li>
+              <li><b>Those Who Come After</b> <span>and this is the rest of it</span></li>
+            </ol>
+            <div class="meta">
+              <a class="go" href="/the-method/">Read the method</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="join" aria-hidden="true">
+        <span class="rule"></span>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M50 0 C50 56, 25 38, 25 100" vector-effect="non-scaling-stroke"/>
+          <path d="M50 0 C50 56, 75 38, 75 100" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </div>
 
       <!-- 1 ─ Read -->
       <div class="tier" id="t1">
@@ -317,23 +385,24 @@
           <span class="aside">Free or nearly free. No commitment, no application.</span>
         </div>
         <div class="row two">
-          <div class="pcard reveal" data-track="empathy">
+          <div class="pcard reveal" data-track="five">
             <span class="status st-open"><i></i>Open now</span>
-            <div class="track">Empathy</div>
+            <div class="track">All five spheres</div>
             <h3>The 5 Spheres of Empathy: A Field Guide</h3>
-            <p>The method written out in full, with the questions and the exercises for each
-              of the five spheres.</p>
+            <p>The method written out in full, with the questions and the exercises for
+              every sphere, inner to outer.</p>
             <div class="meta">
               <span class="price">Paperback</span>
               <a class="go" href="/the-method/">The method</a>
             </div>
           </div>
-          <div class="pcard reveal" data-track="sustainability">
+          <div class="pcard reveal" data-track="bsfp">
             <span class="status st-open"><i></i>Open now</span>
-            <div class="track">Sustainability</div>
+            <div class="track">Spheres 4 and 5 &middot; in an organisation</div>
             <h3>Business Sustainability First Principles</h3>
-            <p>Eighteen lessons taking the same method through an organisation, from vision
-              all the way to governance.</p>
+            <p>Eighteen lessons on the outer two spheres made concrete inside a business,
+              from clarity of vision through to governance. Not a second subject &mdash; the
+              same method, where the consequences sit furthest from the room.</p>
             <div class="meta">
               <span class="price">Free</span>
               <a class="go" href="/bsfp-accelerator/">Start the course</a>
@@ -355,16 +424,17 @@
         <div class="node" aria-hidden="true">2</div>
         <div class="tier-head reveal">
           <h2>Practise</h2>
-          <span class="aside">Shared by both tracks. Where your hours start counting.</span>
+          <span class="aside">The same drills either way. Where your hours start counting.</span>
         </div>
         <div class="row one">
           <div class="pcard shared reveal" data-track="both">
             <span class="status st-open"><i></i>Open now</span>
-            <div class="track">Both tracks &middot; shared</div>
+            <div class="track">Shared &middot; every route</div>
             <h3>Skill Drills</h3>
-            <p>Ninety minutes on one skill, in a small group, with a hot seat. Then ninety days
-              practising it. Both tracks draw on the same drills, because the skills are the
-              same skills.</p>
+            <p>Ninety minutes on one skill, in a small group, with a hot seat. Then ninety
+              days practising it. One board of drills, because there is one method &mdash; a
+              drill on what a room is avoiding is the same drill whether the room is a family
+              or a supply chain.</p>
             <ul>
               <li>Drop in when you can &mdash; there is no cohort to wait for</li>
               <li>Hours and theory are logged from here on, towards either certification</li>
@@ -393,12 +463,12 @@
         <div class="node" aria-hidden="true">3</div>
         <div class="tier-head reveal">
           <h2>Go deep</h2>
-          <span class="aside">One subject, properly, with your own work as the material.</span>
+          <span class="aside">One end of it, properly, with your own work as the material.</span>
         </div>
         <div class="row two">
-          <div class="pcard reveal" data-track="empathy">
+          <div class="pcard reveal" data-track="five">
             <span class="status st-open"><i></i>Open now</span>
-            <div class="track">Empathy</div>
+            <div class="track">Spheres 1 and 2 &middot; the inner end</div>
             <h3>Human Intelligence</h3>
             <p>Six weeks on the inner two spheres, traced through a real decision of yours.
               It is the way in to certification rather than the certification itself &mdash;
@@ -408,12 +478,12 @@
               <a class="go" href="/#cohort">The cohort</a>
             </div>
           </div>
-          <div class="pcard reveal" data-track="sustainability">
+          <div class="pcard reveal" data-track="bsfp">
             <span class="status st-apply"><i></i>By arrangement</span>
-            <div class="track">Sustainability</div>
+            <div class="track">Spheres 4 and 5 &middot; in the field</div>
             <h3>Real practice with paying clients</h3>
-            <p>Consulting and coaching work in the field. This is what the hours are counted
-              against, and there is no substitute for it in either track.</p>
+            <p>Consulting and coaching work inside organisations that are paying for it. This
+              is what the hours are counted against, and nothing substitutes for it.</p>
             <div class="meta">
               <a class="go" href="/sustainability-tours/">Sustainability tours</a>
             </div>
@@ -434,16 +504,16 @@
         <div class="node" aria-hidden="true">4</div>
         <div class="tier-head reveal">
           <h2>The craft core</h2>
-          <span class="aside">Shared. Taught once, assessed once, counts for both.</span>
+          <span class="aside">Shared. Taught once, assessed once, counts for either.</span>
         </div>
         <div class="row one">
           <div class="pcard shared reveal" data-track="both">
             <span class="status st-design"><i></i>In design</span>
-            <div class="track">Both tracks &middot; shared</div>
+            <div class="track">Shared &middot; every route</div>
             <h3>Coaching craft</h3>
-            <p>What makes someone a coach rather than someone who has read the book. Almost all
-              of the overlap between the two tracks lives here, which is why it would be wrong
-              to teach it twice &mdash; or to charge anyone twice for it.</p>
+            <p>What makes someone a coach rather than someone who has read the book. It does
+              not change with the distance you are working at, so it is taught once &mdash;
+              and nobody pays for it twice.</p>
             <ul>
               <li>The four levels of listening</li>
               <li>Holding a hot seat, and facilitating without rescuing</li>
@@ -474,9 +544,9 @@
           <span class="aside">A licence to practise, not a certificate of attendance.</span>
         </div>
         <div class="row two">
-          <div class="pcard reveal" data-track="empathy">
+          <div class="pcard reveal" data-track="five">
             <span class="status st-design"><i></i>In design</span>
-            <div class="track">Empathy</div>
+            <div class="track">All five spheres</div>
             <h3>5 Spheres Coach</h3>
             <ul>
               <li>The craft core</li>
@@ -490,9 +560,9 @@
               <a class="go" href="#shape">Register interest</a>
             </div>
           </div>
-          <div class="pcard reveal" data-track="sustainability">
+          <div class="pcard reveal" data-track="bsfp">
             <span class="status st-apply"><i></i>By application</span>
-            <div class="track">Sustainability</div>
+            <div class="track">Spheres 4 and 5, substantiated</div>
             <h3>BSFP Coach</h3>
             <ul>
               <li>The craft core</li>
@@ -520,18 +590,27 @@
 
 <section>
   <div class="wrap">
-    <span class="label reveal">Why one core and not two</span>
-    <h2 class="reveal">The overlap is craft, not subject matter.</h2>
+    <span class="label reveal">If it is one method, why two certifications</span>
+    <h2 class="reveal">Same thinking. Different proof.</h2>
     <div class="prose reveal">
-      <p>When I laid the two tracks side by side I expected the shared part to be content. It
-        was not. The sustainability material and the empathy material barely touch.</p>
-      <p>What is identical is everything a coach does regardless of what is being discussed:
-        how you listen, how you hold a room, how you give feedback that is actually heard, how
-        you name the thing everyone has decided not to mention. That is most of what separates
-        a certified coach from a well-read one, and it does not change between the two tracks.</p>
-      <p>So it sits in the middle and is taught once. You are assessed on it once. If you come
-        back later for the second track, you add the subject and the hours &mdash; not the
-        craft again.</p>
+      <p>Sustainability is not a subject I teach alongside empathy. It is what empathy looks
+        like once you extend it to people you will never meet and to a planet that cannot tell
+        you what it needs. That is spheres four and five, and almost every sustainability
+        problem turns out to be a people problem wearing a technical costume: the answers are
+        mostly known and written down already, and what stops them is that someone did not want
+        to say the uncomfortable thing.</p>
+      <p>So the craft does not change with the distance. How you listen, how you hold a room,
+        how you give feedback that is actually heard, how you name the thing everyone has
+        decided not to mention &mdash; that is the same work whether the person in front of
+        you is a co-founder or a procurement lead. It is taught once and assessed once.</p>
+      <p>What differs is what you have to be able to show. A 5 Spheres coach has to work
+        credibly across all five, including the inner two, which is its own kind of hard. A
+        BSFP coach has to do it inside organisations that are paying for the answer, with
+        enough substance in governance, reporting and environmental and social practice to be
+        taken seriously in the room. Neither of those is a subset of the other, and neither is
+        a reason to teach the craft twice.</p>
+      <p>If you hold one and later want the other, you add the evidence. You do not start
+        again.</p>
     </div>
   </div>
 </section>
@@ -542,8 +621,8 @@
     <h2 class="reveal">Two of these are still being designed.</h2>
     <p class="sub reveal">The BSFP requirements are written and I take applications for those
       now. The craft core and the 5 Spheres certification are not finished, and I would rather
-      build them around people who intend to use them than hand you something already set. Tell
-      me which one matters to you and I will come back to you as it takes shape.</p>
+      build them around people who intend to use them than hand you something already set.
+      Tell me which one matters to you and I will come back to you as it takes shape.</p>
 
     <form class="reveal" name="pathway-interest" method="POST" data-netlify="true"
           netlify-honeypot="bot-field" action="/pathway/thanks/">
@@ -556,7 +635,7 @@
             <option value="">Choose one&hellip;</option>
             <option>5 Spheres Coach certification</option>
             <option>BSFP Coach certification &mdash; I want to apply</option>
-            <option>The craft core on its own</option>
+            <option>The coaching craft on its own</option>
             <option>Both certifications</option>
             <option>Not sure yet &mdash; keep me posted</option>
           </select>
@@ -716,9 +795,10 @@
   window.addEventListener('resize', function () { onScroll(); measureJoins(); });
   paint();
 
-  /* 5 ─ the track filter.
+  /* 5 ─ the destination filter.
      The shared cards carry data-track="both" and are never dimmed. Watching
-     them stay lit while one track fades is the point of the control. */
+     the method, the drills and the craft stay lit while one route fades is the
+     point of the control. */
   var btns = [].slice.call(document.querySelectorAll('.fbtn'));
   btns.forEach(function (btn) {
     btn.addEventListener('click', function () {
@@ -727,8 +807,8 @@
       document.querySelectorAll('.pcard').forEach(function (card) {
         var t  = card.dataset.track;
         var on = (want === 'all' || t === 'both' || t === want);
-        /* dimmed, not hidden — the other track is still part of the map, and
-           at .26 the text stopped being readable at all */
+        /* dimmed, not hidden — the other route is still part of the same map,
+           and at .26 the text stopped being readable at all */
         card.style.opacity = on ? '' : '.34';
       });
     });
