@@ -26,6 +26,16 @@
      while everything shared stays lit. Nothing animates for its
      own sake. ── */
 
+  /* ── ember, as text ──
+     --ember (#e8862e) is 2.47:1 on paper. It is fine as a fill — the spine,
+     the lit nodes, the bullets, a button ground — but as small text it fails
+     AA badly, and it fails identically on the homepage, so this is the site's
+     issue and not this page's. #9e5615 is the lightest darkening that clears
+     4.5 on --paper AND on --paper-warm, and it still reads as the same orange.
+     This belongs in styles.css as a shared token; it is scoped here so one
+     page is readable without silently restyling every other page. */
+  .path-hero, .map-section, section, footer { --ember-ink: #9e5615; }
+
   /* ── hero ── */
   .path-hero { padding: 62px 0 34px; position: relative; overflow: hidden; }
   .path-hero h1 { max-width: 17ch; }
@@ -47,7 +57,7 @@
   .filter { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
             padding: 22px 0 4px; }
   .filter .flabel { font-size: .78rem; font-weight: 600; letter-spacing: .12em;
-                    text-transform: uppercase; color: var(--muted); margin-right: 6px; }
+                    text-transform: uppercase; color: #5f636f; margin-right: 6px; }
   .fbtn { font-family: inherit; font-size: .9rem; font-weight: 600; color: var(--ink);
           background: none; border: 1.5px solid var(--line); border-radius: 99px;
           padding: 7px 16px; cursor: pointer;
@@ -57,6 +67,9 @@
   .fbtn:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
 
   /* ── the map ── */
+  /* .kicker and .label are styles.css, and inherit the same failing ember. */
+  .path-hero .kicker, .map-section .label, section .label { color: var(--ember-ink); }
+
   .map-section { background: var(--paper-warm); padding: 40px 0 70px; }
   .map { position: relative; padding-left: 62px; margin-top: 26px; }
 
@@ -102,15 +115,19 @@
   /* Four and five are marked because that is the whole correction this page
      exists to make: sustainability is not beside the method, it is its far end. */
   .spheres li:nth-child(4)::before,
-  .spheres li:nth-child(5)::before { border-color: var(--ember); color: var(--ember); }
+  .spheres li:nth-child(5)::before { border-color: var(--ember); color: var(--ember-ink); }
   .spheres li b { font-weight: 600; color: var(--ink); }
-  .spheres li span { color: var(--ember); font-size: .85rem; font-style: italic;
+  /* The annotation carries meaning rather than decoration, so it does not get
+     to sit at the ember token's 2.47. */
+  .spheres li span { color: var(--ember-ink); font-size: .85rem; font-style: italic;
                      margin-left: 6px; white-space: nowrap; }
 
   .tier-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
                margin-bottom: 14px; }
   .tier-head h2 { font-size: 1.42rem; margin-bottom: 0; max-width: none; }
-  .tier-head .aside { font-size: .95rem; color: var(--muted); }
+  /* --muted clears 4.5 on --paper but not on --paper-warm, and these three
+     sit straight on the warm ground rather than inside a card. */
+  .tier-head .aside { font-size: .95rem; color: #5f636f; }
 
   .row { display: grid; gap: 20px; }
   .row.two { grid-template-columns: 1fr 1fr; }
@@ -122,8 +139,11 @@
            transition: transform .22s ease, box-shadow .22s ease,
                        opacity .3s ease, border-color .3s ease; }
   .pcard:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -22px rgba(29,42,82,.5); }
-  .pcard h3 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink);
-              font-size: 1.16rem; line-height: 1.2; margin-bottom: 6px; padding-right: 96px; }
+  /* The trunk card's title is an h2: it is the only card that stands for a
+     whole section, and an h3 there jumped the outline straight from h1. */
+  .pcard h3, .pcard h2 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink);
+              font-size: 1.16rem; line-height: 1.2; margin-bottom: 6px; padding-right: 96px;
+              max-width: none; }
   .pcard p { font-size: .98rem; color: var(--muted); margin-bottom: 0; }
   .pcard .track { font-size: .72rem; font-weight: 600; letter-spacing: .13em;
                   text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
@@ -133,7 +153,7 @@
      argument, so they are drawn as the argument: an ink border, and they are
      the only cards the filter never dims. */
   .pcard.shared { border-color: var(--ink); border-width: 2px; }
-  .pcard.shared .track { color: var(--ember); }
+  .pcard.shared .track { color: var(--ember-ink); }
 
   .pcard ul { list-style: none; margin-top: 14px; }
   .pcard ul li { position: relative; padding-left: 18px; font-size: .95rem;
@@ -145,7 +165,7 @@
   .price { font-size: .86rem; font-weight: 600; color: var(--ink);
            background: var(--paper-warm); border-radius: 99px; padding: 4px 13px; }
   .pcard.shared .price { background: rgba(29,42,82,.07); }
-  .go { font-size: .9rem; font-weight: 600; color: var(--ember); text-decoration: none; }
+  .go { font-size: .9rem; font-weight: 600; color: var(--ember-ink); text-decoration: none; }
   .go:hover { text-decoration: underline; }
   .go::after { content: " \2192"; }
 
@@ -155,9 +175,12 @@
             letter-spacing: .09em; text-transform: uppercase;
             border-radius: 99px; padding: 4px 11px; white-space: nowrap; }
   .status i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-  .st-open  { color: #4a7a3a; background: rgba(125,164,106,.2); }
-  .st-apply { color: #a8611a; background: rgba(232,134,46,.16); }
-  .st-design{ color: var(--muted); background: rgba(29,42,82,.08); }
+  /* Darkened until each chip clears 4.5:1 against its own tint. The tint is
+     translucent, so the colour has to be checked against what it composites
+     to over the warm ground, not against the tint's nominal value. */
+  .st-open  { color: #3d6830; background: rgba(125,164,106,.2); }
+  .st-apply { color: #8c4f13; background: rgba(232,134,46,.16); }
+  .st-design{ color: #565b68; background: rgba(29,42,82,.08); }
   /* Only "open now" pulses. A status light blinking on everything tells you
      nothing; on one state it reads as availability. */
   .st-open i { animation: breathe 2.6s ease-in-out infinite; }
@@ -180,9 +203,15 @@
   .join.drawn path { stroke: var(--ember); }
   .join .rule { display: none; }
 
+  /* Dimming is a class, not an inline style. Setting opacity inline beat the
+     .reveal rule and popped un-scrolled cards into view at 34% the moment the
+     filter was touched; scoped behind .in, a card that has not arrived yet
+     stays at zero and dims only once it has. */
+  .pcard.reveal.in.is-dim { opacity: .34; }
+
   /* ── legend ── */
   .legend { display: flex; gap: 8px 26px; flex-wrap: wrap; align-items: center;
-            font-size: .88rem; color: var(--muted); padding-top: 34px; }
+            font-size: .88rem; color: #5f636f; padding-top: 34px; }
   .legend span { display: inline-flex; align-items: center; gap: 8px; }
   .legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 
@@ -195,19 +224,25 @@
   /* It is a rail for the map. Past the map there is nothing for it to point
      at, and its muted grey is close to invisible on the ink band below. */
   .rail.away { opacity: 0; pointer-events: none; }
+  /* Fading the resting labels put them at 1.95:1, and .85 only got to 4.03.
+     They are at full strength now; the current item still reads as current by
+     colour and by the longer tick, which is enough without hiding the rest. */
   .rail a { display: flex; align-items: center; justify-content: flex-end; gap: 9px;
             text-decoration: none; font-size: .78rem; font-weight: 600;
-            color: var(--muted); padding: 5px 0; opacity: .5;
-            transition: opacity .25s ease, color .25s ease; }
+            color: #4f5460; padding: 5px 0; opacity: 1;
+            transition: color .25s ease; }
   /* The labels stay visible. Collapsing them to a tick and revealing on hover
      looked tidy in isolation and read as four stray dashes against the page —
      a rail nobody can read is not a rail. */
   .rail a span { white-space: nowrap; }
   .rail a i { width: 18px; height: 2px; border-radius: 2px; background: currentColor;
               flex: 0 0 auto; transition: width .3s ease; }
-  .rail a.here { opacity: 1; color: var(--ember); }
+  /* Ember on the warm ground is only 2.47:1, so the current item is marked
+     by weight and by the longer tick as well as by colour, never by colour
+     alone. */
+  .rail a.here { color: var(--ember-ink); font-weight: 700; }
   .rail a.here i { width: 32px; }
-  .rail a:hover { opacity: 1; color: var(--ink); }
+  .rail a:hover { color: var(--ink); }
   .rail a:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
   /* "The craft core" is the longest label. Below roughly this width it starts
      touching the right edge of the map, so the rail goes rather than overlaps. */
@@ -234,6 +269,10 @@
   .shape .fineprint { color: rgba(250,246,239,.55); text-align: left; }
   .hp { position: absolute; left: -9999px; }
 
+  .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px;
+                      padding: 0; overflow: hidden; clip: rect(0 0 0 0);
+                      white-space: nowrap; border: 0; }
+
   #map, #shape { scroll-margin-top: 76px; }
   .tier { scroll-margin-top: 90px; }
 
@@ -242,7 +281,7 @@
     .map { padding-left: 44px; }
     .spine { left: 21px; }
     .node { left: -38px; width: 30px; height: 30px; font-size: .86rem; }
-    .pcard h3, .pcard .track { padding-right: 0; }
+    .pcard h3, .pcard h2, .pcard .track { padding-right: 0; }
     .status { position: static; margin-bottom: 10px; }
     .sgrid { grid-template-columns: 1fr; }
     /* Curves need two columns to merge. In one column the path is simply
@@ -269,7 +308,7 @@
 </head>
 <body id="top">
 
-<nav>
+<nav aria-label="Main">
   <div class="wrap">
     <a class="mark" href="/">The 5 Spheres<span>.</span></a>
     <div class="nav-links">
@@ -304,11 +343,11 @@
      styles.css styles the nav element itself — sticky, blurred, with a rule
      underneath — so those three are reset in .rail above. -->
 <nav class="rail" aria-label="Jump to a stage">
-  <a href="#t1" data-rail="t1"><span>Read</span><i></i></a>
-  <a href="#t2" data-rail="t2"><span>Practise</span><i></i></a>
-  <a href="#t3" data-rail="t3"><span>Go deep</span><i></i></a>
-  <a href="#t4" data-rail="t4"><span>The craft core</span><i></i></a>
-  <a href="#t5" data-rail="t5"><span>Certify</span><i></i></a>
+  <a href="#t1" data-rail="t1"><span>Read</span><i aria-hidden="true"></i></a>
+  <a href="#t2" data-rail="t2"><span>Practise</span><i aria-hidden="true"></i></a>
+  <a href="#t3" data-rail="t3"><span>Go deep</span><i aria-hidden="true"></i></a>
+  <a href="#t4" data-rail="t4"><span>The craft core</span><i aria-hidden="true"></i></a>
+  <a href="#t5" data-rail="t5"><span>Certify</span><i aria-hidden="true"></i></a>
 </nav>
 
 <header class="path-hero">
@@ -337,7 +376,10 @@
       <span class="flabel">Show the route to</span>
       <button class="fbtn" type="button" data-track="all" aria-pressed="true">Everything</button>
       <button class="fbtn" type="button" data-track="five" aria-pressed="false">5 Spheres Coach</button>
-      <button class="fbtn" type="button" data-track="bsfp" aria-pressed="false">BSFP Coach</button>
+      <button class="fbtn" type="button" data-track="bsfp" aria-pressed="false">Sustainability Coach</button>
+      <!-- aria-pressed is only heard on the button you are focused on. This
+           says what changed on the rest of the page. -->
+      <p class="visually-hidden" role="status" aria-live="polite" id="filter-status"></p>
     </div>
 
     <div class="map">
@@ -351,11 +393,14 @@
         <div class="row one">
           <div class="pcard shared reveal" data-track="both">
             <div class="track">The whole thing</div>
-            <h3>The method</h3>
+            <h2>The method</h2>
             <p>Empathy is intelligence about people, and it starts with you. The five spheres
               are the same intelligence at increasing distance &mdash; from the self nobody
               sees, out to the people who get no vote because they are not born yet.</p>
-            <ol class="spheres">
+            <!-- role="list" restores the list semantics that list-style:none
+                 strips in Safari, so VoiceOver still says "1 of 5". The visible
+                 numerals are CSS counters and are not announced. -->
+            <ol class="spheres" role="list">
               <li><b>The Vulnerable Self</b></li>
               <li><b>The Conscious and Physical Self</b></li>
               <li><b>The Direct Stakeholder</b></li>
@@ -386,7 +431,7 @@
         </div>
         <div class="row two">
           <div class="pcard reveal" data-track="five">
-            <span class="status st-open"><i></i>Open now</span>
+            <span class="status st-open"><i aria-hidden="true"></i>Open now</span>
             <div class="track">All five spheres</div>
             <h3>The 5 Spheres of Empathy: A Field Guide</h3>
             <p>The method written out in full, with the questions and the exercises for
@@ -397,7 +442,7 @@
             </div>
           </div>
           <div class="pcard reveal" data-track="bsfp">
-            <span class="status st-open"><i></i>Open now</span>
+            <span class="status st-open"><i aria-hidden="true"></i>Open now</span>
             <div class="track">Spheres 4 and 5 &middot; in an organisation</div>
             <h3>Business Sustainability First Principles</h3>
             <p>Eighteen lessons on the outer two spheres made concrete inside a business,
@@ -428,7 +473,7 @@
         </div>
         <div class="row one">
           <div class="pcard shared reveal" data-track="both">
-            <span class="status st-open"><i></i>Open now</span>
+            <span class="status st-open"><i aria-hidden="true"></i>Open now</span>
             <div class="track">Shared &middot; every route</div>
             <h3>Skill Drills</h3>
             <p>Ninety minutes on one skill, in a small group, with a hot seat. Then ninety
@@ -437,7 +482,7 @@
               or a supply chain.</p>
             <ul>
               <li>Drop in when you can &mdash; there is no cohort to wait for</li>
-              <li>Hours and theory are logged from here on, towards either certification</li>
+              <li>Hours and theory from here count towards either certification</li>
               <li>One-to-one supervision is available, and it is the same supervision that
                 both certifications ask for</li>
             </ul>
@@ -467,7 +512,7 @@
         </div>
         <div class="row two">
           <div class="pcard reveal" data-track="five">
-            <span class="status st-open"><i></i>Open now</span>
+            <span class="status st-open"><i aria-hidden="true"></i>Open now</span>
             <div class="track">Spheres 1 and 2 &middot; the inner end</div>
             <h3>Human Intelligence</h3>
             <p>Six weeks on the inner two spheres, traced through a real decision of yours.
@@ -479,7 +524,7 @@
             </div>
           </div>
           <div class="pcard reveal" data-track="bsfp">
-            <span class="status st-apply"><i></i>By arrangement</span>
+            <span class="status st-apply"><i aria-hidden="true"></i>By arrangement</span>
             <div class="track">Spheres 4 and 5 &middot; in the field</div>
             <h3>Real practice with paying clients</h3>
             <p>Consulting and coaching work inside organisations that are paying for it. This
@@ -508,7 +553,7 @@
         </div>
         <div class="row one">
           <div class="pcard shared reveal" data-track="both">
-            <span class="status st-design"><i></i>In design</span>
+            <span class="status st-design"><i aria-hidden="true"></i>In design</span>
             <div class="track">Shared &middot; every route</div>
             <h3>Coaching craft</h3>
             <p>What makes someone a coach rather than someone who has read the book. It does
@@ -545,9 +590,12 @@
         </div>
         <div class="row two">
           <div class="pcard reveal" data-track="five">
-            <span class="status st-design"><i></i>In design</span>
+            <span class="status st-design"><i aria-hidden="true"></i>In design</span>
             <div class="track">All five spheres</div>
             <h3>5 Spheres Coach</h3>
+            <p>Being designed now, and this is the shape I have in mind rather than a
+              settled syllabus. If you want it, say so below and say what you would need
+              from it &mdash; that is genuinely what will decide it.</p>
             <ul>
               <li>The craft core</li>
               <li>All five spheres, not only the inner two</li>
@@ -561,16 +609,20 @@
             </div>
           </div>
           <div class="pcard reveal" data-track="bsfp">
-            <span class="status st-apply"><i></i>By application</span>
+            <span class="status st-apply"><i aria-hidden="true"></i>By application</span>
             <div class="track">Spheres 4 and 5, substantiated</div>
-            <h3>BSFP Coach</h3>
+            <h3>Business Sustainability Coach</h3>
+            <p>Separate from the course, and a longer road. The course is the grounding
+              for it, not the qualification itself.</p>
             <ul>
               <li>The craft core</li>
               <li>An interview before you are accepted</li>
               <li>50 hours of online learning</li>
-              <li>100 hours of real coaching and consulting with paying clients</li>
-              <li>A supervised session at the start</li>
-              <li>A recorded unsupervised session, assessed, at the end</li>
+              <li>100 hours of coaching and consulting on business sustainability,
+                under supervision</li>
+              <li>Across more than two impact categories</li>
+              <li>The Business Sustainability Coach exam: a supervised session at the
+                start, and a recorded unsupervised session assessed at the end</li>
             </ul>
             <div class="meta">
               <a class="go" href="#shape">Apply</a>
@@ -581,9 +633,9 @@
     </div>
 
     <div class="legend reveal">
-      <span><i style="background:#7da46a"></i> Open now</span>
-      <span><i style="background:#e8862e"></i> By application or arrangement</span>
-      <span><i style="background:#9aa0ae"></i> Being designed</span>
+      <span><i style="background:#7da46a" aria-hidden="true"></i> Open now</span>
+      <span><i style="background:#e8862e" aria-hidden="true"></i> By application or arrangement</span>
+      <span><i style="background:#9aa0ae" aria-hidden="true"></i> Being designed</span>
     </div>
   </div>
 </section>
@@ -619,10 +671,11 @@
   <div class="wrap">
     <span class="label reveal">Before it is finished</span>
     <h2 class="reveal">Two of these are still being designed.</h2>
-    <p class="sub reveal">The BSFP requirements are written and I take applications for those
-      now. The craft core and the 5 Spheres certification are not finished, and I would rather
-      build them around people who intend to use them than hand you something already set.
-      Tell me which one matters to you and I will come back to you as it takes shape.</p>
+    <p class="sub reveal">The Business Sustainability Coach requirements are written and
+      already public on the course page. The craft core and the 5 Spheres certification are
+      not finished, and I would rather build those around people who intend to use them than
+      hand you something already set. Tell me which one matters to you and I will come back
+      to you as it takes shape.</p>
 
     <form class="reveal" name="pathway-interest" method="POST" data-netlify="true"
           netlify-honeypot="bot-field" action="/pathway/thanks/">
@@ -634,7 +687,7 @@
           <select name="interest" id="p-interest" required>
             <option value="">Choose one&hellip;</option>
             <option>5 Spheres Coach certification</option>
-            <option>BSFP Coach certification &mdash; I want to apply</option>
+            <option>Business Sustainability Coach &mdash; I want to apply</option>
             <option>The coaching craft on its own</option>
             <option>Both certifications</option>
             <option>Not sure yet &mdash; keep me posted</option>
@@ -792,25 +845,60 @@
     requestAnimationFrame(paint);
   }
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', function () { onScroll(); measureJoins(); });
+
+  /* Re-measuring the curves walks 48 sample points through getScreenCTM for
+     every path, which is ~40ms. A drag-resize fires that dozens of times a
+     second and locks the main thread, so the cheap part runs per frame and the
+     expensive part runs once the dragging stops. */
+  var remeasure = null;
+  window.addEventListener('resize', function () {
+    onScroll();
+    clearTimeout(remeasure);
+    remeasure = setTimeout(measureJoins, 160);
+  });
   paint();
+
+  /* Fonts change card heights, which changes where the joins sit. Chrome has
+     usually settled before this resolves; Safari has not. */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { measureJoins(); onScroll(); });
+  }
 
   /* 5 ─ the destination filter.
      The shared cards carry data-track="both" and are never dimmed. Watching
      the method, the drills and the craft stay lit while one route fades is the
      point of the control. */
   var btns = [].slice.call(document.querySelectorAll('.fbtn'));
+  var status = document.getElementById('filter-status');
+
   btns.forEach(function (btn) {
     btn.addEventListener('click', function () {
       var want = btn.dataset.track;
       btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+
+      var dimmed = 0;
       document.querySelectorAll('.pcard').forEach(function (card) {
         var t  = card.dataset.track;
         var on = (want === 'all' || t === 'both' || t === want);
-        /* dimmed, not hidden — the other route is still part of the same map,
-           and at .26 the text stopped being readable at all */
-        card.style.opacity = on ? '' : '.34';
+        /* A class, not an inline style. Inline opacity outranked the .reveal
+           rule and pulled cards you had not scrolled to into view at 34%; the
+           class is scoped behind .in, so a card that has not arrived yet stays
+           at zero and dims only once it has.
+
+           Dimmed rather than hidden: the other route is still part of the same
+           map, and below about a third the text stops being readable at all. */
+        card.classList.toggle('is-dim', !on);
+        if (!on) { dimmed++; }
       });
+
+      /* aria-pressed is announced only for the button you are on. This says
+         what happened to everything else. */
+      if (status) {
+        status.textContent = want === 'all'
+          ? 'Showing every step.'
+          : 'Showing the route to ' + btn.textContent.trim() + '. '
+            + dimmed + ' step' + (dimmed === 1 ? '' : 's') + ' dimmed, still readable.';
+      }
     });
   });
 })();
