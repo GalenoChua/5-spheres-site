@@ -100,10 +100,13 @@
 </header>
 
 <!-- The drills run more often than anything else here, so the next one sits
-     above the credibility strip rather than four sections down. All three are
-     in the markup with their dates; the script below shows whichever is next.
-     With no JavaScript the first one shows, which is the same behaviour a
-     hardcoded band would have had. -->
+     above the credibility strip rather than four sections down.
+
+     EDIT THE SCHEDULE IN /drills.js, NOT HERE. That file is the source and the
+     script at the foot of this page rebuilds the band from it on load, which
+     is what keeps this band and the pathway page from drifting apart. The
+     dates below are only a fallback for a visitor with no JavaScript, where
+     the first item shows — the same behaviour a hardcoded band would have. -->
 <div class="next-drill" id="next-drill">
   <div class="wrap">
     <span class="nd-label">Next skill drill</span>
@@ -348,6 +351,7 @@
   </div>
 </footer>
 
+<script src="/drills.js"></script>
 <script src="script.js"></script>
 
 <script>
@@ -381,17 +385,47 @@
     var items = [].slice.call(band.querySelectorAll('.nd-item'));
     var today = new Date(); today.setHours(0, 0, 0, 0);
 
-    var next = null;
+    /* /drills.js is the schedule. The dates below it in the markup are a
+       fallback for a visitor with no JavaScript, and are not the source: if
+       the two ever disagree, the file wins for everybody who can run it.
+       Rebuilding from the file rather than only re-picking among the hardcoded
+       items is what stops the band drifting from the pathway page. */
+    if (window.Drills) {
+      var next = window.Drills.next();
+      if (!next) { band.style.display = 'none'; return; }
+
+      var a = items[0];
+      if (a) {
+        items.slice(1).forEach(function (el) { el.parentNode.removeChild(el); });
+        a.className = 'nd-item is-next';
+        a.setAttribute('data-on', next.on);
+        a.href = next.href;
+        a.textContent = '';
+        var when = document.createElement('b');
+        when.textContent = window.Drills.label(next.on);
+        var rest = document.createTextNode(' · ' + next.time + ' · ' + next.title + ' ');
+        var tag = document.createElement('span');
+        tag.className = next.price === 'free' ? 'nd-free' : 'nd-price';
+        tag.textContent = next.price;
+        a.appendChild(when); a.appendChild(rest); a.appendChild(tag);
+      }
+      return;
+    }
+
+    /* No drills.js: fall back to advancing past the hardcoded items. A drill
+       is still "next" on the day it runs and drops off the following midnight;
+       if every date has gone the band hides rather than lying. */
+    var found = null;
     items.forEach(function (el) {
       el.classList.remove('is-next');
       var on = el.getAttribute('data-on');
       if (!on) return;
       var parts = on.split('-');
-      var when = new Date(+parts[0], +parts[1] - 1, +parts[2]);
-      if (!next && when >= today) next = el;
+      var w = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+      if (!found && w >= today) found = el;
     });
 
-    if (next) { next.classList.add('is-next'); }
+    if (found) { found.classList.add('is-next'); }
     else { band.style.display = 'none'; }
   })();
 </script>
