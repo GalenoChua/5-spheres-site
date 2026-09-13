@@ -209,6 +209,44 @@
      stays at zero and dims only once it has. */
   .pcard.reveal.in.is-dim { opacity: .34; }
 
+  /* ── the next drill, on the Practise card ──
+     A date is the one thing on this map that is not a structure. It is the
+     difference between a diagram of what exists and something with a day on
+     it you could actually turn up to, so it gets the ink border and sits
+     directly above the prices. */
+  .next-drill-line {
+    display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+    margin-top: 16px; padding: 10px 14px; border-radius: 10px;
+    background: var(--paper-warm); border: 1.5px solid var(--ink);
+    font-size: .93rem; color: var(--text); text-decoration: none;
+    transition: background .2s ease; }
+  .next-drill-line:hover { background: #ece2d0; }
+  .next-drill-line[hidden] { display: none; }
+  .next-drill-line .nd-when { font-weight: 700; color: var(--ink); }
+  .next-drill-line .nd-dot { color: var(--line); }
+  .next-drill-line .nd-tag {
+    font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    padding: 2px 9px; border-radius: 99px; background: var(--ink); color: var(--paper); }
+  .next-drill-line .nd-tag.is-paid { background: rgba(29,42,82,.1); color: var(--ink); }
+  .next-drill-line .nd-go { margin-left: auto; font-weight: 600; color: var(--ember-ink); }
+
+  /* ── the filter, demonstrating itself ──
+     The filter is the best thing on this page and it is a row of quiet pills;
+     left alone most people scroll straight past it. Running it once shows
+     what it does. The button lights up at the same moment the cards fade, so
+     the change has a visible cause and does not read as a glitch. */
+  .fbtn.is-demo { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .fbtn.is-demo::after {
+    content: ""; position: absolute; inset: -5px; border-radius: 99px;
+    border: 2px solid var(--ember); opacity: 0;
+    animation: demo-ring 1.6s ease-out 1; }
+  .fbtn { position: relative; }
+  @keyframes demo-ring {
+    0%   { opacity: 0; transform: scale(.92); }
+    22%  { opacity: .85; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.12); }
+  }
+
   /* ── legend ── */
   .legend { display: flex; gap: 8px 26px; flex-wrap: wrap; align-items: center;
             font-size: .88rem; color: #5f636f; padding-top: 34px; }
@@ -486,6 +524,10 @@
               <li>One-to-one supervision is available, and it is the same supervision that
                 both certifications ask for</li>
             </ul>
+            <!-- Filled from /drills.js, which is the one place the schedule
+                 lives. Empty and hidden until it resolves, so a map with no
+                 script on it says nothing rather than something out of date. -->
+            <a class="next-drill-line" id="pathway-next-drill" href="/skilldrills/" hidden></a>
             <div class="meta">
               <span class="price">&euro;50 a session</span>
               <span class="price">&euro;200 supervision</span>
@@ -728,6 +770,7 @@
   </div>
 </footer>
 
+<script src="/drills.js"></script>
 <script src="/script.js"></script>
 <script>
 /* ── the pathway page ──
@@ -870,26 +913,35 @@
      point of the control. */
   var btns = [].slice.call(document.querySelectorAll('.fbtn'));
   var status = document.getElementById('filter-status');
+  var touched = false;          /* has a person used the filter themselves? */
+
+  /* A class, not an inline style. Inline opacity outranked the .reveal rule
+     and pulled cards you had not scrolled to into view at 34% the moment the
+     filter was touched; the class is scoped behind .in, so a card that has not
+     arrived yet stays at zero and dims only once it has.
+
+     Dimmed rather than hidden: the other route is still part of the same map,
+     and below about a third the text stops being readable at all. */
+  function setRoute(want) {
+    var dimmed = 0;
+    document.querySelectorAll('.pcard').forEach(function (card) {
+      var t  = card.dataset.track;
+      var on = (want === 'all' || t === 'both' || t === want);
+      card.classList.toggle('is-dim', !on);
+      if (!on) { dimmed++; }
+    });
+    return dimmed;
+  }
 
   btns.forEach(function (btn) {
     btn.addEventListener('click', function () {
+      touched = true;
       var want = btn.dataset.track;
-      btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
-
-      var dimmed = 0;
-      document.querySelectorAll('.pcard').forEach(function (card) {
-        var t  = card.dataset.track;
-        var on = (want === 'all' || t === 'both' || t === want);
-        /* A class, not an inline style. Inline opacity outranked the .reveal
-           rule and pulled cards you had not scrolled to into view at 34%; the
-           class is scoped behind .in, so a card that has not arrived yet stays
-           at zero and dims only once it has.
-
-           Dimmed rather than hidden: the other route is still part of the same
-           map, and below about a third the text stops being readable at all. */
-        card.classList.toggle('is-dim', !on);
-        if (!on) { dimmed++; }
+      btns.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b === btn));
+        b.classList.remove('is-demo');
       });
+      var dimmed = setRoute(want);
 
       /* aria-pressed is announced only for the button you are on. This says
          what happened to everything else. */
@@ -901,6 +953,62 @@
       }
     });
   });
+
+  /* 6 ─ run the filter once, so it is discovered rather than missed.
+     Deliberately narrow: once ever per browser, never for someone who has
+     asked for less motion, never once the person has touched the control
+     themselves, and it leaves no trace — aria-pressed and the live region are
+     not touched, because a control that announces itself without being used
+     is a control lying about what the user did. */
+  var SEEN = '5s-pathway-filter-demo';
+  var seen = false;
+  try { seen = window.localStorage.getItem(SEEN) === '1'; } catch (e) { seen = false; }
+
+  var filterRow = document.querySelector('.filter');
+  if (filterRow && !seen && !reduce && btns.length > 1) {
+    var demoBtn = document.querySelector('.fbtn[data-track="five"]') || btns[1];
+    var fio = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting || touched) { return; }
+      fio.disconnect();
+      setTimeout(function () {
+        if (touched) { return; }
+        demoBtn.classList.add('is-demo');
+        setRoute(demoBtn.dataset.track);
+        setTimeout(function () {
+          demoBtn.classList.remove('is-demo');
+          if (!touched) { setRoute('all'); }
+          try { window.localStorage.setItem(SEEN, '1'); } catch (e) {}
+        }, 1700);
+      }, 850);
+    }, { threshold: 1 });
+    fio.observe(filterRow);
+  }
+
+  /* 7 ─ the next drill, read from /drills.js.
+     The schedule is not restated here. If the file is missing or every date
+     has passed the line stays hidden, which is the only honest failure: a map
+     that says nothing beats a map advertising a session that has been. */
+  var line = document.getElementById('pathway-next-drill');
+  if (line && window.Drills) {
+    var next = window.Drills.next();
+    if (next) {
+      var paid = next.price !== 'free';
+      line.href = next.href;
+      line.innerHTML =
+        '<span class="nd-when"></span>'
+        + '<span class="nd-dot">&middot;</span><span class="nd-time"></span>'
+        + '<span class="nd-dot">&middot;</span><span class="nd-title"></span>'
+        + '<span class="nd-tag' + (paid ? ' is-paid' : '') + '"></span>'
+        + '<span class="nd-go">Take a place &rarr;</span>';
+      /* textContent, not interpolation: the titles are ours today, but a
+         schedule is the kind of thing that ends up edited by someone else. */
+      line.querySelector('.nd-when').textContent = 'Next: ' + window.Drills.label(next.on);
+      line.querySelector('.nd-time').textContent = next.time;
+      line.querySelector('.nd-title').textContent = next.title;
+      line.querySelector('.nd-tag').textContent = next.price;
+      line.hidden = false;
+    }
+  }
 })();
 </script>
 </body>
