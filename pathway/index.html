@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The pathway | The 5 Spheres of Empathy</title>
+<meta name="description" content="How the books, the drills, the cohort and the two coach certifications fit together. What is open now, and what is still being designed.">
+<meta property="og:title" content="The pathway | The 5 Spheres of Empathy">
+<meta property="og:description" content="Two certifications, one shared craft. How every piece fits together, and what is open now.">
+<meta property="og:image" content="https://5spheresofempathy.com/og.png">
+<meta property="og:url" content="https://5spheresofempathy.com/pathway/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://5spheresofempathy.com/pathway/">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* ── The pathway ──────────────────────────────────────────────
+     A map of everything that exists, on two tracks that share a
+     middle. The page has one argument to make — that the overlap
+     between the tracks is craft, not subject matter — so the
+     motion is all in service of that: the tracks visibly merge at
+     the shared rungs and split again afterwards, and the filter
+     lets you watch one track fade while the shared rungs stay
+     lit. Nothing here animates for its own sake. ── */
+
+  /* ── hero ── */
+  .path-hero { padding: 62px 0 34px; position: relative; overflow: hidden; }
+  .path-hero h1 { max-width: 17ch; }
+  .path-hero .lede { margin-bottom: 0; max-width: 56ch; }
+
+  /* The hero rings are the framework itself, so they draw themselves in
+     from the inside out — the order you actually learn them in. */
+  .path-hero .sphere-deco { opacity: 0; transform: scale(.82); }
+  .path-hero .sphere-deco.drawn {
+    opacity: 1; transform: scale(1);
+    transition: opacity .9s cubic-bezier(.2,.7,.3,1), transform .9s cubic-bezier(.2,.7,.3,1);
+  }
+  .path-hero .s5.drawn { opacity: .9; }
+
+  /* ── track filter ── */
+  /* Not decoration. Switching to one track is how you see that Skill Drills
+     and the craft core never go dark, which is the whole claim of the page. */
+  .filter { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            padding: 22px 0 4px; }
+  .filter .flabel { font-size: .78rem; font-weight: 600; letter-spacing: .12em;
+                    text-transform: uppercase; color: var(--muted); margin-right: 6px; }
+  .fbtn { font-family: inherit; font-size: .9rem; font-weight: 600; color: var(--ink);
+          background: none; border: 1.5px solid var(--line); border-radius: 99px;
+          padding: 7px 16px; cursor: pointer;
+          transition: background .2s ease, border-color .2s ease, color .2s ease; }
+  .fbtn:hover { border-color: var(--ink); }
+  .fbtn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .fbtn:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+
+  /* ── the map ── */
+  .map-section { background: var(--paper-warm); padding: 40px 0 70px; }
+  .map { position: relative; padding-left: 62px; margin-top: 26px; }
+
+  /* The spine is the path. It fills as you walk down it, which is the one
+     piece of scroll-linked motion on the page — it reports where you are,
+     so it earns the scroll listener. */
+  .spine { position: absolute; left: 30px; top: 14px; bottom: 40px; width: 2px;
+           background: var(--line); border-radius: 2px; }
+  .spine-fill { position: absolute; left: 0; top: 0; width: 100%; height: 0;
+                background: linear-gradient(var(--ember-soft), var(--ember));
+                border-radius: 2px; }
+
+  .tier { position: relative; padding: 10px 0 4px; }
+
+  /* the numbered node, sitting on the spine */
+  .node { position: absolute; left: -46px; top: 8px; width: 34px; height: 34px;
+          border-radius: 50%; background: var(--paper-warm);
+          border: 2px solid var(--line); color: var(--muted);
+          font-family: 'Fraunces', serif; font-weight: 700; font-size: .95rem;
+          display: flex; align-items: center; justify-content: center;
+          transition: background .45s ease, border-color .45s ease,
+                      color .45s ease, transform .45s cubic-bezier(.2,.8,.3,1); }
+  .tier.lit .node { background: var(--ember); border-color: var(--ember);
+                    color: var(--paper); transform: scale(1.12); }
+
+  .tier-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+               margin-bottom: 14px; }
+  .tier-head h2 { font-size: 1.42rem; margin-bottom: 0; max-width: none; }
+  .tier-head .aside { font-size: .95rem; color: var(--muted); }
+
+  .row { display: grid; gap: 20px; }
+  .row.two { grid-template-columns: 1fr 1fr; }
+  .row.one { grid-template-columns: 1fr; }
+
+  /* ── cards ── */
+  .pcard { position: relative; background: var(--paper); border: 1.5px solid var(--line);
+           border-radius: 16px; padding: 24px 26px;
+           transition: transform .22s ease, box-shadow .22s ease,
+                       opacity .3s ease, border-color .3s ease; }
+  .pcard:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -22px rgba(29,42,82,.5); }
+  .pcard h3 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink);
+              font-size: 1.16rem; line-height: 1.2; margin-bottom: 6px; padding-right: 96px; }
+  .pcard p { font-size: .98rem; color: var(--muted); margin-bottom: 0; }
+  .pcard .track { font-size: .72rem; font-weight: 600; letter-spacing: .13em;
+                  text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+                  padding-right: 96px; }
+
+  /* The shared rungs are the argument, so they are drawn as the argument:
+     an ink border, and they are the only cards the filter never dims. */
+  .pcard.shared { border-color: var(--ink); border-width: 2px; }
+  .pcard.shared .track { color: var(--ember); }
+
+  .pcard ul { list-style: none; margin-top: 14px; }
+  .pcard ul li { position: relative; padding-left: 18px; font-size: .95rem;
+                 color: var(--text); margin-bottom: 5px; }
+  .pcard ul li::before { content: ""; position: absolute; left: 0; top: .62em;
+                         width: 6px; height: 6px; border-radius: 50%; background: var(--ember); }
+
+  .meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
+  .price { font-size: .86rem; font-weight: 600; color: var(--ink);
+           background: var(--paper-warm); border-radius: 99px; padding: 4px 13px; }
+  .pcard.shared .price { background: rgba(29,42,82,.07); }
+  .go { font-size: .9rem; font-weight: 600; color: var(--ember); text-decoration: none; }
+  .go:hover { text-decoration: underline; }
+  .go::after { content: " \2192"; }
+
+  /* status */
+  .status { position: absolute; top: 22px; right: 24px; display: inline-flex;
+            align-items: center; gap: 6px; font-size: .7rem; font-weight: 700;
+            letter-spacing: .09em; text-transform: uppercase;
+            border-radius: 99px; padding: 4px 11px; white-space: nowrap; }
+  .status i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .st-open  { color: #4a7a3a; background: rgba(125,164,106,.2); }
+  .st-apply { color: #a8611a; background: rgba(232,134,46,.16); }
+  .st-design{ color: var(--muted); background: rgba(29,42,82,.08); }
+  /* Only "open now" pulses. A status light blinking on everything tells you
+     nothing; on one state it reads as availability. */
+  .st-open i { animation: breathe 2.6s ease-in-out infinite; }
+  @keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+  /* ── the join between tiers ── */
+  /* Two lines merging into one and splitting again. This is the only
+     illustration on the page and it carries the argument on its own. */
+  .join { height: 76px; position: relative; }
+  .join svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  /* No dash is declared here on purpose. The viewBox is stretched hard to the
+     width of the column, and with non-scaling-stroke a browser measures the
+     dash in screen pixels, not viewBox units — so any fixed dasharray written
+     here is the wrong length at every window size and the curves stop short of
+     meeting. The dash is measured and set in JS instead, which also means that
+     with JS off the curves simply render complete rather than not at all. */
+  .join path { fill: none; stroke: var(--line); stroke-width: 2; stroke-linecap: round;
+               transition: stroke-dashoffset 1.1s ease .1s, stroke .7s ease .3s; }
+  .join.drawn path { stroke: var(--ember); }
+  .join .rule { display: none; }
+
+  /* ── legend ── */
+  .legend { display: flex; gap: 8px 26px; flex-wrap: wrap; align-items: center;
+            font-size: .88rem; color: var(--muted); padding-top: 34px; }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+  /* ── sticky tier rail ── */
+  /* The map is long. This says where you are without taking any width from it. */
+  .rail { position: fixed; right: 26px; top: 50%; transform: translateY(-50%);
+          z-index: 40; display: flex; flex-direction: column; gap: 4px;
+          background: none; backdrop-filter: none; border-bottom: 0;
+          transition: opacity .3s ease; }
+  /* It is a rail for the map. Past the map there is nothing for it to point
+     at, and its muted grey is close to invisible on the ink band below. */
+  .rail.away { opacity: 0; pointer-events: none; }
+  .rail a { display: flex; align-items: center; justify-content: flex-end; gap: 9px;
+            text-decoration: none; font-size: .78rem; font-weight: 600;
+            color: var(--muted); padding: 5px 0; opacity: .5;
+            transition: opacity .25s ease, color .25s ease; }
+  /* The labels stay visible. Collapsing them to a tick and revealing on hover
+     looked tidy in isolation and read as four stray dashes against the page —
+     a rail nobody can read is not a rail. */
+  .rail a span { white-space: nowrap; }
+  .rail a i { width: 18px; height: 2px; border-radius: 2px; background: currentColor;
+              flex: 0 0 auto; transition: width .3s ease; }
+  .rail a.here { opacity: 1; color: var(--ember); }
+  .rail a.here i { width: 32px; }
+  .rail a:hover { opacity: 1; color: var(--ink); }
+  .rail a:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+  /* "The craft core" is the longest label. Below roughly this width it starts
+     touching the right edge of the map, so the rail goes rather than overlaps. */
+  @media (max-width: 1360px) { .rail { display: none; } }
+
+  /* ── interest form ── */
+  .shape { background: var(--ink); color: var(--paper); }
+  .shape .label { color: var(--ember-soft); }
+  .shape h2 { color: var(--paper); }
+  .shape p.sub { color: rgba(250,246,239,.84); max-width: 58ch; margin-bottom: 28px; }
+  .shape form { max-width: 620px; }
+  .sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .shape label { display: block; font-size: .86rem; font-weight: 600;
+                 color: rgba(250,246,239,.8); margin-bottom: 6px; }
+  .shape input, .shape select {
+    width: 100%; padding: 13px 15px; font-size: 1rem; font-family: inherit;
+    border: 1.5px solid rgba(250,246,239,.3); border-radius: 10px;
+    background: rgba(250,246,239,.06); color: var(--paper); }
+  .shape option { color: var(--text); }
+  .shape input::placeholder { color: rgba(250,246,239,.5); }
+  .shape input:focus, .shape select:focus { outline: 2px solid var(--ember); border-color: transparent; }
+  .shape .btn { background: var(--ember); color: var(--ink); margin-top: 8px; }
+  .shape .btn:hover { background: var(--paper); }
+  .shape .fineprint { color: rgba(250,246,239,.55); text-align: left; }
+  .hp { position: absolute; left: -9999px; }
+
+  #map, #shape { scroll-margin-top: 76px; }
+  .tier { scroll-margin-top: 90px; }
+
+  @media (max-width: 860px) {
+    .row.two { grid-template-columns: 1fr; }
+    .map { padding-left: 44px; }
+    .spine { left: 21px; }
+    .node { left: -38px; width: 30px; height: 30px; font-size: .86rem; }
+    .pcard h3, .pcard .track { padding-right: 0; }
+    .status { position: static; margin-bottom: 10px; }
+    .sgrid { grid-template-columns: 1fr; }
+    /* Curves need two columns to merge. In one column the path is simply
+       down, so it is drawn as a straight rule rather than a fake fork. */
+    .join { height: 40px; }
+    .join svg { display: none; }
+    .join .rule { display: block; position: absolute; left: 50%; top: 6px; bottom: 6px;
+                  width: 2px; margin-left: -1px; background: var(--line);
+                  transition: background .7s ease; }
+    .join.drawn .rule { background: var(--ember); }
+  }
+
+  /* Everything above is motion that can be removed without losing meaning,
+     so for anyone who has asked for less of it, it is removed. */
+  @media (prefers-reduced-motion: reduce) {
+    .path-hero .sphere-deco { opacity: 1; transform: none; transition: none; }
+    .path-hero .s5 { opacity: .9; }
+    .join path { stroke-dashoffset: 0; transition: none; }
+    .node, .pcard, .rail a, .rail a i, .rail a span, .join .rule { transition: none; }
+    .st-open i { animation: none; }
+    .pcard:hover { transform: none; }
+  }
+</style>
+</head>
+<body id="top">
+
+<nav>
+  <div class="wrap">
+    <a class="mark" href="/">The 5 Spheres<span>.</span></a>
+    <div class="nav-links">
+      <a class="cta" href="/the-method/">The Method</a>
+      <div class="nav-group">
+        <a class="cta" href="/community/">Community</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/skilldrills/">Skill Drills<span>Ninety minutes on one skill</span></a>
+            <a href="/agree-to-disagree/">Agree to Disagree<span>The live leadership roundtable</span></a>
+            <a href="/sustainability-tours/">Sustainability Tours<span>Behind the scenes, in person and virtual</span></a>
+            <a href="/events/">Events<span>Live sessions on the method</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta" href="/field-notes/">Field Notes</a>
+      <div class="nav-group">
+        <a class="cta" href="/resources/">Resources</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/resources/">Tools and downloads<span>Worksheets, checklists and reference sheets</span></a>
+            <a href="/bsfp-accelerator/">Business Sustainability<span>Free eighteen lesson course</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta nav-primary" href="#map">See the map</a>
+    </div>
+  </div>
+</nav>
+
+<!-- The rail mirrors the five tiers below. It is navigation, so it is a nav.
+     styles.css styles the nav element itself — sticky, blurred, with a rule
+     underneath — so those three are reset in .rail above. -->
+<nav class="rail" aria-label="Jump to a stage">
+  <a href="#t1" data-rail="t1"><span>Read</span><i></i></a>
+  <a href="#t2" data-rail="t2"><span>Practise</span><i></i></a>
+  <a href="#t3" data-rail="t3"><span>Go deep</span><i></i></a>
+  <a href="#t4" data-rail="t4"><span>The craft core</span><i></i></a>
+  <a href="#t5" data-rail="t5"><span>Certify</span><i></i></a>
+</nav>
+
+<header class="path-hero">
+  <div class="sphere-deco s1" data-ring="4"></div>
+  <div class="sphere-deco s2" data-ring="3"></div>
+  <div class="sphere-deco s3" data-ring="2"></div>
+  <div class="sphere-deco s4" data-ring="1"></div>
+  <div class="sphere-deco s5" data-ring="0"></div>
+  <div class="wrap">
+    <span class="kicker reveal">How it fits together</span>
+    <h1 class="reveal">Two certifications, <em>one shared craft</em>.</h1>
+    <p class="lede reveal">Everything I teach sits on two tracks. One is empathy, one is
+      sustainability. The material is genuinely different, but the skill underneath is the
+      same skill &mdash; so it is taught once, and it counts for both. This is the whole map:
+      what is open now, and what I am still building.</p>
+  </div>
+</header>
+
+<section id="map" class="map-section">
+  <div class="wrap">
+
+    <div class="filter reveal">
+      <span class="flabel">Show</span>
+      <button class="fbtn" type="button" data-track="all" aria-pressed="true">Both tracks</button>
+      <button class="fbtn" type="button" data-track="empathy" aria-pressed="false">Empathy</button>
+      <button class="fbtn" type="button" data-track="sustainability" aria-pressed="false">Sustainability</button>
+    </div>
+
+    <div class="map">
+      <div class="spine" aria-hidden="true"><div class="spine-fill"></div></div>
+
+      <!-- 1 ─ Read -->
+      <div class="tier" id="t1">
+        <div class="node" aria-hidden="true">1</div>
+        <div class="tier-head reveal">
+          <h2>Read</h2>
+          <span class="aside">Free or nearly free. No commitment, no application.</span>
+        </div>
+        <div class="row two">
+          <div class="pcard reveal" data-track="empathy">
+            <span class="status st-open"><i></i>Open now</span>
+            <div class="track">Empathy</div>
+            <h3>The 5 Spheres of Empathy: A Field Guide</h3>
+            <p>The method written out in full, with the questions and the exercises for each
+              of the five spheres.</p>
+            <div class="meta">
+              <span class="price">Paperback</span>
+              <a class="go" href="/the-method/">The method</a>
+            </div>
+          </div>
+          <div class="pcard reveal" data-track="sustainability">
+            <span class="status st-open"><i></i>Open now</span>
+            <div class="track">Sustainability</div>
+            <h3>Business Sustainability First Principles</h3>
+            <p>Eighteen lessons taking the same method through an organisation, from vision
+              all the way to governance.</p>
+            <div class="meta">
+              <span class="price">Free</span>
+              <a class="go" href="/bsfp-accelerator/">Start the course</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="join" aria-hidden="true">
+        <span class="rule"></span>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M25 0 C25 62, 50 44, 50 100" vector-effect="non-scaling-stroke"/>
+          <path d="M75 0 C75 62, 50 44, 50 100" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </div>
+
+      <!-- 2 ─ Practise (shared) -->
+      <div class="tier" id="t2">
+        <div class="node" aria-hidden="true">2</div>
+        <div class="tier-head reveal">
+          <h2>Practise</h2>
+          <span class="aside">Shared by both tracks. Where your hours start counting.</span>
+        </div>
+        <div class="row one">
+          <div class="pcard shared reveal" data-track="both">
+            <span class="status st-open"><i></i>Open now</span>
+            <div class="track">Both tracks &middot; shared</div>
+            <h3>Skill Drills</h3>
+            <p>Ninety minutes on one skill, in a small group, with a hot seat. Then ninety days
+              practising it. Both tracks draw on the same drills, because the skills are the
+              same skills.</p>
+            <ul>
+              <li>Drop in when you can &mdash; there is no cohort to wait for</li>
+              <li>Hours and theory are logged from here on, towards either certification</li>
+              <li>One-to-one supervision is available, and it is the same supervision that
+                both certifications ask for</li>
+            </ul>
+            <div class="meta">
+              <span class="price">&euro;50 a session</span>
+              <span class="price">&euro;200 supervision</span>
+              <a class="go" href="/skilldrills/">See the board</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="join" aria-hidden="true">
+        <span class="rule"></span>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M50 0 C50 56, 25 38, 25 100" vector-effect="non-scaling-stroke"/>
+          <path d="M50 0 C50 56, 75 38, 75 100" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </div>
+
+      <!-- 3 ─ Go deep -->
+      <div class="tier" id="t3">
+        <div class="node" aria-hidden="true">3</div>
+        <div class="tier-head reveal">
+          <h2>Go deep</h2>
+          <span class="aside">One subject, properly, with your own work as the material.</span>
+        </div>
+        <div class="row two">
+          <div class="pcard reveal" data-track="empathy">
+            <span class="status st-open"><i></i>Open now</span>
+            <div class="track">Empathy</div>
+            <h3>Human Intelligence</h3>
+            <p>Six weeks on the inner two spheres, traced through a real decision of yours.
+              It is the way in to certification rather than the certification itself &mdash;
+              five spheres cannot be signed off on a course that covers two.</p>
+            <div class="meta">
+              <span class="price">&euro;1,000</span>
+              <a class="go" href="/#cohort">The cohort</a>
+            </div>
+          </div>
+          <div class="pcard reveal" data-track="sustainability">
+            <span class="status st-apply"><i></i>By arrangement</span>
+            <div class="track">Sustainability</div>
+            <h3>Real practice with paying clients</h3>
+            <p>Consulting and coaching work in the field. This is what the hours are counted
+              against, and there is no substitute for it in either track.</p>
+            <div class="meta">
+              <a class="go" href="/sustainability-tours/">Sustainability tours</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="join" aria-hidden="true">
+        <span class="rule"></span>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M25 0 C25 62, 50 44, 50 100" vector-effect="non-scaling-stroke"/>
+          <path d="M75 0 C75 62, 50 44, 50 100" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </div>
+
+      <!-- 4 ─ The craft core (shared) -->
+      <div class="tier" id="t4">
+        <div class="node" aria-hidden="true">4</div>
+        <div class="tier-head reveal">
+          <h2>The craft core</h2>
+          <span class="aside">Shared. Taught once, assessed once, counts for both.</span>
+        </div>
+        <div class="row one">
+          <div class="pcard shared reveal" data-track="both">
+            <span class="status st-design"><i></i>In design</span>
+            <div class="track">Both tracks &middot; shared</div>
+            <h3>Coaching craft</h3>
+            <p>What makes someone a coach rather than someone who has read the book. Almost all
+              of the overlap between the two tracks lives here, which is why it would be wrong
+              to teach it twice &mdash; or to charge anyone twice for it.</p>
+            <ul>
+              <li>The four levels of listening</li>
+              <li>Holding a hot seat, and facilitating without rescuing</li>
+              <li>Giving feedback so that it lands and the relationship survives it</li>
+              <li>Relationship design, and boundaries drawn around behaviours rather than people</li>
+              <li>Surfacing what a room is avoiding</li>
+            </ul>
+            <div class="meta">
+              <a class="go" href="#shape">Help shape it</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="join" aria-hidden="true">
+        <span class="rule"></span>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M50 0 C50 56, 25 38, 25 100" vector-effect="non-scaling-stroke"/>
+          <path d="M50 0 C50 56, 75 38, 75 100" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </div>
+
+      <!-- 5 ─ Certify -->
+      <div class="tier" id="t5">
+        <div class="node" aria-hidden="true">5</div>
+        <div class="tier-head reveal">
+          <h2>Certify</h2>
+          <span class="aside">A licence to practise, not a certificate of attendance.</span>
+        </div>
+        <div class="row two">
+          <div class="pcard reveal" data-track="empathy">
+            <span class="status st-design"><i></i>In design</span>
+            <div class="track">Empathy</div>
+            <h3>5 Spheres Coach</h3>
+            <ul>
+              <li>The craft core</li>
+              <li>All five spheres, not only the inner two</li>
+              <li>Human Intelligence completed</li>
+              <li>Logged practice hours</li>
+              <li>A supervised session at the start</li>
+              <li>A recorded unsupervised session, assessed, at the end</li>
+            </ul>
+            <div class="meta">
+              <a class="go" href="#shape">Register interest</a>
+            </div>
+          </div>
+          <div class="pcard reveal" data-track="sustainability">
+            <span class="status st-apply"><i></i>By application</span>
+            <div class="track">Sustainability</div>
+            <h3>BSFP Coach</h3>
+            <ul>
+              <li>The craft core</li>
+              <li>An interview before you are accepted</li>
+              <li>50 hours of online learning</li>
+              <li>100 hours of real coaching and consulting with paying clients</li>
+              <li>A supervised session at the start</li>
+              <li>A recorded unsupervised session, assessed, at the end</li>
+            </ul>
+            <div class="meta">
+              <a class="go" href="#shape">Apply</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend reveal">
+      <span><i style="background:#7da46a"></i> Open now</span>
+      <span><i style="background:#e8862e"></i> By application or arrangement</span>
+      <span><i style="background:#9aa0ae"></i> Being designed</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label reveal">Why one core and not two</span>
+    <h2 class="reveal">The overlap is craft, not subject matter.</h2>
+    <div class="prose reveal">
+      <p>When I laid the two tracks side by side I expected the shared part to be content. It
+        was not. The sustainability material and the empathy material barely touch.</p>
+      <p>What is identical is everything a coach does regardless of what is being discussed:
+        how you listen, how you hold a room, how you give feedback that is actually heard, how
+        you name the thing everyone has decided not to mention. That is most of what separates
+        a certified coach from a well-read one, and it does not change between the two tracks.</p>
+      <p>So it sits in the middle and is taught once. You are assessed on it once. If you come
+        back later for the second track, you add the subject and the hours &mdash; not the
+        craft again.</p>
+    </div>
+  </div>
+</section>
+
+<section id="shape" class="shape">
+  <div class="wrap">
+    <span class="label reveal">Before it is finished</span>
+    <h2 class="reveal">Two of these are still being designed.</h2>
+    <p class="sub reveal">The BSFP requirements are written and I take applications for those
+      now. The craft core and the 5 Spheres certification are not finished, and I would rather
+      build them around people who intend to use them than hand you something already set. Tell
+      me which one matters to you and I will come back to you as it takes shape.</p>
+
+    <form class="reveal" name="pathway-interest" method="POST" data-netlify="true"
+          netlify-honeypot="bot-field" action="/pathway/thanks/">
+      <input type="hidden" name="form-name" value="pathway-interest">
+      <p class="hp"><label>Leave this empty <input name="bot-field"></label></p>
+      <div class="sgrid">
+        <div>
+          <label for="p-interest">Which one</label>
+          <select name="interest" id="p-interest" required>
+            <option value="">Choose one&hellip;</option>
+            <option>5 Spheres Coach certification</option>
+            <option>BSFP Coach certification &mdash; I want to apply</option>
+            <option>The craft core on its own</option>
+            <option>Both certifications</option>
+            <option>Not sure yet &mdash; keep me posted</option>
+          </select>
+        </div>
+        <div>
+          <label for="p-stage">Where you are today</label>
+          <select name="stage" id="p-stage">
+            <option>Just reading</option>
+            <option>I have done a Skill Drill</option>
+            <option>I have done Human Intelligence</option>
+            <option>I already coach or consult for a living</option>
+          </select>
+        </div>
+      </div>
+      <div class="sgrid">
+        <div>
+          <label for="p-email">Your email</label>
+          <input type="email" name="email" id="p-email" required autocomplete="email"
+                 placeholder="you@example.com">
+        </div>
+        <div>
+          <label for="p-note">Anything else <span style="font-weight:400;opacity:.65">optional</span></label>
+          <input type="text" name="note" id="p-note" placeholder="What you would want it to cover…">
+        </div>
+      </div>
+      <button class="btn" type="submit">Send it</button>
+      <p class="fineprint">This puts you on the list for the certification only. It does not
+        sign you up to anything else.</p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
+    <div><a href="/">Home</a> &nbsp;&middot;&nbsp; <a href="/events/">Events</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@5spheresofempathy.com">Get in touch</a></div>
+  </div>
+</footer>
+
+<script src="/script.js"></script>
+<script>
+/* ── the pathway page ──
+   Four behaviours, all of them degradable: the page is complete and readable
+   with this file missing. Nothing here creates content, it only reacts to it. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* 1 ─ the hero rings, drawn from the inside out. */
+  var rings = [].slice.call(document.querySelectorAll('.path-hero .sphere-deco'));
+  rings.sort(function (a, b) { return a.dataset.ring - b.dataset.ring; });
+  rings.forEach(function (el, i) {
+    setTimeout(function () { el.classList.add('drawn'); }, reduce ? 0 : 200 + i * 130);
+  });
+
+  /* 2 ─ the joining curves.
+     Each join svg is stretched to the width of the column, so its path is far
+     longer on screen than it is in viewBox units. getTotalLength() reports the
+     latter and the browser dashes in the former, which is why the dash has to
+     be walked and measured rather than declared. Measured once, and again on
+     resize, because the width it was measured at is the only width it is
+     right for. */
+  var joins = [].slice.call(document.querySelectorAll('.join'));
+
+  function screenLength(path) {
+    var ctm = path.getScreenCTM();
+    if (!ctm) { return 0; }                 /* hidden: mobile drops to a rule */
+    var total = path.getTotalLength(), steps = 48, sum = 0, prev = null;
+    for (var i = 0; i <= steps; i++) {
+      var pt = path.getPointAtLength(total * i / steps).matrixTransform(ctm);
+      if (prev) { sum += Math.hypot(pt.x - prev.x, pt.y - prev.y); }
+      prev = pt;
+    }
+    return sum;
+  }
+
+  function measureJoins() {
+    if (reduce) { return; }
+    joins.forEach(function (join) {
+      var drawn = join.classList.contains('drawn');
+      join.querySelectorAll('path').forEach(function (p) {
+        var len = screenLength(p);
+        if (!len) { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; return; }
+        len = Math.ceil(len) + 4;           /* slack for the round cap */
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = drawn ? 0 : len;
+      });
+    });
+  }
+
+  function drawJoin(join) {
+    join.classList.add('drawn');
+    join.querySelectorAll('path').forEach(function (p) { p.style.strokeDashoffset = 0; });
+  }
+
+  /* 3 ─ tiers light their node, joins draw their curves.
+     Unobserved on the way in, because these are one-way: a node that
+     un-lights when you scroll back up reads as a bug, not as a feature. */
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) { return; }
+      if (e.target.classList.contains('join')) { drawJoin(e.target); }
+      else { e.target.classList.add('lit'); }
+      io.unobserve(e.target);
+    });
+  }, { threshold: .35, rootMargin: '0px 0px -10% 0px' });
+
+  measureJoins();
+  document.querySelectorAll('.tier, .join').forEach(function (el) { io.observe(el); });
+
+  /* Stagger the cards inside a row so a row arrives as a row. The .reveal
+     class and its observer come from script.js; this only sets the delay. */
+  document.querySelectorAll('.row').forEach(function (row) {
+    [].slice.call(row.querySelectorAll('.reveal')).forEach(function (el, i) {
+      el.style.transitionDelay = (i * 0.1) + 's';
+    });
+  });
+
+  /* 4 ─ the spine fills, and the rail follows it.
+     Read on rAF rather than on the scroll event itself: the handler touches
+     layout, and on a page this long that is the difference between smooth
+     and not. */
+  var fill  = document.querySelector('.spine-fill');
+  var spine = document.querySelector('.spine');
+  var tiers = [].slice.call(document.querySelectorAll('.tier'));
+  var rail  = {};
+  var railBox = document.querySelector('.rail');
+  document.querySelectorAll('.rail a').forEach(function (a) { rail[a.dataset.rail] = a; });
+  var queued = false;
+
+  function paint() {
+    queued = false;
+    if (!fill || !spine) return;
+    var box  = spine.getBoundingClientRect();
+    var mark = window.innerHeight * 0.55;      /* the line you count as "here" */
+    var pct  = (mark - box.top) / box.height;
+    fill.style.height = Math.max(0, Math.min(1, pct)) * 100 + '%';
+
+    /* the current tier is the last one whose top has passed that line */
+    var here = null;
+    tiers.forEach(function (t) {
+      if (t.getBoundingClientRect().top <= mark) { here = t.id; }
+    });
+    Object.keys(rail).forEach(function (id) {
+      rail[id].classList.toggle('here', id === here);
+    });
+
+    if (railBox) {
+      railBox.classList.toggle('away', box.bottom < 80 || box.top > window.innerHeight);
+    }
+  }
+  function onScroll() {
+    if (queued) { return; }
+    queued = true;
+    requestAnimationFrame(paint);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () { onScroll(); measureJoins(); });
+  paint();
+
+  /* 5 ─ the track filter.
+     The shared cards carry data-track="both" and are never dimmed. Watching
+     them stay lit while one track fades is the point of the control. */
+  var btns = [].slice.call(document.querySelectorAll('.fbtn'));
+  btns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var want = btn.dataset.track;
+      btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+      document.querySelectorAll('.pcard').forEach(function (card) {
+        var t  = card.dataset.track;
+        var on = (want === 'all' || t === 'both' || t === want);
+        /* dimmed, not hidden — the other track is still part of the map, and
+           at .26 the text stopped being readable at all */
+        card.style.opacity = on ? '' : '.34';
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
