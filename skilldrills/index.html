@@ -268,20 +268,23 @@
         <span class="tagp free">Free</span>
       </div>
       <div class="dcard">
-        <div class="when"><div class="d">&mdash;</div><div class="m">TBC</div></div>
+        <div class="when"><div class="d">22</div><div class="m">OCT</div></div>
         <div>
           <h3>The Empathy Map</h3>
-          <div class="meta">date to be confirmed</div>
-          <a class="book" href="#queue">Tell me when suits &rarr;</a>
+          <div class="meta">Thursday, 09:00 CEST &middot; Zoom &middot; 90 min</div>
+          <a class="book" href="#request">Take a place &rarr;</a>
         </div>
         <span class="tagp">&euro;50</span>
       </div>
+      <!-- 5 November is after the clocks go back on 25 October, so this one is
+           CET and the two before it are CEST. Getting that wrong puts people on
+           the call an hour out. -->
       <div class="dcard">
-        <div class="when"><div class="d">&mdash;</div><div class="m">TBC</div></div>
+        <div class="when"><div class="d">5</div><div class="m">NOV</div></div>
         <div>
           <h3>Active Listening &amp; The Unsaid</h3>
-          <div class="meta">date to be confirmed</div>
-          <a class="book" href="#queue">Tell me when suits &rarr;</a>
+          <div class="meta">Thursday, 09:00 CET &middot; Zoom &middot; 90 min</div>
+          <a class="book" href="#request">Take a place &rarr;</a>
         </div>
         <span class="tagp">&euro;50</span>
       </div>
@@ -427,8 +430,9 @@
          Deliberately not MailerLite: a vote should not make someone a
          subscriber, and these are two different consents. -->
     <div class="request" id="request">
-      <h3>Push one up the board</h3>
-      <p>Tell me which drill you want and where you'd want it. I'll let you know when it's dated.</p>
+      <h3>Take a place, or push one up the board</h3>
+      <p>Tell me which drill you want. If it already has a date I'll send you the joining details;
+        if it doesn't, I'll let you know as soon as it does.</p>
       <form name="drill-requests" method="POST" data-netlify="true"
             netlify-honeypot="bot-field" action="/skilldrills/thanks/">
         <input type="hidden" name="form-name" value="drill-requests">
@@ -437,6 +441,14 @@
           <label>Which drill
             <select name="drill" id="drill-select" required>
               <option value="">Choose one…</option>
+              <!-- The dated drills belong here too. "Take a place" on a booked
+                   drill scrolls to this form, and it would be absurd to arrive
+                   and find the thing you clicked is not in the list. -->
+              <optgroup label="Booked">
+                <option>The Sensing Drill &mdash; 17 September</option>
+                <option>The Empathy Map &mdash; 22 October</option>
+                <option>Active Listening &amp; The Unsaid &mdash; 5 November</option>
+              </optgroup>
               <optgroup label="The five spheres">
                 <option>The Sphere 1 Self-Audit</option>
                 <option>Your Cup</option>
