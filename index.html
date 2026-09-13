@@ -15,6 +15,39 @@
 <link rel="canonical" href="https://5spheresofempathy.com/">
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="styles.css">
+<style>
+  /* The next-drill band. Deliberately thin: it is a signpost, not a section,
+     and it sits above the credibility strip because the drills run more often
+     than anything else on this page. */
+  .next-drill { background: var(--paper-warm); border-bottom: 1px solid var(--line); }
+  .next-drill .wrap {
+    display: flex; align-items: center; gap: 10px 20px; flex-wrap: wrap;
+    padding-top: 13px; padding-bottom: 13px;
+  }
+  .nd-label {
+    font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ember);
+  }
+  .nd-item { display: none; font-size: .95rem; color: var(--text); text-decoration: none; }
+  .nd-item.is-next { display: inline; }
+  .nd-item b { color: var(--ink); font-weight: 600; }
+  .nd-item:hover { color: var(--ink); }
+  .nd-item:hover b { color: var(--ember); }
+  .nd-free, .nd-price {
+    display: inline-block; margin-left: 6px; font-size: .74rem; font-weight: 600;
+    padding: 2px 9px; border-radius: 99px; vertical-align: 1px;
+  }
+  .nd-free { background: var(--ink); color: var(--paper); }
+  .nd-price { background: rgba(29,42,82,.09); color: var(--ink); }
+  .nd-all {
+    margin-left: auto; font-size: .88rem; font-weight: 600;
+    color: var(--ember); text-decoration: none; white-space: nowrap;
+  }
+  .nd-all:hover { color: var(--ink); }
+  @media (max-width: 620px) {
+    .nd-all { margin-left: 0; }
+  }
+</style>
 </head>
 <body>
 
@@ -65,6 +98,27 @@
     </div>
   </div>
 </header>
+
+<!-- The drills run more often than anything else here, so the next one sits
+     above the credibility strip rather than four sections down. All three are
+     in the markup with their dates; the script below shows whichever is next.
+     With no JavaScript the first one shows, which is the same behaviour a
+     hardcoded band would have had. -->
+<div class="next-drill" id="next-drill">
+  <div class="wrap">
+    <span class="nd-label">Next skill drill</span>
+    <a class="nd-item is-next" data-on="2026-09-17" href="/events/the-sensing-drill/">
+      <b>Thu 17 Sep</b> &middot; 09:00 CEST &middot; The Sensing Drill <span class="nd-free">free</span>
+    </a>
+    <a class="nd-item" data-on="2026-10-21" href="/skilldrills/#request">
+      <b>Wed 21 Oct</b> &middot; 09:00 CEST &middot; The Empathy Map <span class="nd-price">&euro;50</span>
+    </a>
+    <a class="nd-item" data-on="2026-11-05" href="/skilldrills/#request">
+      <b>Thu 5 Nov</b> &middot; 09:00 CET &middot; Active Listening &amp; The Unsaid <span class="nd-price">&euro;50</span>
+    </a>
+    <a class="nd-all" href="/skilldrills/">All drills &rarr;</a>
+  </div>
+</div>
 
 <div class="strip">
   <div class="wrap">
@@ -317,5 +371,30 @@
   }
 </script>
 
+<script>
+  /* Advance the next-drill band past anything that has already happened, so
+     the homepage never advertises a session that has been and gone. A drill is
+     still "next" on the day it runs; it drops off the following midnight.
+     If every date is in the past the band hides itself rather than lying. */
+  (function () {
+    var band = document.getElementById('next-drill');
+    if (!band) return;
+    var items = [].slice.call(band.querySelectorAll('.nd-item'));
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+
+    var next = null;
+    items.forEach(function (el) {
+      el.classList.remove('is-next');
+      var on = el.getAttribute('data-on');
+      if (!on) return;
+      var parts = on.split('-');
+      var when = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+      if (!next && when >= today) next = el;
+    });
+
+    if (next) { next.classList.add('is-next'); }
+    else { band.style.display = 'none'; }
+  })();
+</script>
 </body>
 </html>
