@@ -199,6 +199,208 @@
     .pinned { width: 100%; max-width: 300px; }
   }
 </style>
+
+<!-- The board is a schedule, so it says so. Dates, prices and the virtual
+     location are all here; the Sensing Drill's own page carries the same
+     @id so the two are merged rather than counted twice.
+     KEEP IN SYNC with the visible cards above. The QA script asserts they
+     agree and fails the build conversation if they drift. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Skill Drills schedule",
+  "description": "Dated Skill Drills from The 5 Spheres of Empathy. Ninety minutes on one skill, in a small group, with a hot seat.",
+  "url": "https://5spheresofempathy.com/skilldrills/",
+  "numberOfItems": 3,
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "Event",
+        "@id": "https://5spheresofempathy.com/events/the-sensing-drill/",
+        "name": "The Sensing Drill",
+        "description": "Ninety minutes on reading what is actually happening, in yourself and in the person in front of you. Small group, with a hot seat, then ninety days practising it.",
+        "startDate": "2026-09-17T09:00:00+02:00",
+        "endDate": "2026-09-17T10:30:00+02:00",
+        "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "location": {
+          "@type": "VirtualLocation",
+          "url": "https://5spheresofempathy.com/events/the-sensing-drill/"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "The 5 Spheres of Empathy",
+          "url": "https://5spheresofempathy.com"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Galeno Chua"
+        },
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
+        "maximumAttendeeCapacity": 12,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://5spheresofempathy.com/events/the-sensing-drill/",
+          "validFrom": "2026-09-01T00:00:00+02:00"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "Event",
+        "@id": "https://5spheresofempathy.com/skilldrills/#drill-empathy-map",
+        "name": "The Empathy Map",
+        "description": "Ninety minutes building an empathy map on a real situation of yours, in a small group, with a hot seat. Then ninety days practising it.",
+        "startDate": "2026-10-22T09:00:00+02:00",
+        "endDate": "2026-10-22T10:30:00+02:00",
+        "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "location": {
+          "@type": "VirtualLocation",
+          "url": "https://5spheresofempathy.com/skilldrills/#request"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "The 5 Spheres of Empathy",
+          "url": "https://5spheresofempathy.com"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Galeno Chua"
+        },
+        "inLanguage": "en",
+        "isAccessibleForFree": false,
+        "maximumAttendeeCapacity": 12,
+        "offers": {
+          "@type": "Offer",
+          "price": "50",
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://5spheresofempathy.com/skilldrills/#request",
+          "validFrom": "2026-09-01T00:00:00+02:00"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "item": {
+        "@type": "Event",
+        "@id": "https://5spheresofempathy.com/skilldrills/#drill-active-listening",
+        "name": "Active Listening & The Unsaid",
+        "description": "Ninety minutes on the four levels of listening and on naming what a room is avoiding. Small group, with a hot seat, then ninety days practising it.",
+        "startDate": "2026-11-05T09:00:00+01:00",
+        "endDate": "2026-11-05T10:30:00+01:00",
+        "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "location": {
+          "@type": "VirtualLocation",
+          "url": "https://5spheresofempathy.com/skilldrills/#request"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "The 5 Spheres of Empathy",
+          "url": "https://5spheresofempathy.com"
+        },
+        "performer": {
+          "@type": "Person",
+          "name": "Galeno Chua"
+        },
+        "inLanguage": "en",
+        "isAccessibleForFree": false,
+        "maximumAttendeeCapacity": 12,
+        "offers": {
+          "@type": "Offer",
+          "price": "50",
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://5spheresofempathy.com/skilldrills/#request",
+          "validFrom": "2026-09-01T00:00:00+02:00"
+        }
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "@id": "https://5spheresofempathy.com/skilldrills/#course",
+  "name": "Skill Drills",
+  "description": "Ninety minutes on one skill, in a small group, with a hot seat. Then ninety days practising it. Drop in when you can; there is no cohort to wait for.",
+  "url": "https://5spheresofempathy.com/skilldrills/",
+  "provider": {
+    "@type": "Organization",
+    "name": "The 5 Spheres of Empathy",
+    "url": "https://5spheresofempathy.com"
+  },
+  "inLanguage": "en",
+  "teaches": [
+    "Sensing what is happening in a conversation",
+    "The four levels of listening",
+    "Building an empathy map",
+    "Naming what a room is avoiding",
+    "Giving feedback that lands"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "50",
+    "priceCurrency": "EUR",
+    "category": "Paid",
+    "availability": "https://schema.org/InStock",
+    "url": "https://5spheresofempathy.com/skilldrills/"
+  },
+  "hasCourseInstance": [
+    {
+      "@type": "CourseInstance",
+      "courseMode": "Online",
+      "courseWorkload": "PT1H30M",
+      "startDate": "2026-09-17T09:00:00+02:00",
+      "endDate": "2026-09-17T10:30:00+02:00",
+      "name": "The Sensing Drill",
+      "location": {
+        "@type": "VirtualLocation",
+        "url": "https://5spheresofempathy.com/events/the-sensing-drill/"
+      }
+    },
+    {
+      "@type": "CourseInstance",
+      "courseMode": "Online",
+      "courseWorkload": "PT1H30M",
+      "startDate": "2026-10-22T09:00:00+02:00",
+      "endDate": "2026-10-22T10:30:00+02:00",
+      "name": "The Empathy Map",
+      "location": {
+        "@type": "VirtualLocation",
+        "url": "https://5spheresofempathy.com/skilldrills/#request"
+      }
+    },
+    {
+      "@type": "CourseInstance",
+      "courseMode": "Online",
+      "courseWorkload": "PT1H30M",
+      "startDate": "2026-11-05T09:00:00+01:00",
+      "endDate": "2026-11-05T10:30:00+01:00",
+      "name": "Active Listening & The Unsaid",
+      "location": {
+        "@type": "VirtualLocation",
+        "url": "https://5spheresofempathy.com/skilldrills/#request"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -267,7 +469,7 @@
         </div>
         <span class="tagp free">Free</span>
       </div>
-      <div class="dcard">
+      <div class="dcard" id="drill-empathy-map">
         <div class="when"><div class="d">22</div><div class="m">OCT</div></div>
         <div>
           <h3>The Empathy Map</h3>
@@ -279,7 +481,7 @@
       <!-- 5 November is after the clocks go back on 25 October, so this one is
            CET and the two before it are CEST. Getting that wrong puts people on
            the call an hour out. -->
-      <div class="dcard">
+      <div class="dcard" id="drill-active-listening">
         <div class="when"><div class="d">5</div><div class="m">NOV</div></div>
         <div>
           <h3>Active Listening &amp; The Unsaid</h3>

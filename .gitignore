@@ -60,3 +60,9 @@ nul
 # Blank certificate templates. These are fillable and must never be published at
 # usable resolution; only the small previews in /bsfp-accelerator/ go live.
 /bsfp-accelerator/Certificates/
+ops-log/
+
+# Working notes and strategy documents. Everything committed to this repo is
+# deployed to a public web host, so internal material stays out of it — the
+# competency drafts and the candid version of the pathway map included.
+Course Core Competencies/
