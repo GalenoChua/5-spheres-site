@@ -52,6 +52,29 @@ export default async (request) => {
     return json(400, { error: 'session' });
   }
 
+  /* Removing a row. Test submissions land in the real session by accident and
+     one throwaway NPS visibly moves the score in a room of six, so there has to
+     be a way to take one out. Token-protected, one address at a time, and it
+     says what it did rather than failing quietly. */
+  const remove = String(url.searchParams.get('delete') || '').trim().toLowerCase();
+  if (remove) {
+    if (!/^\S+@\S+\.\S+$/.test(remove)) {
+      return json(400, { error: 'delete must be an email address' });
+    }
+    try {
+      const store = getStore('sensing-quad');
+      const key = `${session}/${encodeURIComponent(remove)}`;
+      const existing = await store.get(key, { type: 'json' });
+      if (!existing) {
+        return json(404, { error: 'no such submission', session, email: remove });
+      }
+      await store.delete(key);
+      return json(200, { deleted: true, session, email: remove });
+    } catch (err) {
+      return json(502, { error: 'store unavailable' });
+    }
+  }
+
   /* Same reason as the writer: getStore throws synchronously on an
      unconfigured environment, so it belongs inside the try. */
   let rows = [];

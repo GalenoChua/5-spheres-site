@@ -227,8 +227,8 @@
     <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i></i></div>
     <div class="eyebrow">Second round</div>
     <h2>Same four questions.</h2>
-    <p>About the round you just did, not the first one. I&rsquo;ve kept your earlier scores
-      off this screen because if you can see them you&rsquo;ll score against them.</p>
+    <p>About the round you just did, not the first one. Your baseline is hidden on purpose
+      &mdash; score what you actually noticed, not what would look like improvement.</p>
     <div id="b-dims"></div>
 
     <h3>And where are you now?</h3>
@@ -560,10 +560,19 @@
   });
 
   /* ── sending ─────────────────────────────────────────────────────── */
+  /* The session id can be overridden from the URL, so a dry run lands somewhere
+     harmless. /quad/?session=test-run-one writes to its own bucket instead of
+     counting as a seventh participant on the day — which is exactly what the
+     first trial did, complete with a throwaway NPS of 4. */
+  var SESSION = (function () {
+    var m = /[?&]session=([a-z0-9-]{6,64})(&|$)/.exec(window.location.search || '');
+    return m ? m[1] : 'sensing-drill-2026-09-17';
+  })();
+
   function payload() {
     return {
       version: 2,
-      session: 'sensing-drill-2026-09-17',
+      session: SESSION,
       name: state.name,
       email: state.email,
       startedAt: state.started,
