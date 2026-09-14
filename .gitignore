@@ -67,3 +67,10 @@ node_modules/
 
 # Dropped by the Netlify CLI when it inspects functions. Not ours.
 deno.lock
+
+# Working notes, strategy documents and session records. Everything committed to
+# this repository is deployed to a public web host, so internal material stays
+# out of it. These rules also exist on the drill-schema branch; duplicated here
+# deliberately so the protection does not depend on which branch merges first.
+ops-log/
+Course Core Competencies/
