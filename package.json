@@ -1,0 +1,8 @@
+{
+  "name": "five-spheres-site",
+  "private": true,
+  "description": "Static site. The only dependency is the blob store used by the session tools.",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

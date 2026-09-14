@@ -2,3 +2,15 @@
 /resources       /resources/  301
 /resources/what-a-real-disagreement-looks-like   /field-notes/what-a-real-disagreement-looks-like/  301
 /resources/what-a-real-disagreement-looks-like/  /field-notes/what-a-real-disagreement-looks-like/  301
+
+# This site publishes from the repository root. Adding functions added a
+# dependency tree, and npm install puts it in that same root at build time, so
+# it would otherwise be served. Nothing under here is ever a page.
+# Verify on a deploy preview that /node_modules/ returns 404 before merging.
+# The ! forces the rule. Without it Netlify serves an existing file in
+# preference to a redirect, so package.json was returning 200 on the preview
+# while node_modules 404'd on its own (it is never published).
+/node_modules/*     /   404!
+/package.json       /   404!
+/package-lock.json  /   404!
+/netlify.toml       /   404!

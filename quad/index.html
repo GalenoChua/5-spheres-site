@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Sensing Quad | The 5 Spheres of Empathy</title>
+<meta name="description" content="Score yourself on the four sensing dimensions, before and after the drill. Your lowest score is your ninety-day focus.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://5spheresofempathy.com/quad/">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* ── The Sensing Quad, live ────────────────────────────────
+     One page, held open for the whole session. It takes the
+     baseline, waits through the exercise, takes the second
+     round, and submits both together — which is the only
+     reason the before and after can be paired without asking
+     anyone to match up email addresses afterwards.
+
+     Everything is kept in the page until the very end. If the
+     network drops mid-session nothing is lost; the scores are
+     also mirrored to localStorage so a refresh recovers them.
+
+     noindex because it is a session tool, not a page anyone
+     should find in search. ── */
+
+  .quad-wrap { max-width: 720px; margin: 0 auto; padding: 0 22px 80px; }
+  .stage { padding: 34px 0 0; }
+  .stage[hidden] { display: none; }
+
+  .eyebrow { font-size: .76rem; font-weight: 700; letter-spacing: .15em;
+             text-transform: uppercase; color: #9e5615; margin-bottom: 10px; }
+  .quad-wrap h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); max-width: 20ch; margin-bottom: 12px; }
+  .quad-wrap h2 { font-size: 1.35rem; max-width: none; margin-bottom: 10px; }
+  .quad-wrap p { max-width: 60ch; margin-bottom: 14px; }
+  .muted { color: #5f636f; font-size: .95rem; }
+
+  /* progress */
+  .steps { display: flex; gap: 6px; margin: 24px 0 8px; }
+  .steps i { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
+  .steps i.done { background: var(--ember); }
+
+  /* ── the four dimensions ──
+     Grouped by which role you were in. Rated on their own, "how present was
+     I" and "how well did I sense myself" read as the same question asked
+     twice; under the role they belong to, one is plainly about your
+     attention while watching and the other about knowing yourself while
+     speaking. ── */
+  .role { margin: 26px 0 0; }
+  .role-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+               border-bottom: 1.5px solid var(--line); padding-bottom: 7px; margin-bottom: 4px; }
+  .role-head b { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink);
+                 font-size: 1.05rem; }
+  .role-head span { font-size: .88rem; color: #5f636f; }
+
+  .dim { padding: 18px 0 16px; border-bottom: 1px solid var(--line); }
+  .dim .q { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink);
+            font-size: 1.05rem; line-height: 1.25; margin-bottom: 3px; }
+  .dim .hint { font-size: .92rem; color: #5f636f; margin-bottom: 12px; }
+
+  .scale { display: flex; gap: 8px; }
+  .scale button {
+    flex: 1; font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.1rem;
+    color: var(--ink); background: var(--paper); border: 1.5px solid var(--line);
+    border-radius: 12px; padding: 14px 0; cursor: pointer;
+    transition: background .15s ease, border-color .15s ease, color .15s ease,
+                transform .12s ease; }
+  .scale button:hover { border-color: var(--ink); }
+  .scale button[aria-checked="true"] { background: var(--ink); border-color: var(--ink);
+                                       color: var(--paper); transform: translateY(-2px); }
+  .scale button:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+  .scale-ends { display: flex; justify-content: space-between; font-size: .78rem;
+                color: #5f636f; margin-top: 7px; }
+
+  /* fields */
+  label.f { display: block; font-size: .9rem; font-weight: 600; color: var(--ink);
+            margin: 0 0 6px; }
+  input[type=text], input[type=email], textarea, select {
+    width: 100%; padding: 13px 15px; font-size: 1rem; font-family: inherit;
+    border: 1.5px solid rgba(29,42,82,.25); border-radius: 10px;
+    background: #fff; color: var(--text); }
+  textarea { min-height: 84px; resize: vertical; }
+  input:focus, textarea:focus, select:focus { outline: 2px solid var(--ember); border-color: transparent; }
+  .field { margin-bottom: 16px; }
+
+  .btn.wide { width: 100%; text-align: center; margin-top: 22px; }
+  .btn[disabled] { opacity: .45; cursor: not-allowed; }
+  .btn[disabled]:hover { background: var(--ink); transform: none; }
+
+  /* the hold screen between rounds */
+  .hold { background: var(--paper-warm); border: 2px solid var(--ink); border-radius: 16px;
+          padding: 28px; text-align: center; margin-top: 20px; }
+  .hold .big { font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--ink);
+               margin-bottom: 8px; }
+
+  /* the result */
+  .delta-table { width: 100%; border-collapse: collapse; margin: 18px 0 6px; font-size: .96rem; }
+  .delta-table th { text-align: left; font-size: .74rem; letter-spacing: .1em;
+                    text-transform: uppercase; color: #5f636f; font-weight: 700;
+                    padding-bottom: 8px; border-bottom: 1.5px solid var(--line); }
+  .delta-table td { padding: 11px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .delta-table td.n { text-align: center; width: 62px; font-family: 'Fraunces', serif;
+                      font-weight: 700; color: var(--ink); }
+  .delta-table td.d { text-align: center; width: 62px; font-weight: 600; }
+  .up { color: #3d6830; } .same { color: #5f636f; } .down { color: #8c4f13; }
+  tr.lowest td { background: var(--paper-warm); }
+
+  .focus-card { background: var(--ink); color: var(--paper); border-radius: 16px;
+                padding: 26px 28px; margin: 24px 0 6px; }
+  .focus-card .eyebrow { color: var(--ember-soft); }
+  .focus-card h3 { font-family: 'Fraunces', serif; color: var(--paper);
+                   font-size: 1.3rem; margin-bottom: 8px; }
+  .focus-card p { color: rgba(250,246,239,.88); margin-bottom: 0; }
+
+  .note-box { background: var(--paper-warm); border-left: 3px solid var(--ember);
+              border-radius: 0 10px 10px 0; padding: 14px 18px; font-size: .95rem;
+              margin: 18px 0; }
+
+  .err { background: rgba(140,79,19,.1); border-left: 3px solid #8c4f13;
+         border-radius: 0 10px 10px 0; padding: 14px 18px; font-size: .95rem; margin: 16px 0; }
+  .err[hidden] { display: none; }
+
+  /* The way back. Locking a baseline used to be one-way, so a mistyped email
+     or a misread question left somebody stuck on the hold screen for the rest
+     of the session with no way out. Quiet, but always reachable. */
+  .restart { display: block; text-align: center; margin-top: 22px; font-size: .9rem;
+             color: #5f636f; background: none; border: 0; cursor: pointer;
+             font-family: inherit; text-decoration: underline; width: 100%; }
+  .restart:hover { color: var(--ink); }
+
+  .hp { position: absolute; left: -9999px; }
+
+  @media (max-width: 560px) {
+    .scale button { font-size: 1rem; padding: 12px 0; }
+    .quad-wrap { padding: 0 16px 60px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scale button { transition: none; }
+    .scale button[aria-checked="true"] { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="mark" href="/">The 5 Spheres<span>.</span></a>
+    <div class="nav-links">
+      <a class="cta" href="/resources/pme-sensing-quad/">What the quad is</a>
+    </div>
+  </div>
+</nav>
+
+<div class="quad-wrap">
+
+  <!-- ── 1 · who ─────────────────────────────────────────────────────── -->
+  <section class="stage" id="s-start">
+    <div class="steps"><i class="done"></i><i></i><i></i><i></i></div>
+    <div class="eyebrow">The Sensing Drill</div>
+    <h1>The Sensing Quad</h1>
+    <p>You will score yourself on four things twice today &mdash; once now, before we start,
+      and once at the end. The gap between them is the point, and your lowest score at the
+      end is what you work on for the next ninety days.</p>
+    <p class="muted">Your email is here so I can send you your own results and the anonymised
+      group numbers afterwards. Nothing you score is shown to the room with your name on it.</p>
+
+    <div class="field">
+      <label class="f" for="q-name">Your first name</label>
+      <input type="text" id="q-name" autocomplete="given-name" placeholder="What we should call you">
+    </div>
+    <div class="field">
+      <label class="f" for="q-email">Your email</label>
+      <input type="email" id="q-email" autocomplete="email" placeholder="you@example.com">
+    </div>
+    <button class="btn wide" id="go-r1" disabled>Start &mdash; take my baseline</button>
+  </section>
+
+  <!-- ── 2 · round one ───────────────────────────────────────────────── -->
+  <section class="stage" id="s-r1" hidden>
+    <div class="steps"><i class="done"></i><i class="done"></i><i></i><i></i></div>
+    <div class="eyebrow">Round one &middot; before we start</div>
+    <h2>Where are you now?</h2>
+    <p>Think of the last few real conversations you had at work. Score honestly rather than
+      generously &mdash; a high score now just makes the second round meaningless.</p>
+    <div id="r1-dims"></div>
+    <button class="btn wide" id="go-hold" disabled>Lock in my baseline</button>
+  </section>
+
+  <!-- ── 3 · the exercise ────────────────────────────────────────────── -->
+  <section class="stage" id="s-hold" hidden>
+    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i></i></div>
+    <div class="eyebrow">Round one saved</div>
+    <h2>Leave this open.</h2>
+    <div class="hold">
+      <div class="big">Now go and do the drill.</div>
+      <p class="muted" style="margin:0 auto">Keep this tab open. Nothing has been sent yet
+        &mdash; your baseline is held here until the end.</p>
+    </div>
+    <div class="note-box">
+      <b>Zone 1, the scan.</b> One person speaks for six or seven minutes. The other only
+      senses &mdash; no advice, no fixing, no reassurance. Scan three layers as you go:
+      <b>physical</b> (heart rate, tension, energy), <b>mental</b> (clear or fogged, racing
+      or stuck), <b>emotional</b> (what is the weather in there, named plainly).
+      Then reflect something back: paraphrase, or offer a hunch as a question &mdash;
+      &ldquo;I&rsquo;m sensing&hellip; is that right?&rdquo; Then swap.
+    </div>
+    <button class="btn wide" id="go-r2">We&rsquo;re done &mdash; score round two</button>
+    <button class="restart" type="button" data-restart>Something wrong? Start over</button>
+  </section>
+
+  <!-- ── 4 · round two ───────────────────────────────────────────────── -->
+  <section class="stage" id="s-r2" hidden>
+    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i></i></div>
+    <div class="eyebrow">Round two &middot; after the drill</div>
+    <h2>And now?</h2>
+    <p>Same four questions, about the round you just did. Your baseline is hidden on purpose
+      &mdash; score what you actually noticed, not what would look like improvement.</p>
+    <div id="r2-dims"></div>
+    <button class="btn wide" id="go-result" disabled>See my result</button>
+    <button class="restart" type="button" data-restart>Something wrong? Start over</button>
+  </section>
+
+  <!-- ── 5 · result and the rest of the survey ───────────────────────── -->
+  <section class="stage" id="s-result" hidden>
+    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></div>
+    <div class="eyebrow">Your result</div>
+    <h2 id="result-head">Here is what moved.</h2>
+    <table class="delta-table" id="delta"></table>
+
+    <div class="focus-card">
+      <div class="eyebrow">Your ninety-day focus</div>
+      <h3 id="focus-name"></h3>
+      <p id="focus-advice"></p>
+    </div>
+    <p class="muted">If two came out equal lowest, take the one you least want to work on.</p>
+
+    <h2 style="margin-top:34px">Three last things</h2>
+    <div class="field">
+      <label class="f" for="q-intent">Name one specific thing you intend to do differently in
+        the next thirty days.</label>
+      <textarea id="q-intent" placeholder="Something small enough that you will actually do it."></textarea>
+    </div>
+    <div class="field">
+      <label class="f" for="q-nps">How likely are you to recommend this session to a friend or
+        colleague? <span class="muted">0 is not at all, 10 is definitely.</span></label>
+      <select id="q-nps">
+        <option value="">Choose&hellip;</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="f" for="q-describe">In a sentence or two, how would you describe this session
+        to someone who wasn&rsquo;t here?</label>
+      <textarea id="q-describe" placeholder="Optional, but this is the bit I quote."></textarea>
+    </div>
+    <div class="field">
+      <label class="f" for="q-consent">May I use that as a testimonial?</label>
+      <select id="q-consent">
+        <option>Anonymous is fine</option>
+        <option>Yes, first name only</option>
+        <option>Yes, name and organisation</option>
+        <option>No, please don&rsquo;t</option>
+      </select>
+    </div>
+
+    <div class="err" id="err" hidden></div>
+    <button class="btn wide" id="go-send">Send my results</button>
+    <p class="muted" style="text-align:center;margin-top:12px">Nothing is sent until you press this.</p>
+  </section>
+
+  <!-- ── 6 · done ────────────────────────────────────────────────────── -->
+  <section class="stage" id="s-done" hidden>
+    <div class="eyebrow">Thank you</div>
+    <h2>That&rsquo;s in.</h2>
+    <p>You&rsquo;ll get your own numbers and the anonymised group results by email. Your
+      ninety-day focus is <b id="done-focus"></b> &mdash; one thing, ninety days.</p>
+    <p class="muted">If you want the drill board, it&rsquo;s at
+      <a href="/skilldrills/">5spheresofempathy.com/skilldrills</a>.</p>
+    <a class="btn" href="/resources/pme-sensing-quad/">Keep the quad card</a>
+  </section>
+</div>
+
+<!-- The fallback. If the function is unreachable the page posts here instead, so a
+     backend problem during a live session costs nothing. Netlify detects this form
+     at build time; it is never shown to anyone. -->
+<form name="sensing-quad" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="sensing-quad">
+  <p class="hp"><label>Leave this empty <input name="bot-field"></label></p>
+  <input type="text" name="payload">
+</form>
+
+<script>
+/* ── The Sensing Quad ──
+   Everything is held in the page until the end, for two reasons. The before and
+   after have to be paired, and pairing two separate submissions means matching
+   email addresses by hand afterwards — so one person makes one submission that
+   carries both rounds. And nothing should reach a server while somebody is still
+   deciding whether to take part. */
+(function () {
+  'use strict';
+
+  /* The four dimensions, grouped by the role you were in when you noticed it.
+     Scored on their own, "how present was I" and "how well did I sense myself"
+     collapse into roughly the same question. Under the role they belong to, one
+     is your attention while watching and the other is knowing yourself while
+     speaking, and the difference is obvious. */
+  var ROLES = [
+    {
+      role: 'As the observer',
+      note: 'while they were talking',
+      dims: [
+        { key: 'sense_others', q: 'How well did I sense others?',
+          hint: 'When it was their turn to be read — how close did I get to what was actually true for them.',
+          low: 'Train curiosity. Ask one more question than feels comfortable, and make it about them rather than about your reply.' },
+        { key: 'present', q: 'How present was I?',
+          hint: 'As the observer: here and with them, or drifting and half-forming my reply while they spoke.',
+          low: 'Stop drifting and stay in it. When you notice you have started composing your answer, drop it and go back to listening.' }
+      ]
+    },
+    {
+      role: 'In the hot seat',
+      note: 'while you were talking',
+      dims: [
+        { key: 'sense_self', q: 'How well did I sense myself?',
+          hint: 'What was actually going on in me, and how well I put it into words out loud.',
+          low: 'Build the daily scan. Once a day, name where you are on all three layers — physical, mental, emotional — in one sentence each.' },
+        { key: 'sensed_by_others', q: 'How well did others sense me?',
+          hint: 'How close they got to what was actually true for me, when I was the one being read.',
+          low: 'Let people in and close the gap. If the reflection came back wrong, the useful question is what you left out, not what they missed.' }
+      ]
+    }
+  ];
+
+  var DIMS = ROLES.reduce(function (a, r) { return a.concat(r.dims); }, []);
+  var KEY = '5s-quad-v1';
+  var state = { name: '', email: '', r1: {}, r2: {}, started: null };
+
+  /* A refresh mid-session should not cost somebody their baseline. */
+  try {
+    var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (saved && saved.started) { state = saved; }
+  } catch (e) {}
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function show(id) {
+    ['s-start', 's-r1', 's-hold', 's-r2', 's-result', 's-done'].forEach(function (s) {
+      $(s).hidden = (s !== id);
+    });
+    window.scrollTo(0, 0);
+  }
+
+  /* ── the scales ──────────────────────────────────────────────────── */
+  function buildDims(container, round) {
+    container.innerHTML = '';
+    ROLES.forEach(function (r) {
+      var block = document.createElement('div');
+      block.className = 'role';
+      var head = document.createElement('div');
+      head.className = 'role-head';
+      head.innerHTML = '<b></b><span></span>';
+      head.querySelector('b').textContent = r.role;
+      head.querySelector('span').textContent = r.note;
+      block.appendChild(head);
+
+      r.dims.forEach(function (d) {
+        var el = document.createElement('div');
+        el.className = 'dim';
+        var q = document.createElement('div'); q.className = 'q'; q.textContent = d.q;
+        var h = document.createElement('div'); h.className = 'hint'; h.textContent = d.hint;
+        var scale = document.createElement('div');
+        scale.className = 'scale';
+        scale.setAttribute('role', 'radiogroup');
+        scale.setAttribute('aria-label', d.q + ' — 1 to 5');
+        for (var n = 1; n <= 5; n++) {
+          (function (n) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = n;
+            b.setAttribute('role', 'radio');
+            b.setAttribute('aria-checked', 'false');
+            b.setAttribute('aria-label', String(n));
+            b.addEventListener('click', function () {
+              state[round][d.key] = n;
+              save();
+              [].slice.call(scale.children).forEach(function (other) {
+                other.setAttribute('aria-checked', String(other === b));
+              });
+              gate(round);
+            });
+            scale.appendChild(b);
+          })(n);
+        }
+        var ends = document.createElement('div');
+        ends.className = 'scale-ends';
+        ends.innerHTML = '<span>1 &mdash; barely at all</span><span>5 &mdash; almost always</span>';
+        el.appendChild(q); el.appendChild(h); el.appendChild(scale); el.appendChild(ends);
+        block.appendChild(el);
+
+        /* restore a previous answer after a refresh */
+        var prev = state[round][d.key];
+        if (prev) { scale.children[prev - 1].setAttribute('aria-checked', 'true'); }
+      });
+      container.appendChild(block);
+    });
+  }
+
+  function complete(round) {
+    return DIMS.every(function (d) { return state[round][d.key]; });
+  }
+  function gate(round) {
+    var btn = round === 'r1' ? $('go-hold') : $('go-result');
+    btn.disabled = !complete(round);
+  }
+
+  /* ── start ───────────────────────────────────────────────────────── */
+  function checkWho() {
+    var ok = $('q-name').value.trim() && /\S+@\S+\.\S+/.test($('q-email').value.trim());
+    $('go-r1').disabled = !ok;
+  }
+  $('q-name').addEventListener('input', checkWho);
+  $('q-email').addEventListener('input', checkWho);
+  $('q-name').value = state.name || '';
+  $('q-email').value = state.email || '';
+  checkWho();
+
+  $('go-r1').addEventListener('click', function () {
+    state.name = $('q-name').value.trim();
+    state.email = $('q-email').value.trim();
+    state.started = state.started || new Date().toISOString();
+    save();
+    buildDims($('r1-dims'), 'r1');
+    gate('r1');
+    show('s-r1');
+  });
+
+  $('go-hold').addEventListener('click', function () { save(); show('s-hold'); });
+  $('go-r2').addEventListener('click', function () {
+    buildDims($('r2-dims'), 'r2');
+    gate('r2');
+    show('s-r2');
+  });
+
+  /* ── the result ──────────────────────────────────────────────────── */
+  var nps = $('q-nps');
+  for (var i = 0; i <= 10; i++) {
+    var o = document.createElement('option');
+    o.value = String(i); o.textContent = String(i);
+    nps.appendChild(o);
+  }
+
+  function lowest() {
+    /* Lowest after the drill. Ties break towards the dimension that improved
+       least, because that is the one still standing still. */
+    var best = null;
+    DIMS.forEach(function (d) {
+      var after = state.r2[d.key];
+      var delta = after - state.r1[d.key];
+      if (!best || after < best.after || (after === best.after && delta < best.delta)) {
+        best = { dim: d, after: after, delta: delta };
+      }
+    });
+    return best;
+  }
+
+  $('go-result').addEventListener('click', function () {
+    var t = $('delta');
+    t.innerHTML = '<tr><th>Dimension</th><th style="text-align:center">Before</th>'
+                + '<th style="text-align:center">After</th><th style="text-align:center">Change</th></tr>';
+    var low = lowest();
+    DIMS.forEach(function (d) {
+      var a = state.r1[d.key], b = state.r2[d.key], dl = b - a;
+      var cls = dl > 0 ? 'up' : (dl < 0 ? 'down' : 'same');
+      var sign = dl > 0 ? '+' + dl : (dl < 0 ? String(dl) : '—');
+      var tr = document.createElement('tr');
+      if (d.key === low.dim.key) { tr.className = 'lowest'; }
+      var td = document.createElement('td'); td.textContent = d.q;
+      var t1 = document.createElement('td'); t1.className = 'n'; t1.textContent = a;
+      var t2 = document.createElement('td'); t2.className = 'n'; t2.textContent = b;
+      var t3 = document.createElement('td'); t3.className = 'd ' + cls; t3.textContent = sign;
+      tr.appendChild(td); tr.appendChild(t1); tr.appendChild(t2); tr.appendChild(t3);
+      t.appendChild(tr);
+    });
+    $('focus-name').textContent = low.dim.q;
+    $('focus-advice').textContent = low.dim.low;
+    $('done-focus').textContent = low.dim.q.replace(/\?$/, '');
+    show('s-result');
+  });
+
+  /* ── sending ─────────────────────────────────────────────────────── */
+  function payload() {
+    var low = lowest();
+    return {
+      version: 1,
+      session: 'sensing-drill-2026-09-17',
+      name: state.name,
+      email: state.email,
+      startedAt: state.started,
+      submittedAt: new Date().toISOString(),
+      before: state.r1,
+      after: state.r2,
+      focus: low.dim.key,
+      intention: $('q-intent').value.trim(),
+      nps: $('q-nps').value === '' ? null : Number($('q-nps').value),
+      describe: $('q-describe').value.trim(),
+      testimonial: $('q-consent').value
+    };
+  }
+
+  function encode(data) {
+    return Object.keys(data).map(function (k) {
+      return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]);
+    }).join('&');
+  }
+
+  $('go-send').addEventListener('click', function () {
+    var btn = this;
+    var body = payload();
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    $('err').hidden = true;
+
+    /* The function first. If it is unreachable — and adding a backend to a site
+       that never had one three days before a live session is exactly when that
+       happens — fall back to the Netlify form, which has been working for
+       months. Either way the data lands. */
+    fetch('/.netlify/functions/quad', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+      .then(ok)
+      .then(done)
+      .catch(function () {
+        return fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: encode({ 'form-name': 'sensing-quad', payload: JSON.stringify(body) })
+        })
+          /* The fallback needs the same status check as the primary. fetch only
+             rejects on a network failure, never on an HTTP error, so without
+             this a 500 from the form endpoint resolved happily and the page
+             told the participant their scores were saved when they were not. */
+          .then(ok)
+          .then(done);
+      })
+      .catch(function (e) {
+        btn.disabled = false;
+        btn.textContent = 'Try sending again';
+        var err = $('err');
+        err.hidden = false;
+        err.innerHTML = '<b>That did not send.</b> Press the button again. '
+          + 'If it still will not go, screenshot this page and send it to G — '
+          + 'your scores are on screen and nothing is lost.';
+      });
+  });
+
+  /* A response is only a success if the server said so. */
+  function ok(r) {
+    if (!r.ok) { throw new Error('status ' + r.status); }
+    return r;
+  }
+
+  function done() {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    show('s-done');
+  }
+
+  /* The way out. Confirmed, because it throws away a baseline that cannot be
+     taken again once the drill has been done. */
+  [].slice.call(document.querySelectorAll('[data-restart]')).forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (!window.confirm('This clears your scores and starts again. Are you sure?')) { return; }
+      try { localStorage.removeItem(KEY); } catch (e) {}
+      state = { name: '', email: '', r1: {}, r2: {}, started: null };
+      $('q-name').value = '';
+      $('q-email').value = '';
+      checkWho();
+      show('s-start');
+    });
+  });
+
+  /* Recover the right stage after a refresh. */
+  if (state.started && complete('r1') && !complete('r2')) {
+    buildDims($('r2-dims'), 'r2');
+    gate('r2');
+    show('s-hold');
+  } else if (state.started && complete('r1')) {
+    show('s-hold');
+  }
+})();
+</script>
+</body>
+</html>
