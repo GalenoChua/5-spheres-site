@@ -2,3 +2,9 @@
 /resources       /resources/  301
 /resources/what-a-real-disagreement-looks-like   /field-notes/what-a-real-disagreement-looks-like/  301
 /resources/what-a-real-disagreement-looks-like/  /field-notes/what-a-real-disagreement-looks-like/  301
+
+# The cohort application lived at /apply.html and Netlify also served it at
+# /apply, so the page existed on two URLs with the canonical pointing at one
+# and Google having indexed the other. It is a directory now, like every other
+# page on the site, and the old path sends people to it.
+/apply.html      /apply/   301

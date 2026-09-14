@@ -13,6 +13,51 @@
 <link rel="canonical" href="https://5spheresofempathy.com/events/">
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="/styles.css">
+
+<!-- The index shows one session, so it describes one session. The @id is the
+     drill's own page, which is where the full record lives: this reinforces
+     that entity rather than creating a second copy of the same event. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Events",
+  "description": "Live sessions on the 5 Spheres of Empathy method. Short, practical, and built around work you actually do.",
+  "url": "https://5spheresofempathy.com/events/",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "The 5 Spheres of Empathy",
+    "url": "https://5spheresofempathy.com"
+  },
+  "about": {
+    "@type": "Event",
+    "@id": "https://5spheresofempathy.com/events/the-sensing-drill/",
+    "name": "The Sensing Drill",
+    "startDate": "2026-09-17T09:00:00+02:00",
+    "endDate": "2026-09-17T10:30:00+02:00",
+    "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+    "eventStatus": "https://schema.org/EventScheduled",
+    "location": {
+      "@type": "VirtualLocation",
+      "url": "https://5spheresofempathy.com/events/the-sensing-drill/"
+    },
+    "organizer": {
+      "@type": "Organization",
+      "name": "The 5 Spheres of Empathy",
+      "url": "https://5spheresofempathy.com"
+    },
+    "performer": { "@type": "Person", "name": "Galeno Chua" },
+    "isAccessibleForFree": true,
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/InStock",
+      "url": "https://5spheresofempathy.com/events/the-sensing-drill/"
+    }
+  }
+}
+</script>
 </head>
 <body class="resource-page">
 
