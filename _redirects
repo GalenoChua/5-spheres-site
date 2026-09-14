@@ -2,3 +2,11 @@
 /resources       /resources/  301
 /resources/what-a-real-disagreement-looks-like   /field-notes/what-a-real-disagreement-looks-like/  301
 /resources/what-a-real-disagreement-looks-like/  /field-notes/what-a-real-disagreement-looks-like/  301
+
+# This site publishes from the repository root. Adding functions added a
+# dependency tree, and npm install puts it in that same root at build time, so
+# it would otherwise be served. Nothing under here is ever a page.
+# Verify on a deploy preview that /node_modules/ returns 404 before merging.
+/node_modules/*   /   404
+/package.json     /   404
+/package-lock.json /  404

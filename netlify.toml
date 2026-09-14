@@ -1,0 +1,11 @@
+# The site had no build step and no config before this. Everything here is
+# deliberately conservative: the publish directory is still the repo root and
+# there is still no build command, so how the site is published does not
+# change. The only new thing is a functions directory.
+[build]
+  publish = "."
+  command = ""
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"

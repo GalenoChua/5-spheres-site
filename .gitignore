@@ -60,3 +60,7 @@ nul
 # Blank certificate templates. These are fillable and must never be published at
 # usable resolution; only the small previews in /bsfp-accelerator/ go live.
 /bsfp-accelerator/Certificates/
+
+# The site gained a functions directory, so it gained a dependency tree.
+# Netlify installs it at build time from package-lock.json.
+node_modules/
