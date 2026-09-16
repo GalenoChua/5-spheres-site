@@ -12,7 +12,7 @@
  */
 import { getStore } from '@netlify/blobs';
 
-const MAX_BYTES = 8 * 1024;
+const MAX_BYTES = 16 * 1024;
 const SCALE = [1, 2, 3, 4, 5];
 const QUAD = ['sense_others', 'present', 'sense_self', 'sensed_by_others'];
 const STATE = ['physical', 'mental', 'emotional'];
@@ -92,6 +92,12 @@ export default async (request) => {
     quad,
     state,
     focus: QUAD.includes(body.focus) ? body.focus : null,
+    // Written during the session, while it is still in their head, rather than
+    // at the end after the numbers have reframed it.
+    notes: {
+      a: clip(body.notes?.a, 2000),
+      b: clip(body.notes?.b, 2000)
+    },
     intention: clip(body.intention, 1200),
     nps,
     describe: clip(body.describe, 1200),
