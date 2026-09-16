@@ -4,25 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Sensing Quad | The 5 Spheres of Empathy</title>
-<meta name="description" content="Score yourself on the four sensing dimensions, before and after the drill. Your lowest score is your ninety-day focus.">
+<meta name="description" content="Score the drill twice, and see what moved.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://5spheresofempathy.com/quad/">
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="/styles.css">
 <style>
   /* ── The Sensing Quad, live ────────────────────────────────
-     One page, held open for the whole session. It takes the
-     baseline, waits through the exercise, takes the second
-     round, and submits both together — which is the only
-     reason the before and after can be paired without asking
-     anyone to match up email addresses afterwards.
+     One page, open for the whole session.
 
-     Everything is kept in the page until the very end. If the
-     network drops mid-session nothing is lost; the scores are
-     also mirrored to localStorage so a refresh recovers them.
+     Both scores are now attached to a round that actually
+     happened. An earlier draft took the baseline against "the
+     last few conversations you had at work", which is a
+     remembered self-assessment being compared to an observed
+     one — two different instruments, and the difference between
+     them would have shown up as improvement.
 
-     noindex because it is a session tool, not a page anyone
-     should find in search. ── */
+     The state check is the Zone 1 scan: physical, mental,
+     emotional. It is taken at the start and at the end, so it
+     spans the session rather than a single round, and it is
+     reported separately because how you feel and how well you
+     read people are different claims.
+
+     noindex: a session tool, not a page to be found in search. ── */
 
   .quad-wrap { max-width: 720px; margin: 0 auto; padding: 0 22px 80px; }
   .stage { padding: 34px 0 0; }
@@ -32,28 +36,28 @@
              text-transform: uppercase; color: #9e5615; margin-bottom: 10px; }
   .quad-wrap h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); max-width: 20ch; margin-bottom: 12px; }
   .quad-wrap h2 { font-size: 1.35rem; max-width: none; margin-bottom: 10px; }
+  .quad-wrap h3 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink);
+                  font-size: 1.1rem; margin: 30px 0 2px; }
   .quad-wrap p { max-width: 60ch; margin-bottom: 14px; }
   .muted { color: #5f636f; font-size: .95rem; }
 
-  /* progress */
   .steps { display: flex; gap: 6px; margin: 24px 0 8px; }
   .steps i { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
   .steps i.done { background: var(--ember); }
 
   /* ── the four dimensions ──
-     Grouped by which role you were in. Rated on their own, "how present was
-     I" and "how well did I sense myself" read as the same question asked
-     twice; under the role they belong to, one is plainly about your
-     attention while watching and the other about knowing yourself while
-     speaking. ── */
-  .role { margin: 26px 0 0; }
+     Grouped by the role you were in. Scored on their own, "how present was I"
+     and "how well did I sense myself" collapse into roughly the same question;
+     under the role they belong to, one is your attention while watching and
+     the other is knowing yourself while speaking. ── */
+  .role { margin: 22px 0 0; }
   .role-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
                border-bottom: 1.5px solid var(--line); padding-bottom: 7px; margin-bottom: 4px; }
   .role-head b { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink);
                  font-size: 1.05rem; }
   .role-head span { font-size: .88rem; color: #5f636f; }
 
-  .dim { padding: 18px 0 16px; border-bottom: 1px solid var(--line); }
+  .dim { padding: 16px 0 14px; border-bottom: 1px solid var(--line); }
   .dim .q { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink);
             font-size: 1.05rem; line-height: 1.25; margin-bottom: 3px; }
   .dim .hint { font-size: .92rem; color: #5f636f; margin-bottom: 12px; }
@@ -72,7 +76,6 @@
   .scale-ends { display: flex; justify-content: space-between; font-size: .78rem;
                 color: #5f636f; margin-top: 7px; }
 
-  /* fields */
   label.f { display: block; font-size: .9rem; font-weight: 600; color: var(--ink);
             margin: 0 0 6px; }
   input[type=text], input[type=email], textarea, select {
@@ -83,25 +86,30 @@
   input:focus, textarea:focus, select:focus { outline: 2px solid var(--ember); border-color: transparent; }
   .field { margin-bottom: 16px; }
 
+  .check { display: flex; gap: 11px; align-items: flex-start; padding: 14px 16px;
+           background: var(--paper-warm); border-radius: 10px; margin-bottom: 16px; }
+  .check input { width: 20px; height: 20px; margin-top: 1px; flex: 0 0 auto; accent-color: #1d2a52; }
+  .check label { font-size: .96rem; color: var(--text); }
+
   .btn.wide { width: 100%; text-align: center; margin-top: 22px; }
   .btn[disabled] { opacity: .45; cursor: not-allowed; }
   .btn[disabled]:hover { background: var(--ink); transform: none; }
+  .btn.quiet { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+  .btn.quiet:hover { background: var(--ink); color: var(--paper); }
 
-  /* the hold screen between rounds */
   .hold { background: var(--paper-warm); border: 2px solid var(--ink); border-radius: 16px;
           padding: 28px; text-align: center; margin-top: 20px; }
   .hold .big { font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--ink);
                margin-bottom: 8px; }
 
-  /* the result */
-  .delta-table { width: 100%; border-collapse: collapse; margin: 18px 0 6px; font-size: .96rem; }
+  .delta-table { width: 100%; border-collapse: collapse; margin: 14px 0 6px; font-size: .96rem; }
   .delta-table th { text-align: left; font-size: .74rem; letter-spacing: .1em;
                     text-transform: uppercase; color: #5f636f; font-weight: 700;
                     padding-bottom: 8px; border-bottom: 1.5px solid var(--line); }
   .delta-table td { padding: 11px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
-  .delta-table td.n { text-align: center; width: 62px; font-family: 'Fraunces', serif;
+  .delta-table td.n { text-align: center; width: 58px; font-family: 'Fraunces', serif;
                       font-weight: 700; color: var(--ink); }
-  .delta-table td.d { text-align: center; width: 62px; font-weight: 600; }
+  .delta-table td.d { text-align: center; width: 58px; font-weight: 600; }
   .up { color: #3d6830; } .same { color: #5f636f; } .down { color: #8c4f13; }
   tr.lowest td { background: var(--paper-warm); }
 
@@ -109,7 +117,7 @@
                 padding: 26px 28px; margin: 24px 0 6px; }
   .focus-card .eyebrow { color: var(--ember-soft); }
   .focus-card h3 { font-family: 'Fraunces', serif; color: var(--paper);
-                   font-size: 1.3rem; margin-bottom: 8px; }
+                   font-size: 1.3rem; margin: 0 0 8px; }
   .focus-card p { color: rgba(250,246,239,.88); margin-bottom: 0; }
 
   .note-box { background: var(--paper-warm); border-left: 3px solid var(--ember);
@@ -120,9 +128,8 @@
          border-radius: 0 10px 10px 0; padding: 14px 18px; font-size: .95rem; margin: 16px 0; }
   .err[hidden] { display: none; }
 
-  /* The way back. Locking a baseline used to be one-way, so a mistyped email
-     or a misread question left somebody stuck on the hold screen for the rest
-     of the session with no way out. Quiet, but always reachable. */
+  /* The way back. Locking a round used to be one-way, so a mistyped email left
+     somebody stuck for the rest of the session. */
   .restart { display: block; text-align: center; margin-top: 22px; font-size: .9rem;
              color: #5f636f; background: none; border: 0; cursor: pointer;
              font-family: inherit; text-decoration: underline; width: 100%; }
@@ -153,16 +160,15 @@
 
 <div class="quad-wrap">
 
-  <!-- ── 1 · who ─────────────────────────────────────────────────────── -->
+  <!-- ── 1 · who, and how you arrived ────────────────────────────────── -->
   <section class="stage" id="s-start">
-    <div class="steps"><i class="done"></i><i></i><i></i><i></i></div>
+    <div class="steps"><i class="done"></i><i></i><i></i><i></i><i></i></div>
     <div class="eyebrow">The Sensing Drill</div>
     <h1>The Sensing Quad</h1>
-    <p>You will score yourself on four things twice today &mdash; once now, before we start,
-      and once at the end. The gap between them is the point, and your lowest score at the
-      end is what you work on for the next ninety days.</p>
-    <p class="muted">Your email is here so I can send you your own results and the anonymised
-      group numbers afterwards. Nothing you score is shown to the room with your name on it.</p>
+    <p>You&rsquo;ll score two rounds today, one after each. I&rsquo;ll send you both sets
+      afterwards, with what the group did.</p>
+    <p class="muted">Your name and email are so I can send you that. Nothing you put in here
+      goes back to the room with your name on it.</p>
 
     <div class="field">
       <label class="f" for="q-name">Your first name</label>
@@ -172,88 +178,105 @@
       <label class="f" for="q-email">Your email</label>
       <input type="email" id="q-email" autocomplete="email" placeholder="you@example.com">
     </div>
-    <button class="btn wide" id="go-r1" disabled>Start &mdash; take my baseline</button>
+
+    <h3>Before we start, where are you?</h3>
+    <p class="muted">Not how you usually are. This morning, right now, before anything has
+      happened.</p>
+    <div id="state-start"></div>
+
+    <button class="btn wide" id="go-a" disabled>Done &mdash; on to the first round</button>
   </section>
 
-  <!-- ── 2 · round one ───────────────────────────────────────────────── -->
-  <section class="stage" id="s-r1" hidden>
-    <div class="steps"><i class="done"></i><i class="done"></i><i></i><i></i></div>
-    <div class="eyebrow">Round one &middot; before we start</div>
-    <h2>Where are you now?</h2>
-    <p>Think of the last few real conversations you had at work. Score honestly rather than
-      generously &mdash; a high score now just makes the second round meaningless.</p>
-    <div id="r1-dims"></div>
-    <button class="btn wide" id="go-hold" disabled>Lock in my baseline</button>
+  <!-- ── 2 · round A ─────────────────────────────────────────────────── -->
+  <section class="stage" id="s-a" hidden>
+    <div class="steps"><i class="done"></i><i class="done"></i><i></i><i></i><i></i></div>
+    <div class="eyebrow">First round</div>
+    <h2>How did that one go?</h2>
+    <p>Four questions about the round you just did. Answer them honestly. If you mark
+      yourself up because it feels rude not to, the second round won&rsquo;t tell either of
+      us anything.</p>
+    <div id="a-dims"></div>
+    <button class="btn wide" id="go-hold" disabled>That&rsquo;s my first round</button>
+    <button class="restart" type="button" data-restart>Something wrong? Start over</button>
   </section>
 
-  <!-- ── 3 · the exercise ────────────────────────────────────────────── -->
+  <!-- ── 3 · the teaching ────────────────────────────────────────────── -->
   <section class="stage" id="s-hold" hidden>
-    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i></i></div>
-    <div class="eyebrow">Round one saved</div>
-    <h2>Leave this open.</h2>
+    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i></i><i></i></div>
+    <div class="eyebrow">Saved</div>
+    <h2>Leave this tab open.</h2>
     <div class="hold">
-      <div class="big">Now go and do the drill.</div>
-      <p class="muted" style="margin:0 auto">Keep this tab open. Nothing has been sent yet
-        &mdash; your baseline is held here until the end.</p>
+      <div class="big">Back to G.</div>
+      <p class="muted" style="margin:0 auto">We&rsquo;ll come back here after the next round.
+        Nothing has been sent yet.</p>
     </div>
     <div class="note-box">
-      <b>Zone 1, the scan.</b> One person speaks for six or seven minutes. The other only
-      senses &mdash; no advice, no fixing, no reassurance. Scan three layers as you go:
+      <b>When you go again.</b> One person speaks for seven minutes. The other only senses
+      &mdash; no advice, no fixing, no reassurance. Scan three layers while they talk:
       <b>physical</b> (heart rate, tension, energy), <b>mental</b> (clear or fogged, racing
-      or stuck), <b>emotional</b> (what is the weather in there, named plainly).
-      Then reflect something back: paraphrase, or offer a hunch as a question &mdash;
-      &ldquo;I&rsquo;m sensing&hellip; is that right?&rdquo; Then swap.
+      or stuck), <b>emotional</b> (what the weather is in there, named plainly). Then reflect
+      something back. Paraphrase it, or offer a hunch as a question &mdash; &ldquo;I&rsquo;m
+      sensing&hellip; is that right?&rdquo; Then swap.
     </div>
-    <button class="btn wide" id="go-r2">We&rsquo;re done &mdash; score round two</button>
+    <button class="btn wide" id="go-b">We&rsquo;ve done the second round</button>
     <button class="restart" type="button" data-restart>Something wrong? Start over</button>
   </section>
 
-  <!-- ── 4 · round two ───────────────────────────────────────────────── -->
-  <section class="stage" id="s-r2" hidden>
-    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i></i></div>
-    <div class="eyebrow">Round two &middot; after the drill</div>
-    <h2>And now?</h2>
-    <p>Same four questions, about the round you just did. Your baseline is hidden on purpose
+  <!-- ── 4 · round B, and where you ended up ─────────────────────────── -->
+  <section class="stage" id="s-b" hidden>
+    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i></i></div>
+    <div class="eyebrow">Second round</div>
+    <h2>Same four questions.</h2>
+    <p>About the round you just did, not the first one. Your baseline is hidden on purpose
       &mdash; score what you actually noticed, not what would look like improvement.</p>
-    <div id="r2-dims"></div>
-    <button class="btn wide" id="go-result" disabled>See my result</button>
+    <div id="b-dims"></div>
+
+    <h3>And where are you now?</h3>
+    <p class="muted">Same three as at the start.</p>
+    <div id="state-end"></div>
+
+    <button class="btn wide" id="go-result" disabled>See my numbers</button>
     <button class="restart" type="button" data-restart>Something wrong? Start over</button>
   </section>
 
-  <!-- ── 5 · result and the rest of the survey ───────────────────────── -->
+  <!-- ── 5 · result ──────────────────────────────────────────────────── -->
   <section class="stage" id="s-result" hidden>
-    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></div>
-    <div class="eyebrow">Your result</div>
-    <h2 id="result-head">Here is what moved.</h2>
+    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></div>
+    <div class="eyebrow">Your numbers</div>
+    <h2>Both rounds, side by side.</h2>
     <table class="delta-table" id="delta"></table>
 
+    <h3>How you felt</h3>
+    <p class="muted">Start of the session against the end of it.</p>
+    <table class="delta-table" id="state-delta"></table>
+
     <div class="focus-card">
-      <div class="eyebrow">Your ninety-day focus</div>
+      <div class="eyebrow">What to work on</div>
       <h3 id="focus-name"></h3>
       <p id="focus-advice"></p>
     </div>
     <p class="muted">If two came out equal lowest, take the one you least want to work on.</p>
 
-    <h2 style="margin-top:34px">Three last things</h2>
+    <button class="btn quiet wide" id="go-copy" type="button">Copy my numbers</button>
+
+    <h2 style="margin-top:36px">Last few things.</h2>
     <div class="field">
-      <label class="f" for="q-intent">Name one specific thing you intend to do differently in
-        the next thirty days.</label>
-      <textarea id="q-intent" placeholder="Something small enough that you will actually do it."></textarea>
+      <label class="f" for="q-intent">One thing you&rsquo;ll do differently in the next thirty
+        days.</label>
+      <textarea id="q-intent" placeholder="Small enough that you'll actually do it."></textarea>
     </div>
     <div class="field">
-      <label class="f" for="q-nps">How likely are you to recommend this session to a friend or
+      <label class="f" for="q-nps">How likely are you to recommend this to a friend or
         colleague? <span class="muted">0 is not at all, 10 is definitely.</span></label>
-      <select id="q-nps">
-        <option value="">Choose&hellip;</option>
-      </select>
+      <select id="q-nps"><option value="">Choose&hellip;</option></select>
     </div>
     <div class="field">
-      <label class="f" for="q-describe">In a sentence or two, how would you describe this session
-        to someone who wasn&rsquo;t here?</label>
-      <textarea id="q-describe" placeholder="Optional, but this is the bit I quote."></textarea>
+      <label class="f" for="q-describe">How would you describe this session to someone who
+        wasn&rsquo;t here?</label>
+      <textarea id="q-describe" placeholder="A sentence or two. This is the bit I quote."></textarea>
     </div>
     <div class="field">
-      <label class="f" for="q-consent">May I use that as a testimonial?</label>
+      <label class="f" for="q-consent">Can I use that as a testimonial?</label>
       <select id="q-consent">
         <option>Anonymous is fine</option>
         <option>Yes, first name only</option>
@@ -261,27 +284,32 @@
         <option>No, please don&rsquo;t</option>
       </select>
     </div>
+    <div class="check">
+      <input type="checkbox" id="q-emailme" checked>
+      <label for="q-emailme">Email me my own numbers as well as the group&rsquo;s.</label>
+    </div>
 
     <div class="err" id="err" hidden></div>
-    <button class="btn wide" id="go-send">Send my results</button>
-    <p class="muted" style="text-align:center;margin-top:12px">Nothing is sent until you press this.</p>
+    <button class="btn wide" id="go-send">Send</button>
+    <p class="muted" style="text-align:center;margin-top:12px">Nothing goes anywhere until you
+      press this.</p>
   </section>
 
   <!-- ── 6 · done ────────────────────────────────────────────────────── -->
   <section class="stage" id="s-done" hidden>
     <div class="eyebrow">Thank you</div>
-    <h2>That&rsquo;s in.</h2>
-    <p>You&rsquo;ll get your own numbers and the anonymised group results by email. Your
-      ninety-day focus is <b id="done-focus"></b> &mdash; one thing, ninety days.</p>
-    <p class="muted">If you want the drill board, it&rsquo;s at
-      <a href="/skilldrills/">5spheresofempathy.com/skilldrills</a>.</p>
+    <h2>Got it.</h2>
+    <p>I&rsquo;ll send your scores and the group&rsquo;s numbers this week. The thing to work
+      on is <b id="done-focus"></b>.</p>
+    <p class="muted">The drill board is at <a href="/skilldrills/">5spheresofempathy.com/skilldrills</a>
+      if you want the next one.</p>
     <a class="btn" href="/resources/pme-sensing-quad/">Keep the quad card</a>
   </section>
 </div>
 
 <!-- The fallback. If the function is unreachable the page posts here instead, so a
      backend problem during a live session costs nothing. Netlify detects this form
-     at build time; it is never shown to anyone. -->
+     at build time; nobody is ever shown it. -->
 <form name="sensing-quad" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
   <input type="hidden" name="form-name" value="sensing-quad">
   <p class="hp"><label>Leave this empty <input name="bot-field"></label></p>
@@ -290,70 +318,110 @@
 
 <script>
 /* ── The Sensing Quad ──
-   Everything is held in the page until the end, for two reasons. The before and
-   after have to be paired, and pairing two separate submissions means matching
-   email addresses by hand afterwards — so one person makes one submission that
-   carries both rounds. And nothing should reach a server while somebody is still
-   deciding whether to take part. */
+   Everything is held in the page until the end. Both rounds have to be paired
+   per person, and pairing two submissions means matching email addresses by
+   hand afterwards, so one person makes one submission carrying the lot. */
 (function () {
   'use strict';
 
-  /* The four dimensions, grouped by the role you were in when you noticed it.
-     Scored on their own, "how present was I" and "how well did I sense myself"
-     collapse into roughly the same question. Under the role they belong to, one
-     is your attention while watching and the other is knowing yourself while
-     speaking, and the difference is obvious. */
   var ROLES = [
     {
-      role: 'As the observer',
-      note: 'while they were talking',
+      role: 'As the observer', note: 'while they were talking',
       dims: [
         { key: 'sense_others', q: 'How well did I sense others?',
-          hint: 'When it was their turn to be read — how close did I get to what was actually true for them.',
+          hint: 'How close I got to what was actually true for them.',
           low: 'Train curiosity. Ask one more question than feels comfortable, and make it about them rather than about your reply.' },
         { key: 'present', q: 'How present was I?',
-          hint: 'As the observer: here and with them, or drifting and half-forming my reply while they spoke.',
+          hint: 'Here with them, or drifting and half-forming my reply while they spoke.',
           low: 'Stop drifting and stay in it. When you notice you have started composing your answer, drop it and go back to listening.' }
       ]
     },
     {
-      role: 'In the hot seat',
-      note: 'while you were talking',
+      role: 'In the hot seat', note: 'while you were talking',
       dims: [
         { key: 'sense_self', q: 'How well did I sense myself?',
-          hint: 'What was actually going on in me, and how well I put it into words out loud.',
+          hint: 'What was going on in me, and how well I put it into words out loud.',
           low: 'Build the daily scan. Once a day, name where you are on all three layers — physical, mental, emotional — in one sentence each.' },
         { key: 'sensed_by_others', q: 'How well did others sense me?',
-          hint: 'How close they got to what was actually true for me, when I was the one being read.',
+          hint: 'How close they got to what was true for me, when I was the one being read.',
           low: 'Let people in and close the gap. If the reflection came back wrong, the useful question is what you left out, not what they missed.' }
       ]
     }
   ];
 
-  var DIMS = ROLES.reduce(function (a, r) { return a.concat(r.dims); }, []);
-  var KEY = '5s-quad-v1';
-  var state = { name: '', email: '', r1: {}, r2: {}, started: null };
+  /* The Zone 1 scan, as a measurement. Same three layers people are asked to
+     notice in the exercise, which keeps the instrument and the teaching the
+     same thing. */
+  var STATE = [
+    { key: 'physical', q: 'Physical', hint: 'How settled is your body?',
+      lo: 'wired or heavy', hi: 'settled' },
+    { key: 'mental', q: 'Mental', hint: 'How clear is your head?',
+      lo: 'fogged or racing', hi: 'clear' },
+    { key: 'emotional', q: 'Emotional', hint: 'How steady do you feel?',
+      lo: 'turbulent', hi: 'steady' }
+  ];
 
-  /* A refresh mid-session should not cost somebody their baseline. */
+  var DIMS = ROLES.reduce(function (a, r) { return a.concat(r.dims); }, []);
+  var KEY = '5s-quad-v2';
+  var blank = function () {
+    return { name: '', email: '', a: {}, b: {}, s1: {}, s2: {}, started: null };
+  };
+  var state = blank();
+
   try {
     var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
     if (saved && saved.started) { state = saved; }
   } catch (e) {}
-  function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
-  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
   var $ = function (id) { return document.getElementById(id); };
-
+  var STAGES = ['s-start', 's-a', 's-hold', 's-b', 's-result', 's-done'];
   function show(id) {
-    ['s-start', 's-r1', 's-hold', 's-r2', 's-result', 's-done'].forEach(function (s) {
-      $(s).hidden = (s !== id);
-    });
+    STAGES.forEach(function (s) { $(s).hidden = (s !== id); });
     window.scrollTo(0, 0);
   }
 
-  /* ── the scales ──────────────────────────────────────────────────── */
-  function buildDims(container, round) {
+  /* ── scales ──────────────────────────────────────────────────────── */
+  function scaleFor(round, d, lo, hi) {
+    var wrap = document.createElement('div');
+    wrap.className = 'dim';
+    var q = document.createElement('div'); q.className = 'q'; q.textContent = d.q;
+    var h = document.createElement('div'); h.className = 'hint'; h.textContent = d.hint;
+    var scale = document.createElement('div');
+    scale.className = 'scale';
+    scale.setAttribute('role', 'radiogroup');
+    scale.setAttribute('aria-label', d.q + ' — 1 to 5');
+    for (var n = 1; n <= 5; n++) {
+      (function (n) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = n;
+        b.setAttribute('role', 'radio');
+        b.setAttribute('aria-checked', 'false');
+        b.setAttribute('aria-label', String(n));
+        b.addEventListener('click', function () {
+          state[round][d.key] = n;
+          save();
+          [].slice.call(scale.children).forEach(function (o) {
+            o.setAttribute('aria-checked', String(o === b));
+          });
+          gateAll();
+        });
+        scale.appendChild(b);
+      })(n);
+    }
+    var ends = document.createElement('div');
+    ends.className = 'scale-ends';
+    ends.innerHTML = '<span></span><span></span>';
+    ends.children[0].textContent = '1 — ' + lo;
+    ends.children[1].textContent = '5 — ' + hi;
+    wrap.appendChild(q); wrap.appendChild(h); wrap.appendChild(scale); wrap.appendChild(ends);
+    var prev = state[round][d.key];
+    if (prev) { scale.children[prev - 1].setAttribute('aria-checked', 'true'); }
+    return wrap;
+  }
+
+  function buildQuad(container, round) {
     container.innerHTML = '';
     ROLES.forEach(function (r) {
       var block = document.createElement('div');
@@ -364,86 +432,55 @@
       head.querySelector('b').textContent = r.role;
       head.querySelector('span').textContent = r.note;
       block.appendChild(head);
-
       r.dims.forEach(function (d) {
-        var el = document.createElement('div');
-        el.className = 'dim';
-        var q = document.createElement('div'); q.className = 'q'; q.textContent = d.q;
-        var h = document.createElement('div'); h.className = 'hint'; h.textContent = d.hint;
-        var scale = document.createElement('div');
-        scale.className = 'scale';
-        scale.setAttribute('role', 'radiogroup');
-        scale.setAttribute('aria-label', d.q + ' — 1 to 5');
-        for (var n = 1; n <= 5; n++) {
-          (function (n) {
-            var b = document.createElement('button');
-            b.type = 'button';
-            b.textContent = n;
-            b.setAttribute('role', 'radio');
-            b.setAttribute('aria-checked', 'false');
-            b.setAttribute('aria-label', String(n));
-            b.addEventListener('click', function () {
-              state[round][d.key] = n;
-              save();
-              [].slice.call(scale.children).forEach(function (other) {
-                other.setAttribute('aria-checked', String(other === b));
-              });
-              gate(round);
-            });
-            scale.appendChild(b);
-          })(n);
-        }
-        var ends = document.createElement('div');
-        ends.className = 'scale-ends';
-        ends.innerHTML = '<span>1 &mdash; barely at all</span><span>5 &mdash; almost always</span>';
-        el.appendChild(q); el.appendChild(h); el.appendChild(scale); el.appendChild(ends);
-        block.appendChild(el);
-
-        /* restore a previous answer after a refresh */
-        var prev = state[round][d.key];
-        if (prev) { scale.children[prev - 1].setAttribute('aria-checked', 'true'); }
+        block.appendChild(scaleFor(round, d, 'barely at all', 'almost always'));
       });
       container.appendChild(block);
     });
   }
 
-  function complete(round) {
-    return DIMS.every(function (d) { return state[round][d.key]; });
-  }
-  function gate(round) {
-    var btn = round === 'r1' ? $('go-hold') : $('go-result');
-    btn.disabled = !complete(round);
+  function buildState(container, round) {
+    container.innerHTML = '';
+    STATE.forEach(function (d) { container.appendChild(scaleFor(round, d, d.lo, d.hi)); });
   }
 
-  /* ── start ───────────────────────────────────────────────────────── */
-  function checkWho() {
-    var ok = $('q-name').value.trim() && /\S+@\S+\.\S+/.test($('q-email').value.trim());
-    $('go-r1').disabled = !ok;
+  var doneAll = function (round, list) {
+    return list.every(function (d) { return state[round][d.key]; });
+  };
+  function gateAll() {
+    $('go-a').disabled = !(whoOk() && doneAll('s1', STATE));
+    $('go-hold').disabled = !doneAll('a', DIMS);
+    $('go-result').disabled = !(doneAll('b', DIMS) && doneAll('s2', STATE));
   }
-  $('q-name').addEventListener('input', checkWho);
-  $('q-email').addEventListener('input', checkWho);
+
+  function whoOk() {
+    return $('q-name').value.trim() && /\S+@\S+\.\S+/.test($('q-email').value.trim());
+  }
+  $('q-name').addEventListener('input', gateAll);
+  $('q-email').addEventListener('input', gateAll);
   $('q-name').value = state.name || '';
   $('q-email').value = state.email || '';
-  checkWho();
 
-  $('go-r1').addEventListener('click', function () {
+  buildState($('state-start'), 's1');
+  gateAll();
+
+  $('go-a').addEventListener('click', function () {
     state.name = $('q-name').value.trim();
     state.email = $('q-email').value.trim();
     state.started = state.started || new Date().toISOString();
     save();
-    buildDims($('r1-dims'), 'r1');
-    gate('r1');
-    show('s-r1');
+    buildQuad($('a-dims'), 'a');
+    gateAll();
+    show('s-a');
   });
-
   $('go-hold').addEventListener('click', function () { save(); show('s-hold'); });
-  $('go-r2').addEventListener('click', function () {
-    buildDims($('r2-dims'), 'r2');
-    gate('r2');
-    show('s-r2');
+  $('go-b').addEventListener('click', function () {
+    buildQuad($('b-dims'), 'b');
+    buildState($('state-end'), 's2');
+    gateAll();
+    show('s-b');
   });
 
-  /* ── the result ──────────────────────────────────────────────────── */
   var nps = $('q-nps');
   for (var i = 0; i <= 10; i++) {
     var o = document.createElement('option');
@@ -452,12 +489,11 @@
   }
 
   function lowest() {
-    /* Lowest after the drill. Ties break towards the dimension that improved
-       least, because that is the one still standing still. */
+    /* Lowest after the second round. A tie goes to whichever moved least,
+       because that is the one still standing still. */
     var best = null;
     DIMS.forEach(function (d) {
-      var after = state.r2[d.key];
-      var delta = after - state.r1[d.key];
+      var after = state.b[d.key], delta = after - state.a[d.key];
       if (!best || after < best.after || (after === best.after && delta < best.delta)) {
         best = { dim: d, after: after, delta: delta };
       }
@@ -465,47 +501,89 @@
     return best;
   }
 
-  $('go-result').addEventListener('click', function () {
-    var t = $('delta');
-    t.innerHTML = '<tr><th>Dimension</th><th style="text-align:center">Before</th>'
-                + '<th style="text-align:center">After</th><th style="text-align:center">Change</th></tr>';
-    var low = lowest();
-    DIMS.forEach(function (d) {
-      var a = state.r1[d.key], b = state.r2[d.key], dl = b - a;
-      var cls = dl > 0 ? 'up' : (dl < 0 ? 'down' : 'same');
-      var sign = dl > 0 ? '+' + dl : (dl < 0 ? String(dl) : '—');
+  function fill(table, list, from, to, headers, markKey) {
+    table.innerHTML = '';
+    var hr = document.createElement('tr');
+    hr.innerHTML = '<th></th><th style="text-align:center"></th>'
+                 + '<th style="text-align:center"></th><th style="text-align:center">Change</th>';
+    hr.children[0].textContent = headers[0];
+    hr.children[1].textContent = headers[1];
+    hr.children[2].textContent = headers[2];
+    table.appendChild(hr);
+    list.forEach(function (d) {
+      var a = state[from][d.key], b = state[to][d.key], dl = b - a;
       var tr = document.createElement('tr');
-      if (d.key === low.dim.key) { tr.className = 'lowest'; }
-      var td = document.createElement('td'); td.textContent = d.q;
-      var t1 = document.createElement('td'); t1.className = 'n'; t1.textContent = a;
-      var t2 = document.createElement('td'); t2.className = 'n'; t2.textContent = b;
-      var t3 = document.createElement('td'); t3.className = 'd ' + cls; t3.textContent = sign;
-      tr.appendChild(td); tr.appendChild(t1); tr.appendChild(t2); tr.appendChild(t3);
-      t.appendChild(tr);
+      if (markKey && d.key === markKey) { tr.className = 'lowest'; }
+      var c0 = document.createElement('td'); c0.textContent = d.q;
+      var c1 = document.createElement('td'); c1.className = 'n'; c1.textContent = a;
+      var c2 = document.createElement('td'); c2.className = 'n'; c2.textContent = b;
+      var c3 = document.createElement('td');
+      c3.className = 'd ' + (dl > 0 ? 'up' : (dl < 0 ? 'down' : 'same'));
+      c3.textContent = dl > 0 ? '+' + dl : (dl < 0 ? String(dl) : '—');
+      [c0, c1, c2, c3].forEach(function (c) { tr.appendChild(c); });
+      table.appendChild(tr);
     });
+  }
+
+  $('go-result').addEventListener('click', function () {
+    var low = lowest();
+    fill($('delta'), DIMS, 'a', 'b', ['Dimension', 'Round 1', 'Round 2'], low.dim.key);
+    fill($('state-delta'), STATE, 's1', 's2', ['', 'Start', 'End'], null);
     $('focus-name').textContent = low.dim.q;
     $('focus-advice').textContent = low.dim.low;
-    $('done-focus').textContent = low.dim.q.replace(/\?$/, '');
+    $('done-focus').textContent = low.dim.q.replace(/\?$/, '').toLowerCase();
     show('s-result');
   });
 
-  /* ── sending ─────────────────────────────────────────────────────── */
-  function payload() {
+  /* Something to leave with, whatever happens to the network. */
+  $('go-copy').addEventListener('click', function () {
     var low = lowest();
+    var lines = ['The Sensing Quad — ' + (state.name || '') , ''];
+    lines.push('Round 1 → Round 2');
+    DIMS.forEach(function (d) {
+      lines.push('  ' + d.q + '  ' + state.a[d.key] + ' → ' + state.b[d.key]);
+    });
+    lines.push('', 'How I felt, start → end');
+    STATE.forEach(function (d) {
+      lines.push('  ' + d.q + '  ' + state.s1[d.key] + ' → ' + state.s2[d.key]);
+    });
+    lines.push('', 'Ninety-day focus: ' + low.dim.q, low.dim.low);
+    var text = lines.join('\n');
+    var btn = this;
+    var ok = function () { btn.textContent = 'Copied'; setTimeout(function () {
+      btn.textContent = 'Copy my numbers'; }, 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(ok, function () { window.prompt('Copy this:', text); });
+    } else {
+      window.prompt('Copy this:', text);
+    }
+  });
+
+  /* ── sending ─────────────────────────────────────────────────────── */
+  /* The session id can be overridden from the URL, so a dry run lands somewhere
+     harmless. /quad/?session=test-run-one writes to its own bucket instead of
+     counting as a seventh participant on the day — which is exactly what the
+     first trial did, complete with a throwaway NPS of 4. */
+  var SESSION = (function () {
+    var m = /[?&]session=([a-z0-9-]{6,64})(&|$)/.exec(window.location.search || '');
+    return m ? m[1] : 'sensing-drill-2026-09-17';
+  })();
+
+  function payload() {
     return {
-      version: 1,
-      session: 'sensing-drill-2026-09-17',
+      version: 2,
+      session: SESSION,
       name: state.name,
       email: state.email,
       startedAt: state.started,
-      submittedAt: new Date().toISOString(),
-      before: state.r1,
-      after: state.r2,
-      focus: low.dim.key,
+      quad: { a: state.a, b: state.b },
+      state: { start: state.s1, end: state.s2 },
+      focus: lowest().dim.key,
       intention: $('q-intent').value.trim(),
       nps: $('q-nps').value === '' ? null : Number($('q-nps').value),
       describe: $('q-describe').value.trim(),
-      testimonial: $('q-consent').value
+      testimonial: $('q-consent').value,
+      emailMe: $('q-emailme').checked
     };
   }
 
@@ -515,17 +593,19 @@
     }).join('&');
   }
 
+  /* A response is only a success if the server said so. fetch resolves on a
+     500 as happily as on a 200. */
+  function ok(r) {
+    if (!r.ok) { throw new Error('status ' + r.status); }
+    return r;
+  }
+
   $('go-send').addEventListener('click', function () {
-    var btn = this;
-    var body = payload();
+    var btn = this, body = payload();
     btn.disabled = true;
     btn.textContent = 'Sending…';
     $('err').hidden = true;
 
-    /* The function first. If it is unreachable — and adding a backend to a site
-       that never had one three days before a live session is exactly when that
-       happens — fall back to the Netlify form, which has been working for
-       months. Either way the data lands. */
     fetch('/.netlify/functions/quad', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -538,57 +618,47 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: encode({ 'form-name': 'sensing-quad', payload: JSON.stringify(body) })
-        })
-          /* The fallback needs the same status check as the primary. fetch only
-             rejects on a network failure, never on an HTTP error, so without
-             this a 500 from the form endpoint resolved happily and the page
-             told the participant their scores were saved when they were not. */
-          .then(ok)
-          .then(done);
+        }).then(ok).then(done);
       })
-      .catch(function (e) {
+      .catch(function () {
         btn.disabled = false;
-        btn.textContent = 'Try sending again';
+        btn.textContent = 'Try again';
         var err = $('err');
         err.hidden = false;
-        err.innerHTML = '<b>That did not send.</b> Press the button again. '
-          + 'If it still will not go, screenshot this page and send it to G — '
-          + 'your scores are on screen and nothing is lost.';
+        err.innerHTML = '<b>That did not send.</b> Press the button again. If it still '
+          + 'will not go, use <b>Copy my numbers</b> above and paste them to G — nothing '
+          + 'on this screen is lost.';
       });
   });
-
-  /* A response is only a success if the server said so. */
-  function ok(r) {
-    if (!r.ok) { throw new Error('status ' + r.status); }
-    return r;
-  }
 
   function done() {
     try { localStorage.removeItem(KEY); } catch (e) {}
     show('s-done');
   }
 
-  /* The way out. Confirmed, because it throws away a baseline that cannot be
-     taken again once the drill has been done. */
   [].slice.call(document.querySelectorAll('[data-restart]')).forEach(function (b) {
     b.addEventListener('click', function () {
       if (!window.confirm('This clears your scores and starts again. Are you sure?')) { return; }
       try { localStorage.removeItem(KEY); } catch (e) {}
-      state = { name: '', email: '', r1: {}, r2: {}, started: null };
+      state = blank();
       $('q-name').value = '';
       $('q-email').value = '';
-      checkWho();
+      buildState($('state-start'), 's1');
+      gateAll();
       show('s-start');
     });
   });
 
-  /* Recover the right stage after a refresh. */
-  if (state.started && complete('r1') && !complete('r2')) {
-    buildDims($('r2-dims'), 'r2');
-    gate('r2');
+  /* Put a refresh back where it was. */
+  if (state.started && doneAll('a', DIMS)) {
+    buildQuad($('b-dims'), 'b');
+    buildState($('state-end'), 's2');
+    gateAll();
     show('s-hold');
-  } else if (state.started && complete('r1')) {
-    show('s-hold');
+  } else if (state.started) {
+    buildQuad($('a-dims'), 'a');
+    gateAll();
+    show('s-a');
   }
 })();
 </script>

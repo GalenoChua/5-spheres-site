@@ -18,6 +18,15 @@ const DIMS = [
   ['sensed_by_others', 'How well did others sense me?']
 ];
 
+/* The Zone 1 scan. Reported as its own table because how somebody feels and
+   how well they read a room are different claims, and averaging them together
+   would be a third claim nobody made. */
+const STATE = [
+  ['physical', 'Physical — how settled'],
+  ['mental', 'Mental — how clear'],
+  ['emotional', 'Emotional — how steady']
+];
+
 const json = (status, body) =>
   new Response(JSON.stringify(body, null, 2), {
     status,
@@ -43,6 +52,29 @@ export default async (request) => {
     return json(400, { error: 'session' });
   }
 
+  /* Removing a row. Test submissions land in the real session by accident and
+     one throwaway NPS visibly moves the score in a room of six, so there has to
+     be a way to take one out. Token-protected, one address at a time, and it
+     says what it did rather than failing quietly. */
+  const remove = String(url.searchParams.get('delete') || '').trim().toLowerCase();
+  if (remove) {
+    if (!/^\S+@\S+\.\S+$/.test(remove)) {
+      return json(400, { error: 'delete must be an email address' });
+    }
+    try {
+      const store = getStore('sensing-quad');
+      const key = `${session}/${encodeURIComponent(remove)}`;
+      const existing = await store.get(key, { type: 'json' });
+      if (!existing) {
+        return json(404, { error: 'no such submission', session, email: remove });
+      }
+      await store.delete(key);
+      return json(200, { deleted: true, session, email: remove });
+    } catch (err) {
+      return json(502, { error: 'store unavailable' });
+    }
+  }
+
   /* Same reason as the writer: getStore throws synchronously on an
      unconfigured environment, so it belongs inside the try. */
   let rows = [];
@@ -64,22 +96,42 @@ export default async (request) => {
   /* The group table. Per dimension: mean before, mean after, the movement, and
      how many people that dimension was the lowest for — which is the number
      worth talking about, because it is what the room is collectively worst at. */
-  const dimensions = DIMS.map(([key, label]) => {
-    const before = rows.map((r) => r.before[key]).filter(Number.isFinite);
-    const after = rows.map((r) => r.after[key]).filter(Number.isFinite);
-    const mb = mean(before);
-    const ma = mean(after);
-    return {
-      dimension: label,
-      before: round2(mb),
-      after: round2(ma),
-      change: round2(ma - mb),
-      improved: rows.filter((r) => r.after[key] > r.before[key]).length,
-      unchanged: rows.filter((r) => r.after[key] === r.before[key]).length,
-      declined: rows.filter((r) => r.after[key] < r.before[key]).length,
-      chosenAsFocus: rows.filter((r) => r.focus === key).length
-    };
-  });
+  /* Two shapes of record can be in the store: version 1 had before/after at
+     the top level and no state check. Read both so an early test row does not
+     break the table. */
+  const pick = (r, which) =>
+    r.version >= 2 ? r.quad[which === 'a' ? 'a' : 'b'] : (which === 'a' ? r.before : r.after);
+
+  const compare = (list, first, second, extra = () => ({})) =>
+    list.map(([key, label]) => {
+      const fs = rows.map((r) => first(r)?.[key]).filter(Number.isFinite);
+      const ss = rows.map((r) => second(r)?.[key]).filter(Number.isFinite);
+      const mf = mean(fs);
+      const ms = mean(ss);
+      return {
+        dimension: label,
+        from: round2(mf),
+        to: round2(ms),
+        change: round2(ms - mf),
+        improved: rows.filter((r) => second(r)?.[key] > first(r)?.[key]).length,
+        unchanged: rows.filter((r) => second(r)?.[key] === first(r)?.[key]).length,
+        declined: rows.filter((r) => second(r)?.[key] < first(r)?.[key]).length,
+        ...extra(key)
+      };
+    });
+
+  const dimensions = compare(
+    DIMS,
+    (r) => pick(r, 'a'),
+    (r) => pick(r, 'b'),
+    (key) => ({ chosenAsFocus: rows.filter((r) => r.focus === key).length })
+  );
+
+  /* Only version 2 records carry a state check. */
+  const withState = rows.filter((r) => r.state);
+  const stateTable = withState.length
+    ? compare(STATE, (r) => r.state?.start, (r) => r.state?.end)
+    : null;
 
   const npsScores = rows.map((r) => r.nps).filter((n) => Number.isInteger(n));
   const promoters = npsScores.filter((n) => n >= 9).length;
@@ -88,7 +140,12 @@ export default async (request) => {
   const summary = {
     session,
     n: rows.length,
+    note: 'from is the first round, to is the second. Some of any improvement is '
+        + 'practice effect rather than teaching — the second round is longer and '
+        + 'they already know their partner.',
     dimensions,
+    state: stateTable,
+    wantResultsEmailed: rows.filter((r) => r.emailMe).map((r) => r.email),
     nps: npsScores.length
       ? {
           responses: npsScores.length,
