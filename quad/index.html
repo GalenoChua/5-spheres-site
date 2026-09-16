@@ -128,6 +128,22 @@
          border-radius: 0 10px 10px 0; padding: 14px 18px; font-size: .95rem; margin: 16px 0; }
   .err[hidden] { display: none; }
 
+  /* Stepping back one screen. Separate from Start over, which throws
+     everything away — this is for the mistyped score, which was previously
+     unfixable without losing the round. */
+  .navrow { display: flex; gap: 12px; align-items: center; margin-top: 22px; }
+  .navrow .btn { margin-top: 0; }
+  .btn.back { flex: 0 0 auto; background: transparent; color: var(--ink);
+              border: 1.5px solid var(--ink); padding-left: 20px; padding-right: 20px; }
+  .btn.back:hover { background: var(--ink); color: var(--paper); }
+  .navrow .grow { flex: 1; }
+
+  /* Somewhere to put a passing thought while it is still in your head. */
+  .note-field { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .note-field label { display: block; font-size: .95rem; font-weight: 600;
+                      color: var(--ink); margin-bottom: 4px; }
+  .note-field .why { font-size: .9rem; color: #5f636f; margin-bottom: 10px; }
+
   /* The way back. Locking a round used to be one-way, so a mistyped email left
      somebody stuck for the rest of the session. */
   .restart { display: block; text-align: center; margin-top: 22px; font-size: .9rem;
@@ -196,7 +212,16 @@
       yourself up because it feels rude not to, the second round won&rsquo;t tell either of
       us anything.</p>
     <div id="a-dims"></div>
-    <button class="btn wide" id="go-hold" disabled>That&rsquo;s my first round</button>
+    <div class="note-field">
+      <label for="a-note">Anything you noticed?</label>
+      <p class="why">Optional. A passing thought, something that surprised you, something
+        you can&rsquo;t explain yet.</p>
+      <textarea id="a-note" rows="2" placeholder="My shoulders dropped about a minute in…"></textarea>
+    </div>
+    <div class="navrow">
+      <button class="btn back" type="button" data-back="s-start">&larr; Back</button>
+      <button class="btn grow" id="go-hold" disabled>That&rsquo;s my first round</button>
+    </div>
     <button class="restart" type="button" data-restart>Something wrong? Start over</button>
   </section>
 
@@ -218,7 +243,10 @@
       something back. Paraphrase it, or offer a hunch as a question &mdash; &ldquo;I&rsquo;m
       sensing&hellip; is that right?&rdquo; Then swap.
     </div>
-    <button class="btn wide" id="go-b">We&rsquo;ve done the second round</button>
+    <div class="navrow">
+      <button class="btn back" type="button" data-back="s-a">&larr; Back</button>
+      <button class="btn grow" id="go-b">We&rsquo;ve done the second round</button>
+    </div>
     <button class="restart" type="button" data-restart>Something wrong? Start over</button>
   </section>
 
@@ -235,7 +263,15 @@
     <p class="muted">Same three as at the start.</p>
     <div id="state-end"></div>
 
-    <button class="btn wide" id="go-result" disabled>See my numbers</button>
+    <div class="note-field">
+      <label for="b-note">And anything from that round?</label>
+      <p class="why">Optional. How it felt, what changed, what didn&rsquo;t.</p>
+      <textarea id="b-note" rows="2" placeholder="Easier the second time, but I still…"></textarea>
+    </div>
+    <div class="navrow">
+      <button class="btn back" type="button" data-back="s-hold">&larr; Back</button>
+      <button class="btn grow" id="go-result" disabled>See my numbers</button>
+    </div>
     <button class="restart" type="button" data-restart>Something wrong? Start over</button>
   </section>
 
@@ -290,7 +326,10 @@
     </div>
 
     <div class="err" id="err" hidden></div>
-    <button class="btn wide" id="go-send">Send</button>
+    <div class="navrow">
+      <button class="btn back" type="button" data-back="s-b">&larr; Back</button>
+      <button class="btn grow" id="go-send">Send</button>
+    </div>
     <p class="muted" style="text-align:center;margin-top:12px">Nothing goes anywhere until you
       press this.</p>
   </section>
@@ -364,7 +403,8 @@
   var DIMS = ROLES.reduce(function (a, r) { return a.concat(r.dims); }, []);
   var KEY = '5s-quad-v2';
   var blank = function () {
-    return { name: '', email: '', a: {}, b: {}, s1: {}, s2: {}, started: null };
+    return { name: '', email: '', a: {}, b: {}, s1: {}, s2: {},
+             aNote: '', bNote: '', started: null };
   };
   var state = blank();
 
@@ -460,6 +500,8 @@
   $('q-email').addEventListener('input', gateAll);
   $('q-name').value = state.name || '';
   $('q-email').value = state.email || '';
+  if ($('a-note')) { $('a-note').value = state.aNote || ''; }
+  if ($('b-note')) { $('b-note').value = state.bNote || ''; }
 
   buildState($('state-start'), 's1');
   gateAll();
@@ -473,6 +515,25 @@
     gateAll();
     show('s-a');
   });
+  /* Notes are kept as they are typed, so stepping back and forward again does
+     not quietly empty the box. */
+  ['a-note', 'b-note'].forEach(function (id) {
+    var el = $(id);
+    if (!el) { return; }
+    el.addEventListener('input', function () {
+      state[id === 'a-note' ? 'aNote' : 'bNote'] = el.value;
+      save();
+    });
+  });
+
+  /* One screen back. Distinct from Start over, which discards everything. */
+  [].slice.call(document.querySelectorAll('[data-back]')).forEach(function (b) {
+    b.addEventListener('click', function () {
+      save();
+      show(b.dataset.back);
+    });
+  });
+
   $('go-hold').addEventListener('click', function () { save(); show('s-hold'); });
   $('go-b').addEventListener('click', function () {
     buildQuad($('b-dims'), 'b');
@@ -579,6 +640,7 @@
       quad: { a: state.a, b: state.b },
       state: { start: state.s1, end: state.s2 },
       focus: lowest().dim.key,
+      notes: { a: state.aNote || '', b: state.bNote || '' },
       intention: $('q-intent').value.trim(),
       nps: $('q-nps').value === '' ? null : Number($('q-nps').value),
       describe: $('q-describe').value.trim(),
@@ -643,6 +705,8 @@
       state = blank();
       $('q-name').value = '';
       $('q-email').value = '';
+      if ($('a-note')) { $('a-note').value = ''; }
+      if ($('b-note')) { $('b-note').value = ''; }
       buildState($('state-start'), 's1');
       gateAll();
       show('s-start');
