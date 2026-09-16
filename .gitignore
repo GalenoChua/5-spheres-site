@@ -74,3 +74,11 @@ deno.lock
 # deliberately so the protection does not depend on which branch merges first.
 ops-log/
 Course Core Competencies/
+
+# Skill Drill decks. Facilitator material — timings, chat prompts, the run of
+# the room — and this repository deploys to a public web host, so they stay
+# local. See skilldrills/decks/README.md.
+skilldrills/decks/
+
+# Google Drive leaves this behind while syncing.
+.tmp.driveupload/
