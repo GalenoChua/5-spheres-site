@@ -159,9 +159,14 @@ export default async (request) => {
     session,
     n: rows.length,
     nRescored: rescored.length,
-    note: 'from is the first round, to is the second. Some of any improvement is '
-        + 'practice effect rather than teaching — the second round is longer and '
-        + 'they already know their partner.',
+    note: 'In dimensions, from is round one re-scored after the teaching and to is '
+        + 'round two, so both sit on the same ruler. standardShift is the first '
+        + 'pass against that re-score: how far their standard moved, not their '
+        + 'skill. Some of any improvement is practice effect rather than teaching '
+        + '— the second round is longer and they already know their partner. '
+        + 'Where nRescored is below n, the rows without a re-score fall back to '
+        + 'their first pass and the dimensions table is contaminated to that '
+        + 'extent; check the two numbers match before quoting the change.',
     dimensions,
     standardShift,
     state: stateTable,
