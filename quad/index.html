@@ -447,7 +447,20 @@
 
   try {
     var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
-    if (saved && saved.started) { state = saved; }
+    if (saved && saved.started) {
+      /* Merge onto a blank rather than replacing it. A session saved by an
+         earlier version of this page has no a2 block at all, and replacing the
+         state wholesale meant every later read of it threw - on load and then
+         on every keystroke - which left the button disabled with nothing to
+         say why, because the throw was inside the code that would have said
+         it. Anything blank() knows about and the saved copy does not now keeps
+         its default. */
+      var restored = blank();
+      Object.keys(restored).forEach(function (k) {
+        if (saved[k] !== undefined && saved[k] !== null) { restored[k] = saved[k]; }
+      });
+      state = restored;
+    }
   } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
@@ -521,11 +534,17 @@
     STATE.forEach(function (d) { container.appendChild(scaleFor(round, d, d.lo, d.hi)); });
   }
 
+  /* A missing block reads as empty. Nothing here is worth throwing over, and
+     a throw in the gate is invisible and unrecoverable for whoever hits it. */
+  var answers = function (round) { return state[round] || {}; };
+
   var doneAll = function (round, list) {
-    return list.every(function (d) { return state[round][d.key]; });
+    var r = answers(round);
+    return list.every(function (d) { return r[d.key]; });
   };
   var countDone = function (round, list) {
-    return list.filter(function (d) { return state[round][d.key]; }).length;
+    var r = answers(round);
+    return list.filter(function (d) { return r[d.key]; }).length;
   };
 
   /* Name what is missing. A count rather than a tick, because the thing people
@@ -638,7 +657,7 @@
     DIMS.forEach(function (d) {
       /* Against the re-score, not the first pass: the first pass was made
          with a different idea of what the question meant. */
-      var base = state.a2[d.key] || state.a[d.key];
+      var base = answers('a2')[d.key] || answers('a')[d.key];
       var after = state.b[d.key], delta = after - base;
       if (!best || after < best.after || (after === best.after && delta < best.delta)) {
         best = { dim: d, after: after, delta: delta };
@@ -663,8 +682,8 @@
     hr.lastChild.style.textAlign = 'center';
     table.appendChild(hr);
     list.forEach(function (d) {
-      var a = state.a[d.key];
-      var a2 = state.a2[d.key] || a;
+      var a = answers('a')[d.key];
+      var a2 = answers('a2')[d.key] || a;
       var b = state.b[d.key], dl = b - a2;
       var tr = document.createElement('tr');
       if (markKey && d.key === markKey) { tr.className = 'lowest'; }
@@ -724,7 +743,7 @@
     lines.push('Round 1 → Round 1 again → Round 2');
     DIMS.forEach(function (d) {
       lines.push('  ' + d.q + '  ' + state.a[d.key]
-                 + ' → ' + (state.a2[d.key] || state.a[d.key])
+                 + ' → ' + (answers('a2')[d.key] || answers('a')[d.key])
                  + ' → ' + state.b[d.key]);
     });
     lines.push('', 'How I felt, start → end');
@@ -760,7 +779,7 @@
       name: state.name,
       email: state.email,
       startedAt: state.started,
-      quad: { a: state.a, a2: state.a2, b: state.b },
+      quad: { a: state.a, a2: answers('a2'), b: state.b },
       state: { start: state.s1, end: state.s2 },
       focus: lowest().dim.key,
       notes: { a: state.aNote || '', a2: state.a2Note || '', b: state.bNote || '' },
