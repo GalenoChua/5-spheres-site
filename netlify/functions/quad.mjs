@@ -12,7 +12,7 @@
  */
 import { getStore } from '@netlify/blobs';
 
-const MAX_BYTES = 16 * 1024;
+const MAX_BYTES = 20 * 1024;
 const SCALE = [1, 2, 3, 4, 5];
 const QUAD = ['sense_others', 'present', 'sense_self', 'sensed_by_others'];
 const STATE = ['physical', 'mental', 'emotional'];
@@ -69,6 +69,11 @@ export default async (request) => {
   try {
     quad = {
       a: block(body.quad?.a, QUAD, 'quad.a'),
+      /* Round one scored a second time, after the teaching. Optional on
+         purpose: anyone whose page loaded before this shipped sends no a2, and
+         rejecting them would throw away their whole submission over a field
+         their copy of the page has never heard of. */
+      a2: body.quad?.a2 ? block(body.quad.a2, QUAD, 'quad.a2') : null,
       b: block(body.quad?.b, QUAD, 'quad.b')
     };
     state = {
@@ -83,7 +88,7 @@ export default async (request) => {
   const nps = Number.isInteger(body.nps) && body.nps >= 0 && body.nps <= 10 ? body.nps : null;
 
   const record = {
-    version: 2,
+    version: 3,
     session,
     name: clip(body.name, 120),
     email,
@@ -96,6 +101,7 @@ export default async (request) => {
     // at the end after the numbers have reframed it.
     notes: {
       a: clip(body.notes?.a, 2000),
+      a2: clip(body.notes?.a2, 2000),
       b: clip(body.notes?.b, 2000)
     },
     intention: clip(body.intention, 1200),
