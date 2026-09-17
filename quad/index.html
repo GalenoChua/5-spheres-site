@@ -128,6 +128,12 @@
          border-radius: 0 10px 10px 0; padding: 14px 18px; font-size: .95rem; margin: 16px 0; }
   .err[hidden] { display: none; }
 
+  /* What the button is waiting for. A disabled button with no explanation
+     reads as a broken one, and on this page the thing it is waiting for is
+     usually off the top of the screen. */
+  .gate-hint { margin: 10px 0 0; font-size: .92rem; color: var(--ember-ink, #9e5615); }
+  .gate-hint[hidden] { display: none; }
+
   /* Stepping back one screen. Separate from Start over, which throws
      everything away — this is for the mistyped score, which was previously
      unfixable without losing the round. */
@@ -201,6 +207,7 @@
     <div id="state-start"></div>
 
     <button class="btn wide" id="go-a" disabled>Done &mdash; on to the first round</button>
+    <p class="gate-hint" id="hint-a" hidden></p>
   </section>
 
   <!-- ── 2 · round A ─────────────────────────────────────────────────── -->
@@ -222,6 +229,7 @@
       <button class="btn back" type="button" data-back="s-start">&larr; Back</button>
       <button class="btn grow" id="go-hold" disabled>That&rsquo;s my first round</button>
     </div>
+    <p class="gate-hint" id="hint-hold" hidden></p>
     <button class="restart" type="button" data-restart>Something wrong? Start over</button>
   </section>
 
@@ -270,6 +278,7 @@
       <button class="btn back" type="button" data-back="s-hold">&larr; Back</button>
       <button class="btn grow" id="go-b" disabled>We&rsquo;ve done the second round</button>
     </div>
+    <p class="gate-hint" id="hint-b" hidden></p>
     <button class="restart" type="button" data-restart>Something wrong? Start over</button>
   </section>
 
@@ -295,6 +304,7 @@
       <button class="btn back" type="button" data-back="s-again">&larr; Back</button>
       <button class="btn grow" id="go-result" disabled>See my numbers</button>
     </div>
+    <p class="gate-hint" id="hint-result" hidden></p>
     <button class="restart" type="button" data-restart>Something wrong? Start over</button>
   </section>
 
@@ -514,11 +524,47 @@
   var doneAll = function (round, list) {
     return list.every(function (d) { return state[round][d.key]; });
   };
+  var countDone = function (round, list) {
+    return list.filter(function (d) { return state[round][d.key]; }).length;
+  };
+
+  /* Name what is missing. A count rather than a tick, because the thing people
+     miss is one scale in the middle of a set they thought they had finished. */
+  function hint(id, parts) {
+    var el = $(id);
+    if (!el) { return; }
+    var want = parts.filter(Boolean);
+    el.hidden = !want.length;
+    if (want.length) {
+      el.textContent = 'Still to do: ' + want.join(', ') + '.';
+    }
+  }
+
   function gateAll() {
-    $('go-a').disabled = !(whoOk() && doneAll('s1', STATE));
-    $('go-hold').disabled = !doneAll('a', DIMS);
-    $('go-b').disabled = !doneAll('a2', DIMS);
-    $('go-result').disabled = !(doneAll('b', DIMS) && doneAll('s2', STATE));
+    var s1 = countDone('s1', STATE), a = countDone('a', DIMS);
+    var a2 = countDone('a2', DIMS), b = countDone('b', DIMS);
+    var s2 = countDone('s2', STATE);
+
+    $('go-a').disabled = !(whoOk() && s1 === STATE.length);
+    hint('hint-a', [
+      $('q-name').value.trim() ? '' : 'your first name',
+      /\S+@\S+\.\S+/.test($('q-email').value.trim()) ? '' : 'your email',
+      s1 === STATE.length ? '' : 'the three-layer scan (' + s1 + ' of ' + STATE.length + ')'
+    ]);
+
+    $('go-hold').disabled = a !== DIMS.length;
+    hint('hint-hold', [a === DIMS.length ? ''
+         : 'all four questions (' + a + ' of ' + DIMS.length + ')']);
+
+    $('go-b').disabled = a2 !== DIMS.length;
+    hint('hint-b', [a2 === DIMS.length ? ''
+         : 'all four questions (' + a2 + ' of ' + DIMS.length + ')']);
+
+    $('go-result').disabled = !(b === DIMS.length && s2 === STATE.length);
+    hint('hint-result', [
+      b === DIMS.length ? '' : 'all four questions (' + b + ' of ' + DIMS.length + ')',
+      s2 === STATE.length ? '' : 'where you are now (' + s2 + ' of ' + STATE.length + ')'
+    ]);
   }
 
   function whoOk() {
