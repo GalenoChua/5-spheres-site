@@ -178,7 +178,7 @@
 
   <!-- ── 1 · who, and how you arrived ────────────────────────────────── -->
   <section class="stage" id="s-start">
-    <div class="steps"><i class="done"></i><i></i><i></i><i></i><i></i></div>
+    <div class="steps"><i class="done"></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="eyebrow">The Sensing Drill</div>
     <h1>The Sensing Quad</h1>
     <p>You&rsquo;ll score two rounds today, one after each. I&rsquo;ll send you both sets
@@ -205,7 +205,7 @@
 
   <!-- ── 2 · round A ─────────────────────────────────────────────────── -->
   <section class="stage" id="s-a" hidden>
-    <div class="steps"><i class="done"></i><i class="done"></i><i></i><i></i><i></i></div>
+    <div class="steps"><i class="done"></i><i class="done"></i><i></i><i></i><i></i><i></i></div>
     <div class="eyebrow">First round</div>
     <h2>How did that one go?</h2>
     <p>Four questions about the round you just did. Answer them honestly. If you mark
@@ -227,7 +227,7 @@
 
   <!-- ── 3 · the teaching ────────────────────────────────────────────── -->
   <section class="stage" id="s-hold" hidden>
-    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i></i><i></i></div>
+    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i></i><i></i><i></i></div>
     <div class="eyebrow">Saved</div>
     <h2>Leave this tab open.</h2>
     <div class="hold">
@@ -236,7 +236,7 @@
         Nothing has been sent yet.</p>
     </div>
     <div class="note-box">
-      <b>When you go again.</b> One person speaks for seven minutes. The other only senses
+      <b>When you go again.</b> One person speaks for six minutes. The other only senses
       &mdash; no advice, no fixing, no reassurance. Scan three layers while they talk:
       <b>physical</b> (heart rate, tension, energy), <b>mental</b> (clear or fogged, racing
       or stuck), <b>emotional</b> (what the weather is in there, named plainly). Then reflect
@@ -245,14 +245,37 @@
     </div>
     <div class="navrow">
       <button class="btn back" type="button" data-back="s-a">&larr; Back</button>
-      <button class="btn grow" id="go-b">We&rsquo;ve done the second round</button>
+      <button class="btn grow" id="go-again">That&rsquo;s the theory done</button>
     </div>
     <button class="restart" type="button" data-restart>Something wrong? Start over</button>
   </section>
 
-  <!-- ── 4 · round B, and where you ended up ─────────────────────────── -->
+  <!-- ── 4 · round one, scored again ─────────────────────────────────── -->
+  <section class="stage" id="s-again" hidden>
+    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i></i><i></i></div>
+    <div class="eyebrow">First round, second look</div>
+    <h2>Score that first round again.</h2>
+    <p>Same four questions, same round &mdash; the one you did before any of this. You know
+      what the questions are asking now. You didn&rsquo;t then. Score it the way you would
+      have if you had.</p>
+    <p class="muted">Your first set is hidden on purpose. If you could see it you would
+      anchor to it, and then there is nothing left to find out.</p>
+    <div id="a2-dims"></div>
+    <div class="note-field">
+      <label for="a2-note">Did anything move?</label>
+      <p class="why">Optional. If a number went down, that is the interesting one.</p>
+      <textarea id="a2-note" rows="2" placeholder="I thought I was listening. I was waiting for my turn…"></textarea>
+    </div>
+    <div class="navrow">
+      <button class="btn back" type="button" data-back="s-hold">&larr; Back</button>
+      <button class="btn grow" id="go-b" disabled>We&rsquo;ve done the second round</button>
+    </div>
+    <button class="restart" type="button" data-restart>Something wrong? Start over</button>
+  </section>
+
+  <!-- ── 5 · round B, and where you ended up ─────────────────────────── -->
   <section class="stage" id="s-b" hidden>
-    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i></i></div>
+    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i></i></div>
     <div class="eyebrow">Second round</div>
     <h2>Same four questions.</h2>
     <p>About the round you just did, not the first one. Your baseline is hidden on purpose
@@ -269,7 +292,7 @@
       <textarea id="b-note" rows="2" placeholder="Easier the second time, but I still…"></textarea>
     </div>
     <div class="navrow">
-      <button class="btn back" type="button" data-back="s-hold">&larr; Back</button>
+      <button class="btn back" type="button" data-back="s-again">&larr; Back</button>
       <button class="btn grow" id="go-result" disabled>See my numbers</button>
     </div>
     <button class="restart" type="button" data-restart>Something wrong? Start over</button>
@@ -277,10 +300,14 @@
 
   <!-- ── 5 · result ──────────────────────────────────────────────────── -->
   <section class="stage" id="s-result" hidden>
-    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></div>
+    <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></div>
     <div class="eyebrow">Your numbers</div>
     <h2>Both rounds, side by side.</h2>
     <table class="delta-table" id="delta"></table>
+    <p class="muted">Two numbers for the first round. The first is what you thought at the
+      time; the second is that same round scored once you knew what you were looking for.
+      Change is measured between the second one and round two &mdash; the two that were
+      scored on the same terms.</p>
 
     <h3>How you felt</h3>
     <p class="muted">Start of the session against the end of it.</p>
@@ -403,8 +430,8 @@
   var DIMS = ROLES.reduce(function (a, r) { return a.concat(r.dims); }, []);
   var KEY = '5s-quad-v2';
   var blank = function () {
-    return { name: '', email: '', a: {}, b: {}, s1: {}, s2: {},
-             aNote: '', bNote: '', started: null };
+    return { name: '', email: '', a: {}, a2: {}, b: {}, s1: {}, s2: {},
+             aNote: '', a2Note: '', bNote: '', started: null };
   };
   var state = blank();
 
@@ -415,7 +442,7 @@
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
   var $ = function (id) { return document.getElementById(id); };
-  var STAGES = ['s-start', 's-a', 's-hold', 's-b', 's-result', 's-done'];
+  var STAGES = ['s-start', 's-a', 's-hold', 's-again', 's-b', 's-result', 's-done'];
   function show(id) {
     STAGES.forEach(function (s) { $(s).hidden = (s !== id); });
     window.scrollTo(0, 0);
@@ -490,6 +517,7 @@
   function gateAll() {
     $('go-a').disabled = !(whoOk() && doneAll('s1', STATE));
     $('go-hold').disabled = !doneAll('a', DIMS);
+    $('go-b').disabled = !doneAll('a2', DIMS);
     $('go-result').disabled = !(doneAll('b', DIMS) && doneAll('s2', STATE));
   }
 
@@ -501,6 +529,7 @@
   $('q-name').value = state.name || '';
   $('q-email').value = state.email || '';
   if ($('a-note')) { $('a-note').value = state.aNote || ''; }
+  if ($('a2-note')) { $('a2-note').value = state.a2Note || ''; }
   if ($('b-note')) { $('b-note').value = state.bNote || ''; }
 
   buildState($('state-start'), 's1');
@@ -517,11 +546,12 @@
   });
   /* Notes are kept as they are typed, so stepping back and forward again does
      not quietly empty the box. */
-  ['a-note', 'b-note'].forEach(function (id) {
+  var NOTE_OF = { 'a-note': 'aNote', 'a2-note': 'a2Note', 'b-note': 'bNote' };
+  Object.keys(NOTE_OF).forEach(function (id) {
     var el = $(id);
     if (!el) { return; }
     el.addEventListener('input', function () {
-      state[id === 'a-note' ? 'aNote' : 'bNote'] = el.value;
+      state[NOTE_OF[id]] = el.value;
       save();
     });
   });
@@ -535,6 +565,12 @@
   });
 
   $('go-hold').addEventListener('click', function () { save(); show('s-hold'); });
+  $('go-again').addEventListener('click', function () {
+    buildQuad($('a2-dims'), 'a2');
+    gateAll();
+    save();
+    show('s-again');
+  });
   $('go-b').addEventListener('click', function () {
     buildQuad($('b-dims'), 'b');
     buildState($('state-end'), 's2');
@@ -554,12 +590,50 @@
        because that is the one still standing still. */
     var best = null;
     DIMS.forEach(function (d) {
-      var after = state.b[d.key], delta = after - state.a[d.key];
+      /* Against the re-score, not the first pass: the first pass was made
+         with a different idea of what the question meant. */
+      var base = state.a2[d.key] || state.a[d.key];
+      var after = state.b[d.key], delta = after - base;
       if (!best || after < best.after || (after === best.after && delta < best.delta)) {
         best = { dim: d, after: after, delta: delta };
       }
     });
     return best;
+  }
+
+  function fill3(table, list, headers, markKey) {
+    /* Three readings, not two. The change is b - a2, because a and a2 are the
+       same round and the gap between them is the standard moving, not the
+       skill. */
+    table.innerHTML = '';
+    var hr = document.createElement('tr');
+    headers.forEach(function (h, i) {
+      var th = document.createElement('th');
+      if (i) { th.style.textAlign = 'center'; }
+      th.textContent = h;
+      hr.appendChild(th);
+    });
+    hr.appendChild(document.createElement('th')).textContent = 'Change';
+    hr.lastChild.style.textAlign = 'center';
+    table.appendChild(hr);
+    list.forEach(function (d) {
+      var a = state.a[d.key];
+      var a2 = state.a2[d.key] || a;
+      var b = state.b[d.key], dl = b - a2;
+      var tr = document.createElement('tr');
+      if (markKey && d.key === markKey) { tr.className = 'lowest'; }
+      var c0 = document.createElement('td'); c0.textContent = d.q;
+      [a, a2, b].forEach(function (v) {
+        var c = document.createElement('td'); c.className = 'n'; c.textContent = v;
+        tr.appendChild(c);
+      });
+      tr.insertBefore(c0, tr.firstChild);
+      var c3 = document.createElement('td');
+      c3.className = 'd ' + (dl > 0 ? 'up' : (dl < 0 ? 'down' : 'same'));
+      c3.textContent = dl > 0 ? '+' + dl : (dl < 0 ? String(dl) : '\u2014');
+      tr.appendChild(c3);
+      table.appendChild(tr);
+    });
   }
 
   function fill(table, list, from, to, headers, markKey) {
@@ -588,7 +662,8 @@
 
   $('go-result').addEventListener('click', function () {
     var low = lowest();
-    fill($('delta'), DIMS, 'a', 'b', ['Dimension', 'Round 1', 'Round 2'], low.dim.key);
+    fill3($('delta'), DIMS,
+          ['Dimension', 'Round 1', 'Round 1 again', 'Round 2'], low.dim.key);
     fill($('state-delta'), STATE, 's1', 's2', ['', 'Start', 'End'], null);
     $('focus-name').textContent = low.dim.q;
     $('focus-advice').textContent = low.dim.low;
@@ -600,9 +675,11 @@
   $('go-copy').addEventListener('click', function () {
     var low = lowest();
     var lines = ['The Sensing Quad — ' + (state.name || '') , ''];
-    lines.push('Round 1 → Round 2');
+    lines.push('Round 1 → Round 1 again → Round 2');
     DIMS.forEach(function (d) {
-      lines.push('  ' + d.q + '  ' + state.a[d.key] + ' → ' + state.b[d.key]);
+      lines.push('  ' + d.q + '  ' + state.a[d.key]
+                 + ' → ' + (state.a2[d.key] || state.a[d.key])
+                 + ' → ' + state.b[d.key]);
     });
     lines.push('', 'How I felt, start → end');
     STATE.forEach(function (d) {
@@ -637,10 +714,10 @@
       name: state.name,
       email: state.email,
       startedAt: state.started,
-      quad: { a: state.a, b: state.b },
+      quad: { a: state.a, a2: state.a2, b: state.b },
       state: { start: state.s1, end: state.s2 },
       focus: lowest().dim.key,
-      notes: { a: state.aNote || '', b: state.bNote || '' },
+      notes: { a: state.aNote || '', a2: state.a2Note || '', b: state.bNote || '' },
       intention: $('q-intent').value.trim(),
       nps: $('q-nps').value === '' ? null : Number($('q-nps').value),
       describe: $('q-describe').value.trim(),
@@ -706,6 +783,7 @@
       $('q-name').value = '';
       $('q-email').value = '';
       if ($('a-note')) { $('a-note').value = ''; }
+      if ($('a2-note')) { $('a2-note').value = ''; }
       if ($('b-note')) { $('b-note').value = ''; }
       buildState($('state-start'), 's1');
       gateAll();

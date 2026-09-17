@@ -99,8 +99,14 @@ export default async (request) => {
   /* Two shapes of record can be in the store: version 1 had before/after at
      the top level and no state check. Read both so an early test row does not
      break the table. */
-  const pick = (r, which) =>
-    r.version >= 2 ? r.quad[which === 'a' ? 'a' : 'b'] : (which === 'a' ? r.before : r.after);
+  const pick = (r, which) => {
+    if (r.version < 2) { return which === 'b' ? r.after : r.before; }
+    /* a2 is round one scored again after the teaching, and only version 3
+       records have it. Where it is missing, fall back to the first pass so an
+       earlier row still lands in the table rather than dropping out of it. */
+    if (which === 'a2') { return r.quad.a2 || r.quad.a; }
+    return r.quad[which];
+  };
 
   const compare = (list, first, second, extra = () => ({})) =>
     list.map(([key, label]) => {
@@ -120,12 +126,24 @@ export default async (request) => {
       };
     });
 
+  /* The change worth reporting is measured from the re-score, not the first
+     pass. Both were about round one, but the first was scored before anyone
+     knew what the questions meant, so a - a2 is the standard moving and
+     a2 - b is the skill moving. Reporting b - a would add the two together and
+     can show a real improvement as a decline. */
   const dimensions = compare(
     DIMS,
-    (r) => pick(r, 'a'),
+    (r) => pick(r, 'a2'),
     (r) => pick(r, 'b'),
     (key) => ({ chosenAsFocus: rows.filter((r) => r.focus === key).length })
   );
+
+  /* How far the ruler moved. A fall here is people getting more accurate about
+     themselves, not worse at the thing. */
+  const rescored = rows.filter((r) => r.quad?.a2);
+  const standardShift = rescored.length
+    ? compare(DIMS, (r) => r.quad.a, (r) => r.quad.a2)
+    : null;
 
   /* Only version 2 records carry a state check. */
   const withState = rows.filter((r) => r.state);
@@ -140,10 +158,12 @@ export default async (request) => {
   const summary = {
     session,
     n: rows.length,
+    nRescored: rescored.length,
     note: 'from is the first round, to is the second. Some of any improvement is '
         + 'practice effect rather than teaching — the second round is longer and '
         + 'they already know their partner.',
     dimensions,
+    standardShift,
     state: stateTable,
     wantResultsEmailed: rows.filter((r) => r.emailMe).map((r) => r.email),
     nps: npsScores.length
