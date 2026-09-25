@@ -254,7 +254,11 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
 .article-body h2 { margin-top: 58px; margin-bottom: 18px; max-width: 30ch; }
 .article-body h2:first-child { margin-top: 0; }
 .article-body h3 { margin-top: 34px; }
-.article-body > img { margin-top: 34px; }
+/* Images in article prose had no rule, so a full-resolution file rendered at its natural
+   width and ran straight out of the column. Every field note so far carried inline styles
+   to work around that. */
+.article-body img { display: block; width: 100%; height: auto; border-radius: 10px;
+                    margin: 34px 0 10px; }
 
 /* Participant quotes. This is the first field note to carry any, so there was no rule for
    them and they rendered identically to the prose around them. In a piece where three
