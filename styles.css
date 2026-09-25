@@ -244,6 +244,46 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
 }
 .article-body a:hover { color: var(--ink); text-decoration-color: var(--ink); }
 
+/* Long-form rhythm. The rules above were written for short pages. A field note runs to a
+   couple of thousand words, and at 16px between paragraphs with nothing at all above a
+   heading, every heading sat on the last line of the paragraph before it and the whole
+   page read as one block. Space above a heading is roughly triple the space below it,
+   because a heading belongs to the section it opens rather than the one it closes. */
+.article-body p { margin-bottom: 21px; }
+.article-body p.lede { max-width: 51ch; }
+.article-body h2 { margin-top: 58px; margin-bottom: 18px; max-width: 30ch; }
+.article-body h2:first-child { margin-top: 0; }
+.article-body h3 { margin-top: 34px; }
+.article-body > img { margin-top: 34px; }
+
+/* Participant quotes. This is the first field note to carry any, so there was no rule for
+   them and they rendered identically to the prose around them. In a piece where three
+   different people are quoted in the same section, the reader could not see where
+   somebody else started speaking. */
+.article-body blockquote {
+  margin: 26px 0; padding: 4px 0 4px 26px;
+  border-left: 2px solid var(--ember);
+  max-width: 58ch;
+}
+.article-body blockquote p {
+  font-size: 1.06rem; line-height: 1.6; color: var(--ink); margin-bottom: 12px;
+}
+.article-body blockquote p:last-child { margin-bottom: 0; }
+.article-body blockquote cite {
+  display: block; font-style: normal; font-size: .84rem; letter-spacing: .04em;
+  color: var(--muted); margin-top: 12px;
+}
+
+/* Quiet lines: photo captions, table notes and the credit at the foot of a piece. The
+   note was using a "muted" class that had never been defined, so a line meant to sit
+   back was rendering at the same weight as the argument above it. */
+.article-body p.caption, .article-body p.muted {
+  font-size: .9rem; line-height: 1.5; color: var(--muted); max-width: 58ch;
+}
+.article-body p.caption { margin-bottom: 30px; }
+.article-body p.muted { margin-top: 30px; }
+
+
 /* primer callout */
 .primer { border: 1.5px solid var(--line); border-radius: 12px; background: #fff; padding: 16px 20px; margin: 22px 0 8px; }
 .primer .primer-label { font-size: .74rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ember); margin-bottom: 6px; }
@@ -524,7 +564,8 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
 .feed-entry h3 a { color: var(--ink); text-decoration: none; }
 .feed-entry h3 a:hover { color: var(--ember); }
 .feed-entry p { margin: 0; color: var(--text); }
-.header-date { font-size: .92rem; color: rgba(250,246,239,.7); margin-top: 6px; }
+.header-date { font-size: .92rem; color: rgba(250,246,239,.7); margin-top: 10px;
+               margin-bottom: 18px; letter-spacing: .02em; }
 
   /* ── Nav dropdown (Community) ──────────────────────────────
      No JS. On desktop the menu opens on hover or keyboard focus.
