@@ -233,6 +233,17 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
 .article-body p { margin-bottom: 16px; max-width: 62ch; }
 .article-body p.italic { font-style: italic; color: var(--muted); }
 
+/* Inline links in article prose had no rule at all, so every field note was
+   rendering browser-default blue underline on a page otherwise built from the
+   ink/ember palette. Ember, with a quiet underline so it still reads as a link. */
+.article-body a {
+  color: var(--ember); text-decoration: underline;
+  text-underline-offset: 2px; text-decoration-thickness: 1px;
+  text-decoration-color: rgba(232, 134, 46, .45);
+  transition: color .15s ease, text-decoration-color .15s ease;
+}
+.article-body a:hover { color: var(--ink); text-decoration-color: var(--ink); }
+
 /* primer callout */
 .primer { border: 1.5px solid var(--line); border-radius: 12px; background: #fff; padding: 16px 20px; margin: 22px 0 8px; }
 .primer .primer-label { font-size: .74rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ember); margin-bottom: 6px; }

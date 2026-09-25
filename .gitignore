@@ -82,3 +82,7 @@ skilldrills/decks/
 
 # Google Drive leaves this behind while syncing.
 .tmp.driveupload/
+
+# Sales and marketing source material. Mural exports, decks and working PDFs.
+# This repository is public, so the originals stay local.
+/5 Spheres Sales and Marketing/

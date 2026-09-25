@@ -3,6 +3,10 @@
 /resources/what-a-real-disagreement-looks-like   /field-notes/what-a-real-disagreement-looks-like/  301
 /resources/what-a-real-disagreement-looks-like/  /field-notes/what-a-real-disagreement-looks-like/  301
 
+# The measurement note was folded into the field report it belonged with.
+/field-notes/what-the-sensing-drill-measured  /field-notes/i-have-gone-through-that/  301
+/field-notes/what-the-sensing-drill-measured/  /field-notes/i-have-gone-through-that/  301
+
 # This site publishes from the repository root. Adding functions added a
 # dependency tree, and npm install puts it in that same root at build time, so
 # it would otherwise be served. Nothing under here is ever a page.
