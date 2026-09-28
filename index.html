@@ -47,7 +47,26 @@
   @media (max-width: 620px) {
     .nd-all { margin-left: 0; }
   }
-</style>
+
+  /* Field guide band */
+  .fg-band { background: var(--paper); padding: 64px 0; }
+  .fg-inner { display: grid; grid-template-columns: 210px 1fr; gap: 48px; align-items: center; }
+  .fg-cover { display: block; }
+  .fg-cover img { width: 100%; height: auto; display: block; border-radius: 3px;
+                  box-shadow: 0 18px 40px rgba(20,29,58,.22), 0 2px 6px rgba(20,29,58,.12); }
+  .fg-copy h2 { max-width: 20ch; margin-bottom: 14px; }
+  .fg-copy p { max-width: 58ch; margin-bottom: 0; }
+  .fg-copy .btn { margin-top: 22px; }
+  .fg-note { font-size: .88rem; color: var(--muted); margin-top: 14px; }
+  @media (max-width: 760px) {
+    .fg-band { padding: 44px 0; }
+    .fg-inner { grid-template-columns: 160px 1fr; gap: 28px; align-items: start; }
+  }
+  @media (max-width: 520px) {
+    .fg-inner { grid-template-columns: 1fr; gap: 22px; }
+    .fg-cover { max-width: 170px; }
+  }
+  </style>
 </head>
 <body>
 
@@ -77,7 +96,7 @@
           </div>
         </div>
       </div>
-      <a class="cta nav-primary" href="#begin">Start here</a>
+      <a class="cta nav-primary" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">The Field Guide</a>
     </div>
   </div>
 </nav>
@@ -93,8 +112,8 @@
     <h1 class="reveal">Almost every business problem is a people problem. Empathy is intelligence about people, <em>starting with you.</em></h1>
     <p class="lede reveal">Most people think empathy means being nice, or feeling what other people feel. That version is useless in a meeting. Real empathy is intelligence about people: understanding what is actually going on, in yourself first and then in everyone around you. It is the skill underneath the rest, and most of us learned it backwards. Learn it properly and you stop guessing expensively.</p>
     <div class="reveal">
-      <a class="btn" href="#begin">Coach yourself through a real decision</a>
-      <a class="btn ghost" href="#cohort">Human Intelligence</a>
+      <a class="btn" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">Reserve the Field Guide</a>
+      <a class="btn ghost" href="#begin">Coach yourself through a real decision</a>
     </div>
   </div>
 </header>
@@ -128,6 +147,26 @@
     <div>Author of <b>The 5 Spheres of Empathy</b></div>
   </div>
 </div>
+
+<!-- The field guide waitlist. It sits directly under the credibility strip, which ends on
+     "Author of The 5 Spheres of Empathy", so the claim and the offer are adjacent. -->
+<section class="fg-band">
+  <div class="wrap fg-inner">
+    <a class="fg-cover" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">
+      <img src="/images/field-guide-cover.jpg" width="1000" height="1600"
+           alt="The 5 Spheres of Empathy field guide, front cover">
+    </a>
+    <div class="fg-copy">
+      <span class="label">The field guide</span>
+      <h2>The first hundred get a group coaching session</h2>
+      <p>All five spheres in one book, with the question each one asks, the tools that go
+      with it and the exercises to practise them. Reserve a copy and you go on the list for
+      the session, which you can keep or give to somebody who needs it more than you do.</p>
+      <a class="btn" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">Reserve a copy &#8594;</a>
+      <p class="fg-note">A minute to register. You choose the edition nearer the time.</p>
+    </div>
+  </div>
+</section>
 
 <section id="begin">
   <div class="wrap magnet">
@@ -345,7 +384,7 @@
 <footer>
   <div class="wrap">
     <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
-    <div><a href="/field-notes/">Field Notes</a> &nbsp;&middot;&nbsp; <a href="/resources/">Resources</a> &nbsp;&middot;&nbsp; <a href="https://www.linkedin.com/in/mr-g-galeno-chua-7692b792/">LinkedIn</a> &nbsp;&middot;&nbsp; <a href="https://forms.gle/4CFNNYry3RKsAX9h6">The book</a></div>
+    <div><a href="/field-notes/">Field Notes</a> &nbsp;&middot;&nbsp; <a href="/resources/">Resources</a> &nbsp;&middot;&nbsp; <a href="https://www.linkedin.com/in/mr-g-galeno-chua-7692b792/">LinkedIn</a> &nbsp;&middot;&nbsp; <a href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">The Field Guide</a></div>
   </div>
 </footer>
 
