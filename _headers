@@ -16,7 +16,7 @@
   # is what turns a stray injected <script> into a no-op. 'unsafe-inline' is here
   # because pages carry inline <script> and style attributes; tightening that to
   # hashes is a later job and needs the inline blocks to stop changing first.
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline' https://*.mailerlite.com https://assets.mlcdn.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://i.ytimg.com https://*.ytimg.com https://*.mailerlite.com; font-src 'self'; connect-src 'self' https://*.mailerlite.com; frame-src https://www.youtube-nocookie.com https://www.youtube.com https://docs.google.com https://drive.google.com; form-action 'self' https://*.mailerlite.com; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline' https://*.mailerlite.com https://assets.mlcdn.com https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://assets.mlcdn.com; img-src 'self' data: https://i.ytimg.com https://*.ytimg.com https://*.mailerlite.com https://assets.mlcdn.com https://www.gstatic.com; font-src 'self'; connect-src 'self' https://*.mailerlite.com https://assets.mlcdn.com https://www.google.com; frame-src https://www.youtube-nocookie.com https://www.youtube.com https://docs.google.com https://drive.google.com https://www.google.com; form-action 'self' https://*.mailerlite.com; upgrade-insecure-requests
 
   # Refuse to be framed by anyone. frame-ancestors above is the modern version;
   # this stays for older browsers that never learned it.
