@@ -86,3 +86,26 @@ skilldrills/decks/
 # Sales and marketing source material. Mural exports, decks and working PDFs.
 # This repository is public, so the originals stay local.
 /5 Spheres Sales and Marketing/
+
+# Social film build artefacts. Frame sequences run to roughly 1.4GB per cut and
+# this directory syncs to Google Drive, so they are deleted after encoding and
+# rebuilt on demand: see video/sick-day/README.md. Frames are a pure function of
+# time, so a rebuild is byte-identical and render.py --resume picks up where an
+# interrupted run stopped. The finished MP4s stay out of the repository too,
+# because everything committed here is deployed to a public web host.
+video/*/frames/
+video/*/assets/
+video/*/stills/
+video/*/_verify/
+video/*/_chrome_profile/
+video/*/out/
+video/*/contact_*.png
+video/*/verify_*.png
+
+# Vendored agent skills installed by `npx skills add`. Third-party material, and
+# not something to publish with the site.
+.agents/
+
+# Self-contained local previews. Built by scratchpad/_selfcontained.py so a page can be
+# looked at from disk without a server running. Megabytes of inlined fonts, never deployed.
+/PREVIEW-*.html

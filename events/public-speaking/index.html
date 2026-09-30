@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Public Speaking Drill, a live 90-minute session | Human Intelligence</title>
+<meta name="description" content="Ninety minutes of what actually makes people listen, from someone who used to be terrified of speaking. Theory, singing, then you deliver in threes and score each other. Thursday 22 October, 09:00 CEST, on Zoom.">
+<meta property="og:title" content="The Public Speaking Drill, a live 90-minute session">
+<meta property="og:description" content="Most public speaking advice tells you to be confident. This is the handful of things that actually change how a room receives you, and you practise all of them.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://5spheresofempathy.com/og.png">
+<meta property="og:url" content="https://5spheresofempathy.com/events/public-speaking/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://5spheresofempathy.com/og.png">
+<link rel="canonical" href="https://5spheresofempathy.com/events/public-speaking/">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<style>
+:root {
+  --navy: #002C45;
+  --navy-deep: #001d2e;
+  --offwhite: #F5E8D6;
+  --offwhite-warm: #efdfc8;
+  --orange: #FF4900;
+  --orange-soft: #FF6500;
+  --text: #23303a;
+  --muted: #6a7480;
+  --line: #ddcdb4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--offwhite);
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 600; line-height: 1.18; }
+
+a { color: var(--orange); }
+
+/* ── Hero ── */
+.hero {
+  background: var(--navy);
+  color: var(--offwhite);
+  padding: 84px 0 72px;
+}
+.eyebrow {
+  display: inline-block;
+  font-size: .78rem; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--orange-soft);
+  margin-bottom: 26px;
+}
+.hero h1 {
+  font-size: clamp(2.5rem, 7vw, 3.9rem);
+  font-weight: 700;
+  letter-spacing: -.015em;
+  margin-bottom: 26px;
+}
+.subhead {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.12rem, 2.6vw, 1.32rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(245,232,214,.9);
+  max-width: 40ch;
+}
+
+/* ── Details bar ── */
+.details {
+  margin-top: 40px;
+  padding-top: 26px;
+  border-top: 1px solid rgba(245,232,214,.22);
+}
+.details dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 20px 26px;
+}
+.details dt {
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: .13em; text-transform: uppercase;
+  color: rgba(245,232,214,.52);
+  margin-bottom: 5px;
+}
+.details dd { font-size: .98rem; font-weight: 600; color: var(--offwhite); }
+.facilitator {
+  margin-top: 24px;
+  font-size: .95rem;
+  color: rgba(245,232,214,.72);
+}
+
+/* ── Sections ── */
+section { padding: 64px 0; }
+section + section { padding-top: 0; }
+
+.label {
+  display: block;
+  font-size: .74rem; font-weight: 700;
+  letter-spacing: .15em; text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 16px;
+}
+section h2 {
+  font-size: clamp(1.6rem, 4vw, 2.05rem);
+  color: var(--navy);
+  margin-bottom: 22px;
+}
+section p { margin-bottom: 20px; max-width: 62ch; }
+section p:last-child { margin-bottom: 0; }
+
+/* ── Ordered run-of-show ── */
+.runlist { list-style: none; counter-reset: run; margin-top: 8px; }
+.runlist li {
+  counter-increment: run;
+  position: relative;
+  padding-left: 62px;
+  padding-bottom: 26px;
+  max-width: 60ch;
+}
+.runlist li:last-child { padding-bottom: 0; }
+.runlist li::before {
+  content: counter(run);
+  position: absolute; left: 0; top: 2px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--navy); color: var(--offwhite);
+  font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.05rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.runlist strong {
+  display: block;
+  font-family: 'Fraunces', serif;
+  font-size: 1.08rem; font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+/* ── Take-away list ── */
+.takeaways { list-style: none; margin-top: 6px; }
+.takeaways li {
+  position: relative;
+  padding-left: 30px;
+  padding-bottom: 16px;
+  max-width: 60ch;
+}
+.takeaways li:last-child { padding-bottom: 0; }
+.takeaways li::before {
+  content: '';
+  position: absolute; left: 4px; top: 11px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--orange);
+}
+
+/* ── Evidence panel ── */
+.evidence {
+  background: var(--offwhite-warm);
+  border-left: 3px solid var(--orange);
+  border-radius: 0 10px 10px 0;
+  padding: 34px 34px 34px 30px;
+  margin-top: 4px;
+}
+.evidence p { max-width: none; }
+.evidence p:last-child { margin-bottom: 0; }
+
+/* ── Sign-up form ── */
+.signup {
+  background: var(--navy);
+  color: var(--offwhite);
+  padding: 60px 0;
+  margin-top: 64px;
+}
+.signup.top { margin-top: 0; }
+.signup h2 {
+  font-size: clamp(1.6rem, 4vw, 2.05rem);
+  color: var(--offwhite);
+  margin-bottom: 10px;
+}
+.signup .intro {
+  color: rgba(245,232,214,.78);
+  margin-bottom: 30px;
+  max-width: 48ch;
+}
+
+form { max-width: 480px; }
+.field { margin-bottom: 18px; }
+label {
+  display: block;
+  font-size: .8rem; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+  color: rgba(245,232,214,.66);
+  margin-bottom: 7px;
+}
+input[type="text"], input[type="email"], select {
+  width: 100%;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--offwhite);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 13px 15px;
+  transition: border-color .18s ease;
+  -webkit-appearance: none; appearance: none;
+}
+select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' stroke='%23002C45' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  padding-right: 42px;
+  cursor: pointer;
+}
+input:focus, select:focus { outline: none; border-color: var(--orange); }
+
+button[type="submit"] {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1rem; font-weight: 700;
+  letter-spacing: .01em;
+  color: #fff;
+  background: var(--orange);
+  border: 0; border-radius: 99px;
+  padding: 15px 34px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background .18s ease;
+}
+button[type="submit"]:hover { background: var(--orange-soft); }
+
+.fineprint {
+  font-size: .88rem;
+  color: rgba(245,232,214,.6);
+  margin-top: 16px;
+  max-width: 44ch;
+}
+
+/* ── Add to calendar ── */
+.addcal { margin-top: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.addcal-label {
+  font-size: .7rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase;
+  color: rgba(245,232,214,.52); margin-right: 4px;
+}
+.addcal-btn {
+  display: inline-block; padding: 8px 16px; border-radius: 99px;
+  border: 1.5px solid rgba(245,232,214,.32);
+  font-size: .86rem; font-weight: 600; color: var(--offwhite);
+  text-decoration: none; transition: border-color .18s ease, color .18s ease;
+}
+.addcal-btn:hover { border-color: var(--orange); color: var(--orange-soft); }
+
+/* ── Tool figure ── */
+.tool { margin: 38px 0 0; }
+.tool img {
+  display: block; width: 100%; max-width: 520px; height: auto;
+  margin: 0 auto; border-radius: 10px;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 30px rgba(0,44,69,.10);
+}
+.tool figcaption {
+  margin: 16px auto 0; max-width: 52ch;
+  font-size: .88rem; line-height: 1.5; color: var(--muted); text-align: center;
+}
+
+/* ── Close line ── */
+.close {
+  padding: 54px 0 64px;
+  text-align: center;
+}
+.close p {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.15rem, 3vw, 1.4rem);
+  font-style: italic;
+  color: var(--navy);
+  max-width: none;
+  margin: 0 auto;
+}
+
+footer {
+  background: var(--navy-deep);
+  color: rgba(245,232,214,.55);
+  font-size: .88rem;
+  padding: 30px 0;
+}
+footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 22px; justify-content: space-between; }
+footer a { color: rgba(245,232,214,.78); text-decoration: none; }
+footer a:hover { color: var(--orange-soft); }
+
+@media (max-width: 560px) {
+  body { font-size: 17px; }
+  .hero { padding: 60px 0 52px; }
+  section { padding: 48px 0; }
+  .signup { padding: 48px 0; margin-top: 48px; }
+  .runlist li { padding-left: 52px; }
+  .runlist li::before { width: 34px; height: 34px; font-size: .95rem; }
+  .evidence { padding: 26px 24px 26px 22px; }
+}
+
+/* The twelve are three groups, not three steps, so they take bullets rather than the
+   numbered circles the run-of-session list uses. */
+.takeaways.grouped li { margin-bottom: 16px; }
+.takeaways.grouped strong { display: block; font-family: 'Fraunces', serif;
+  font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Human Intelligence: The Public Speaking Drill",
+  "description": "A 90-minute live session on holding a room. You deliver, you are scored against twelve delivery behaviours by the people who watched, and you deliver again.",
+  "startDate": "2026-10-22T09:00:00+02:00",
+  "endDate": "2026-10-22T10:30:00+02:00",
+  "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "location": {
+    "@type": "VirtualLocation",
+    "url": "https://5spheresofempathy.com/events/public-speaking/"
+  },
+  "image": "https://5spheresofempathy.com/og.png",
+  "organizer": { "@type": "Organization", "name": "The 5 Spheres of Empathy" },
+  "performer": { "@type": "Person", "name": "Galeno Chua" },
+  "offers": {
+    "@type": "Offer",
+    "price": "50",
+    "priceCurrency": "EUR",
+    "availability": "https://schema.org/InStock",
+    "url": "https://5spheresofempathy.com/events/public-speaking/",
+    "validFrom": "2026-09-30T00:00:00+02:00"
+  }
+}
+</script>
+</head>
+<body>
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Human Intelligence &middot; Live on Zoom</span>
+    <h1>The Public Speaking Drill</h1>
+    <p class="subhead">I used to sweat, shiver and all round suck at public speaking. Now I
+    get voted onto the organisers&rsquo; top speaker lists at conferences from New Zealand to Cambodia to
+    Poland to London. These are the most important fundamentals I could fit into ninety
+    minutes, enough to get you on your feet, or to polish you into what my father-in-law
+    calls a stage animal.</p>
+
+    <div class="details">
+      <dl>
+        <div><dt>Date</dt><dd>Thursday 22 October</dd></div>
+        <div><dt>Time</dt><dd>09:00 CEST</dd></div>
+        <div><dt>Length</dt><dd>90 minutes</dd></div>
+        <div><dt>Where</dt><dd>Zoom</dd></div>
+        <div><dt>Cost</dt><dd>&euro;50, twelve places</dd></div>
+      </dl>
+      <p class="facilitator">Facilitated by Galeno Chua</p>
+
+      <div class="addcal">
+        <span class="addcal-label">Add to calendar</span>
+        <a class="addcal-btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Human%20Intelligence%3A%20The%20Public%20Speaking%20Drill&amp;dates=20261022T070000Z/20261022T083000Z&amp;details=A%2090-minute%20live%20session%20on%20holding%20a%20room.%20You%20deliver%2C%20you%20get%20read%20back%20against%20twelve%20delivery%20behaviours%2C%20and%20you%20deliver%20again.%0A%0ABring%20ninety%20seconds%20of%20something%20real%20you%20have%20to%20say%20soon.%0A%0ADetails%3A%20https%3A//5spheresofempathy.com/events/public-speaking/&amp;location=Zoom&amp;ctz=Europe/Warsaw" target="_blank" rel="noopener">Google Calendar</a>
+        <a class="addcal-btn" href="/events/public-speaking/public-speaking-drill.ics" download>Outlook, Apple or other</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ SIGN-UP, TOP ══════════ -->
+<div class="signup top" id="signup-top">
+  <div class="wrap">
+    <div class="row-form">
+    <h2>Take a place</h2>
+
+    <!-- Netlify form. There is no MailerLite form for this drill yet, and this one works
+         from the moment it deploys. Swapping to MailerLite is the action attribute and the
+         field names, nothing else. -->
+    <form name="public-speaking-22-oct" method="POST" data-netlify="true"
+          netlify-honeypot="bot-field" action="/skilldrills/thanks/">
+      <input type="hidden" name="form-name" value="public-speaking-22-oct">
+      <p style="position:absolute;left:-9999px"><label>Leave this empty <input name="bot-field"></label></p>
+      <div class="field">
+        <label for="name-top">First name</label>
+        <input type="text" id="name-top" name="name" autocomplete="given-name" required>
+      </div>
+      <div class="field">
+        <label for="email-top">Email</label>
+        <input type="email" id="email-top" name="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="saying-top">What do you have to say soon, and to whom?</label>
+        <input type="text" id="saying-top" name="saying"
+               placeholder="A pitch, a board update, a eulogy, a lesson">
+      </div>
+      <button type="submit">Take a place</button>
+      <p class="fineprint">&euro;50. I will reply with the payment link and the Zoom
+      details. Twelve places, which is four breakout rooms of three.</p>
+    </form>
+    </div>
+  </div>
+</div>
+
+<!-- ═════ WHAT THIS IS ═════ -->
+<section>
+  <div class="wrap">
+    <span class="label">What this is</span>
+    <h2>Speak with empathy and make their hearts sing.</h2>
+    <p>Most speaking advice tells you to be more confident, which is not a thing anybody can
+    practise on a Thursday morning. What actually changed it for me is all learnable, and
+    most of it happens before you open your mouth. Ninety per cent of a good speech is in the
+    preparation.</p>
+    <p>The mechanism is empathy, and in public speaking it runs both ways. You are
+    designing a relationship with the room, and you do that by speaking to one human in it
+    rather than broadcasting at a crowd.</p>
+    <p>It also helps to know where the work actually is. Of what an audience takes from you,
+    your body does most of it, your voice does most of the rest, and the words themselves
+    carry a surprisingly small share. Most people spend all of their preparation on the
+    words.</p>
+  </div>
+</section>
+
+<!-- ═════ WHO IT'S FOR ═════ -->
+<section>
+  <div class="wrap">
+    <span class="label">Who it&rsquo;s for</span>
+    <h2>Anyone who has to stand up and be believed.</h2>
+    <p>Founders pitching, leaders briefing, coaches and facilitators, teachers, and anyone
+    who speaks to rooms often enough to suspect they are getting away with it rather than
+    doing it well. You do not need the method to be familiar.</p>
+    <p>Bring ninety seconds of something real that you have to say soon. A pitch, a board
+    update, a lesson, a eulogy. Bring something real. Made-up material is easy to deliver
+    because nothing is riding on it, and then you have spent the morning practising the wrong
+    thing.</p>
+    <p>One thing to know before you book. You will speak, you will sing, and you will be
+    scored by two other people. Everybody does all three, and nobody sits and watches.</p>
+  </div>
+</section>
+
+<!-- ═════ HOW THE 90 MINUTES RUN ═════ -->
+<section>
+  <div class="wrap">
+    <span class="label">How the 90 minutes run</span>
+    <h2>Fifteen minutes of theory, then you are up.</h2>
+    <ol class="runlist">
+      <li>
+        <strong>First 15 minutes</strong>
+        The theory, and only the parts you will use in the next hour. Why empathy is the
+        mechanism, the seven things to settle before you speak, the five things to do while
+        you are speaking, and where an audience is actually reading you.
+      </li>
+      <li>
+        <strong>Then everybody sings</strong>
+        Yes, everybody. It is a Disney singing warm-up, and it is the fastest way I know to
+        open up tone, range and breath. It has the side effect of making the speaking
+        afterwards feel straightforward by comparison. Nobody is judged on the singing.
+      </li>
+      <li>
+        <strong>Then we talk about what just happened</strong>
+        Short, and worth doing, because most people learn something about their own voice in
+        those two minutes that they did not know that morning.
+      </li>
+      <li>
+        <strong>Then the video mirror drill</strong>
+        Breakout rooms of three. You deliver your ninety seconds, the other two watch and
+        score you against the sheet, and then you swap until everyone has gone. Scoring is part of the
+        session and not optional, because a read from two people who just watched you is the
+        whole reason to be in a room rather than reading a book.
+      </li>
+      <li>
+        <strong>Questions and close</strong>
+        Everyone back together, what came up, and what the numbers meant.
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ═════ WHAT GETS SCORED ═════ -->
+<section>
+  <div class="wrap">
+    <span class="label">What gets scored</span>
+    <h2>Seven things before you speak, five while you are speaking.</h2>
+    <ul class="takeaways grouped">
+      <li>
+        <strong>Before you open your mouth</strong>
+        Know why you are speaking, and speak to serve rather than to impress. Talk to one
+        human, not to a crowd. Choose clarity over cleverness and say one thing well. Tell a
+        story, because emotion is what memory attaches to. Be present rather than polished.
+        Give them a structure, which is what makes an audience feel safe. Rehearse it enough
+        that you are free of it.
+      </li>
+      <li>
+        <strong>While you are speaking</strong>
+        Pause, which gives a moment its weight and lets people breathe. Pace, which is how
+        attention is held. Volume, for emphasis. Emotion, because the resonance in your
+        voice opens feelings in other people. Tonality, the ups and downs, playful through
+        to dead serious.
+      </li>
+    </ul>
+    <p style="margin-top:20px">The scoring sheet for this is being built for the session and
+    everyone who attends keeps theirs.</p>
+  </div>
+</section>
+
+<!-- ═════ YOU'LL LEAVE WITH ═════ -->
+<section>
+  <div class="wrap">
+    <span class="label">You&rsquo;ll leave with</span>
+    <h2>Four things you can use the next time you stand up.</h2>
+    <ul class="takeaways">
+      <li>Your sheet, scored by two people who watched you deliver, and the one thing to
+      change first.</li>
+      <li>Event, If, Therefore, But. The structure I use to turn anything into a story that
+      holds, including data.</li>
+      <li>Three practices that keep working after the session: sing everything, record and
+      review, make good friends who will tell you the truth.</li>
+      <li>The anonymised before and after from the whole group, sent to everyone who
+      attends.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═════ AFTERWARDS ═════ -->
+<section>
+  <div class="wrap">
+    <span class="label">If you want to be good, and fast</span>
+    <h2>Send me a video of you speaking and I will tell you what I see.</h2>
+    <p>The drill gives you a read from two people in a breakout room, which is a real start
+    and it is still ninety minutes. If you have something coming up that matters, a keynote,
+    an investor meeting, a conference slot, private sessions go further. You record yourself
+    speaking, I review it properly, and you get direct feedback on what to change and in
+    what order.</p>
+    <p><a href="/coaching/">How private sessions work &#8594;</a></p>
+  </div>
+</section>
+
+<!-- ═════ WHERE IT COMES FROM ═════ -->
+<section>
+  <div class="wrap">
+    <span class="label">Where it comes from</span>
+    <div class="evidence">
+      <p>The material behind this is a half-day workshop run with groups across several
+      countries, and a two-day programme, Speaking with Influence and Empathy, typically
+      delivered for my corporate clients. The ninety-minute version keeps the two exercises that do the
+      most per minute, the Disney singing and the video mirror drill in threes, and cuts
+      everything you could read instead of practising.</p>
+      <p>The last drill ran in September. You can
+      <a href="/field-notes/i-have-gone-through-that/">read what happened in that room</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SIGN-UP, BOTTOM ══════════ -->
+<div class="signup bottom" id="signup-bottom">
+  <div class="wrap">
+    <div class="row-form">
+    <h2>Take a place</h2>
+
+    <!-- Netlify form. There is no MailerLite form for this drill yet, and this one works
+         from the moment it deploys. Swapping to MailerLite is the action attribute and the
+         field names, nothing else. -->
+    <form name="public-speaking-22-oct" method="POST" data-netlify="true"
+          netlify-honeypot="bot-field" action="/skilldrills/thanks/">
+      <input type="hidden" name="form-name" value="public-speaking-22-oct">
+      <p style="position:absolute;left:-9999px"><label>Leave this empty <input name="bot-field"></label></p>
+      <div class="field">
+        <label for="name-bottom">First name</label>
+        <input type="text" id="name-bottom" name="name" autocomplete="given-name" required>
+      </div>
+      <div class="field">
+        <label for="email-bottom">Email</label>
+        <input type="email" id="email-bottom" name="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="saying-bottom">What do you have to say soon, and to whom?</label>
+        <input type="text" id="saying-bottom" name="saying"
+               placeholder="A pitch, a board update, a eulogy, a lesson">
+      </div>
+      <button type="submit">Take a place</button>
+      <p class="fineprint">&euro;50. I will reply with the payment link and the Zoom
+      details. Twelve places, which is four breakout rooms of three.</p>
+    </form>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
+    <div><a href="/">Home</a> &middot; <a href="/events/">Events</a> &middot; <a href="mailto:hello@5spheresofempathy.com">hello@5spheresofempathy.com</a></div>
+  </div>
+</footer>
+
+</body>
+</html>

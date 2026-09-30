@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//The 5 Spheres of Empathy//Public Speaking Drill//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:public-speaking-drill-2026-10-22@5spheresofempathy.com
+DTSTAMP:20260930T000000Z
+DTSTART:20261022T070000Z
+DTEND:20261022T083000Z
+SUMMARY:Human Intelligence: The Public Speaking Drill
+DESCRIPTION:A 90-minute live session on holding a room. You deliver\, you g
+ et read back against twelve delivery behaviours\, and you deliver again.\n
+ \nBring ninety seconds of something real you have to say soon.\n\nDetails:
+  https://5spheresofempathy.com/events/public-speaking/
+LOCATION:Zoom
+URL:https://5spheresofempathy.com/events/public-speaking/
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:The Public Speaking Drill starts in an hour
+END:VALARM
+END:VEVENT
+END:VCALENDAR
