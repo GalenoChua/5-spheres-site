@@ -1,0 +1,5 @@
+# Calendar files must keep CRLF. RFC 5545 specifies it, and desktop Outlook is
+# strict about it: an .ics with bare newlines can download and then open to
+# nothing, which looks exactly like a broken link. Git's autocrlf normalises
+# them to LF on commit unless told otherwise.
+*.ics -text
