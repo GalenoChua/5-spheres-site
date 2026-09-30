@@ -372,30 +372,39 @@ footer a:hover { color: var(--orange-soft); }
     <div class="row-form">
     <h2>Take a place</h2>
 
-    <!-- Netlify form. There is no MailerLite form for this drill yet, and this one works
-         from the moment it deploys. Swapping to MailerLite is the action attribute and the
-         field names, nothing else. -->
-    <form name="public-speaking-22-oct" method="POST" data-netlify="true"
-          netlify-honeypot="bot-field" action="/skilldrills/thanks/">
-      <input type="hidden" name="form-name" value="public-speaking-22-oct">
-      <p style="position:absolute;left:-9999px"><label>Leave this empty <input name="bot-field"></label></p>
+    <!-- Posts straight to MailerLite form 200050059381835246, which adds to Events and to
+         Event 2026-10-22 Public Speaking. MailerLite's own embedded widget is not used
+         anywhere it matters on this site: it pulls in Google reCAPTCHA, which this site's
+         CSP blocks, so the widget renders and then silently fails to submit. -->
+    <form class="drill-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/200050059381835246/subscribe" method="post" target="_blank" rel="noopener">
       <div class="field">
         <label for="name-top">First name</label>
-        <input type="text" id="name-top" name="name" autocomplete="given-name" required>
+        <input type="text" id="name-top" name="fields[name]" autocomplete="given-name" required>
       </div>
       <div class="field">
         <label for="email-top">Email</label>
-        <input type="email" id="email-top" name="email" autocomplete="email" required>
+        <input type="email" id="email-top" name="fields[email]" autocomplete="email" required>
       </div>
       <div class="field">
-        <label for="saying-top">What do you have to say soon, and to whom?</label>
-        <input type="text" id="saying-top" name="saying"
+        <label for="why-top">What do you have to say soon, and to whom?</label>
+        <input type="text" id="why-top" name="fields[why_now]"
                placeholder="A pitch, a board update, a eulogy, a lesson">
       </div>
+      <input type="hidden" name="ml-submit" value="1">
+      <input type="hidden" name="anticsrf" value="true">
       <button type="submit">Take a place</button>
       <p class="fineprint">&euro;50. I will reply with the payment link and the Zoom
       details. Twelve places, which is four breakout rooms of three.</p>
     </form>
+    </div>
+    <div class="row-success" style="display:none">
+      <h2>Your place is held.</h2>
+      <p class="intro">I will email you the payment link and the Zoom details before
+      Thursday 22 October. Start thinking about the ninety seconds you want to work on.</p>
+      <div class="addcal">
+        <span class="addcal-label">Add to calendar</span>
+        <a class="addcal-btn" href="/events/public-speaking/public-speaking-drill.ics" download>Outlook, Apple or other</a>
+      </div>
     </div>
   </div>
 </div>
@@ -555,30 +564,39 @@ footer a:hover { color: var(--orange-soft); }
     <div class="row-form">
     <h2>Take a place</h2>
 
-    <!-- Netlify form. There is no MailerLite form for this drill yet, and this one works
-         from the moment it deploys. Swapping to MailerLite is the action attribute and the
-         field names, nothing else. -->
-    <form name="public-speaking-22-oct" method="POST" data-netlify="true"
-          netlify-honeypot="bot-field" action="/skilldrills/thanks/">
-      <input type="hidden" name="form-name" value="public-speaking-22-oct">
-      <p style="position:absolute;left:-9999px"><label>Leave this empty <input name="bot-field"></label></p>
+    <!-- Posts straight to MailerLite form 200050059381835246, which adds to Events and to
+         Event 2026-10-22 Public Speaking. MailerLite's own embedded widget is not used
+         anywhere it matters on this site: it pulls in Google reCAPTCHA, which this site's
+         CSP blocks, so the widget renders and then silently fails to submit. -->
+    <form class="drill-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/200050059381835246/subscribe" method="post" target="_blank" rel="noopener">
       <div class="field">
         <label for="name-bottom">First name</label>
-        <input type="text" id="name-bottom" name="name" autocomplete="given-name" required>
+        <input type="text" id="name-bottom" name="fields[name]" autocomplete="given-name" required>
       </div>
       <div class="field">
         <label for="email-bottom">Email</label>
-        <input type="email" id="email-bottom" name="email" autocomplete="email" required>
+        <input type="email" id="email-bottom" name="fields[email]" autocomplete="email" required>
       </div>
       <div class="field">
-        <label for="saying-bottom">What do you have to say soon, and to whom?</label>
-        <input type="text" id="saying-bottom" name="saying"
+        <label for="why-bottom">What do you have to say soon, and to whom?</label>
+        <input type="text" id="why-bottom" name="fields[why_now]"
                placeholder="A pitch, a board update, a eulogy, a lesson">
       </div>
+      <input type="hidden" name="ml-submit" value="1">
+      <input type="hidden" name="anticsrf" value="true">
       <button type="submit">Take a place</button>
       <p class="fineprint">&euro;50. I will reply with the payment link and the Zoom
       details. Twelve places, which is four breakout rooms of three.</p>
     </form>
+    </div>
+    <div class="row-success" style="display:none">
+      <h2>Your place is held.</h2>
+      <p class="intro">I will email you the payment link and the Zoom details before
+      Thursday 22 October. Start thinking about the ninety seconds you want to work on.</p>
+      <div class="addcal">
+        <span class="addcal-label">Add to calendar</span>
+        <a class="addcal-btn" href="/events/public-speaking/public-speaking-drill.ics" download>Outlook, Apple or other</a>
+      </div>
     </div>
   </div>
 </div>
@@ -589,6 +607,48 @@ footer a:hover { color: var(--orange-soft); }
     <div><a href="/">Home</a> &middot; <a href="/events/">Events</a> &middot; <a href="mailto:hello@5spheresofempathy.com">hello@5spheresofempathy.com</a></div>
   </div>
 </footer>
+
+
+<script>
+/* Post the form ourselves and swap in the success state. The page carries the same form
+   twice, so MailerLite's own script cannot be used: it finds a form by a single id. The
+   POST is a CORS simple request, so no preflight, and the response is opaque under no-cors,
+   which is fine because the subscriber is created either way. With JavaScript off the form
+   still submits natively through target="_blank". */
+(function () {
+  var ACTION = "https://assets.mailerlite.com/jsonp/2409610/forms/200050059381835246/subscribe";
+
+  document.querySelectorAll('form.drill-form').forEach(function (form) {
+    var sending = false;
+    form.addEventListener('submit', function (e) {
+      if (sending) { return; }
+      if (!form.checkValidity()) { form.reportValidity(); e.preventDefault(); return; }
+      e.preventDefault();
+
+      var btn = form.querySelector('button[type="submit"]');
+      var label = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Holding your place...'; }
+
+      fetch(ACTION, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form)).toString()
+      }).then(function () {
+        document.querySelectorAll('.row-form').forEach(function (el) { el.style.display = 'none'; });
+        document.querySelectorAll('.row-success').forEach(function (el) { el.style.display = 'block'; });
+        var wrap = form.closest('.signup');
+        if (wrap) { wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      }).catch(function () {
+        /* Network failure: submit natively so a sign-up is never silently lost. */
+        if (btn) { btn.disabled = false; btn.textContent = label; }
+        sending = true;
+        form.submit();
+      });
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
