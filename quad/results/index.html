@@ -133,9 +133,13 @@
            table(d.dimensions, cols.concat([['Chose as focus', 'chosenAsFocus']]));
     }
     if (d.standardShift) {
-      h += '<h2>How far the ruler moved</h2>' +
-           '<p class="note">First pass against the re-score. A fall here is somebody getting ' +
-           'more accurate about themselves, not worse at the thing.</p>' +
+      h += '<h2 style="color:var(--warn)">Standard shift, WITHDRAWN</h2>' +
+           '<div class="msg err"><b>Do not quote these numbers.</b> Withdrawn on ' +
+           '17 September. The re-score was run in the wrong place, so this gap no longer ' +
+           'isolates the teaching: it contains the teaching, the whole of round two, and ' +
+           'the close of a session people enjoyed. It does not belong in a participant ' +
+           'email, a social post or a report. Shown only so it is not quietly recomputed ' +
+           'and mistaken for a finding.</div>' +
            table(d.standardShift, cols);
     }
     if (d.state) {
