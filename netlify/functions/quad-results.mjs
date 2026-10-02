@@ -36,6 +36,19 @@ const json = (status, body) =>
 const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
 const round2 = (n) => (n === null ? null : Math.round(n * 100) / 100);
 
+/* Compared in constant time, so the endpoint does not leak the token one
+   character at a time to anybody willing to measure the difference between a
+   first-character mismatch and a last-character one. An unset variable fails
+   here too, which is the closed default. */
+function tokenOk(given, expected) {
+  if (!expected || !given || given.length !== expected.length) return false;
+  let diff = 0;
+  for (let i = 0; i < given.length; i += 1) {
+    diff |= given.charCodeAt(i) ^ expected.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
 export default async (request) => {
   const url = new URL(request.url);
   const token = url.searchParams.get('token') || '';
@@ -43,7 +56,7 @@ export default async (request) => {
 
   /* No token configured means the endpoint is closed, not open. Failing shut is
      the only safe default for something that can return email addresses. */
-  if (!expected || token !== expected) {
+  if (!tokenOk(token, expected)) {
     return json(401, { error: 'unauthorised' });
   }
 

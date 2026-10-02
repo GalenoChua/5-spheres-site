@@ -206,7 +206,7 @@
       happened.</p>
     <div id="state-start"></div>
 
-    <button class="btn wide" id="go-a" disabled>Done &mdash; on to the first round</button>
+    <button class="btn wide" id="go-a" disabled>Done, on to the first round</button>
     <p class="gate-hint" id="hint-a" hidden></p>
   </section>
 
@@ -215,7 +215,7 @@
     <div class="steps"><i class="done"></i><i class="done"></i><i></i><i></i><i></i><i></i></div>
     <div class="eyebrow">First round</div>
     <h2>How did that one go?</h2>
-    <p>Four questions about the round you just did. Answer them honestly. If you mark
+    <p>Four questions about the round you just did. If you mark
       yourself up because it feels rude not to, the second round won&rsquo;t tell either of
       us anything.</p>
     <div id="a-dims"></div>
@@ -223,7 +223,7 @@
       <label for="a-note">Anything you noticed?</label>
       <p class="why">Optional. A passing thought, something that surprised you, something
         you can&rsquo;t explain yet.</p>
-      <textarea id="a-note" rows="2" placeholder="My shoulders dropped about a minute in…"></textarea>
+      <textarea id="a-note" maxlength="2000" rows="2" placeholder="My shoulders dropped about a minute in…"></textarea>
     </div>
     <div class="navrow">
       <button class="btn back" type="button" data-back="s-start">&larr; Back</button>
@@ -245,10 +245,10 @@
     </div>
     <div class="note-box">
       <b>When you go again.</b> One person speaks for six minutes. The other only senses
-      &mdash; no advice, no fixing, no reassurance. Scan three layers while they talk:
+      with no advice, no fixing and no reassurance. Scan three layers while they talk:
       <b>physical</b> (heart rate, tension, energy), <b>mental</b> (clear or fogged, racing
       or stuck), <b>emotional</b> (what the weather is in there, named plainly). Then reflect
-      something back. Paraphrase it, or offer a hunch as a question &mdash; &ldquo;I&rsquo;m
+      something back. Paraphrase it, or offer a hunch as a question. &ldquo;I&rsquo;m
       sensing&hellip; is that right?&rdquo; Then swap.
     </div>
     <div class="navrow">
@@ -263,7 +263,7 @@
     <div class="steps"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i></i><i></i></div>
     <div class="eyebrow">First round, second look</div>
     <h2>Score that first round again.</h2>
-    <p>Same four questions, same round &mdash; the one you did before any of this. You know
+    <p>Same four questions, same round, the one you did before any of this. You know
       what the questions are asking now. You didn&rsquo;t then. Score it the way you would
       have if you had.</p>
     <p class="muted">Your first set is hidden on purpose. If you could see it you would
@@ -272,7 +272,7 @@
     <div class="note-field">
       <label for="a2-note">Did anything move?</label>
       <p class="why">Optional. If a number went down, that is the interesting one.</p>
-      <textarea id="a2-note" rows="2" placeholder="I thought I was listening. I was waiting for my turn…"></textarea>
+      <textarea id="a2-note" maxlength="2000" rows="2" placeholder="I thought I was listening. I was waiting for my turn…"></textarea>
     </div>
     <div class="navrow">
       <button class="btn back" type="button" data-back="s-hold">&larr; Back</button>
@@ -288,7 +288,7 @@
     <div class="eyebrow">Second round</div>
     <h2>Same four questions.</h2>
     <p>About the round you just did, not the first one. Your baseline is hidden on purpose
-      &mdash; score what you actually noticed, not what would look like improvement.</p>
+      Score what you actually noticed, not what would look like improvement.</p>
     <div id="b-dims"></div>
 
     <h3>And where are you now?</h3>
@@ -298,7 +298,7 @@
     <div class="note-field">
       <label for="b-note">And anything from that round?</label>
       <p class="why">Optional. How it felt, what changed, what didn&rsquo;t.</p>
-      <textarea id="b-note" rows="2" placeholder="Easier the second time, but I still…"></textarea>
+      <textarea id="b-note" maxlength="2000" rows="2" placeholder="Easier the second time, but I still…"></textarea>
     </div>
     <div class="navrow">
       <button class="btn back" type="button" data-back="s-again">&larr; Back</button>
@@ -316,7 +316,7 @@
     <table class="delta-table" id="delta"></table>
     <p class="muted">Two numbers for the first round. The first is what you thought at the
       time; the second is that same round scored once you knew what you were looking for.
-      Change is measured between the second one and round two &mdash; the two that were
+      Change is measured between the second one and round two, the two that were
       scored on the same terms.</p>
 
     <h3>How you felt</h3>
@@ -336,7 +336,7 @@
     <div class="field">
       <label class="f" for="q-intent">One thing you&rsquo;ll do differently in the next thirty
         days.</label>
-      <textarea id="q-intent" placeholder="Small enough that you'll actually do it."></textarea>
+      <textarea id="q-intent" maxlength="1200" placeholder="Small enough that you'll actually do it."></textarea>
     </div>
     <div class="field">
       <label class="f" for="q-nps">How likely are you to recommend this to a friend or
@@ -346,7 +346,7 @@
     <div class="field">
       <label class="f" for="q-describe">How would you describe this session to someone who
         wasn&rsquo;t here?</label>
-      <textarea id="q-describe" placeholder="A sentence or two. This is the bit I quote."></textarea>
+      <textarea id="q-describe" maxlength="1200" placeholder="A sentence or two. This is the bit I quote."></textarea>
     </div>
     <div class="field">
       <label class="f" for="q-consent">Can I use that as a testimonial?</label>
@@ -377,6 +377,7 @@
     <h2>Got it.</h2>
     <p>I&rsquo;ll send your scores and the group&rsquo;s numbers this week. The thing to work
       on is <b id="done-focus"></b>.</p>
+    <p class="muted" id="done-keyed"></p>
     <p class="muted">The drill board is at <a href="/skilldrills/">5spheresofempathy.com/skilldrills</a>
       if you want the next one.</p>
     <a class="btn" href="/resources/pme-sensing-quad/">Keep the quad card</a>
@@ -417,7 +418,7 @@
       dims: [
         { key: 'sense_self', q: 'How well did I sense myself?',
           hint: 'What was going on in me, and how well I put it into words out loud.',
-          low: 'Build the daily scan. Once a day, name where you are on all three layers — physical, mental, emotional — in one sentence each.' },
+          low: 'Build the daily scan. Once a day, name where you are on all three layers, physical, mental and emotional, in one sentence each.' },
         { key: 'sensed_by_others', q: 'How well did others sense me?',
           hint: 'How close they got to what was true for me, when I was the one being read.',
           low: 'Let people in and close the gap. If the reflection came back wrong, the useful question is what you left out, not what they missed.' }
@@ -567,7 +568,7 @@
     $('go-a').disabled = !(whoOk() && s1 === STATE.length);
     hint('hint-a', [
       $('q-name').value.trim() ? '' : 'your first name',
-      /\S+@\S+\.\S+/.test($('q-email').value.trim()) ? '' : 'your email',
+      /^\S+@\S+\.\S+$/.test($('q-email').value.trim()) ? '' : 'your email',
       s1 === STATE.length ? '' : 'the three-layer scan (' + s1 + ' of ' + STATE.length + ')'
     ]);
 
@@ -587,7 +588,7 @@
   }
 
   function whoOk() {
-    return $('q-name').value.trim() && /\S+@\S+\.\S+/.test($('q-email').value.trim());
+    return $('q-name').value.trim() && /^\S+@\S+\.\S+$/.test($('q-email').value.trim());
   }
   $('q-name').addEventListener('input', gateAll);
   $('q-email').addEventListener('input', gateAll);
@@ -732,7 +733,16 @@
     fill($('state-delta'), STATE, 's1', 's2', ['', 'Start', 'End'], null);
     $('focus-name').textContent = low.dim.q;
     $('focus-advice').textContent = low.dim.low;
-    $('done-focus').textContent = low.dim.q.replace(/\?$/, '').toLowerCase();
+    /* Written out per dimension. Lower-casing the question produced
+       "how well did i sense myself", which is the most-read line on the page. */
+    var FOCUS_PHRASE = {
+      sense_others: 'how well you sense other people',
+      present: 'how present you are',
+      sense_self: 'how well you sense yourself',
+      sensed_by_others: 'how well other people sense you'
+    };
+    $('done-focus').textContent = FOCUS_PHRASE[low.dim.key] ||
+      low.dim.q.replace(/\?$/, '');
     show('s-result');
   });
 
@@ -769,7 +779,10 @@
      first trial did, complete with a throwaway NPS of 4. */
   var SESSION = (function () {
     var m = /[?&]session=([a-z0-9-]{6,64})(&|$)/.exec(window.location.search || '');
-    return m ? m[1] : 'sensing-drill-2026-09-17';
+    /* Not a real session. Defaulting to a past one meant any visit without the
+       parameter wrote into that drill's results, where it is indistinguishable
+       from a participant. Strays land in their own bucket instead. */
+    return m ? m[1] : 'quad-unassigned';
   })();
 
   function payload() {
@@ -815,27 +828,58 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     })
-      .then(ok)
+      .then(function (r) {
+        /* A 4xx means this record is wrong, not that the network is. Falling
+           back to the form would put it where nobody looks and still show the
+           thank-you screen, so the participant is told it sent, their answers
+           are cleared from the browser, and the row is not in the store. */
+        if (r.status >= 400 && r.status < 500) {
+          return r.json().catch(function () { return {}; }).then(function (j) {
+            var e = new Error(j.error || 'rejected');
+            e.rejected = true;
+            throw e;
+          });
+        }
+        return ok(r);
+      })
       .then(done)
-      .catch(function () {
+      .catch(function (e) {
+        if (e && e.rejected) { throw e; }
         return fetch('/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: encode({ 'form-name': 'sensing-quad', payload: JSON.stringify(body) })
         }).then(ok).then(done);
       })
-      .catch(function () {
+      .catch(function (e) {
         btn.disabled = false;
         btn.textContent = 'Try again';
         var err = $('err');
         err.hidden = false;
-        err.innerHTML = '<b>That did not send.</b> Press the button again. If it still '
-          + 'will not go, use <b>Copy my numbers</b> above and paste them to G — nothing '
-          + 'on this screen is lost.';
+        if (e && e.rejected) {
+          err.innerHTML = '<b>That did not send.</b> ' +
+            (e.message === 'email'
+              ? 'Your email address was not accepted. Check it is just the address, '
+                + 'with no name or angle brackets around it, then press the button again.'
+              : 'Something on this page was not accepted (' + String(e.message) + '). '
+                + 'Check your answers and press the button again.');
+        } else {
+          err.innerHTML = '<b>That did not send.</b> Press the button again. If it still '
+            + 'will not go, use <b>Copy my numbers</b> above and paste them to G. Nothing '
+            + 'on this screen is lost.';
+        }
       });
   });
 
   function done() {
+    /* Name the address it was saved against. A second submission replaces the
+       first rather than adding a row, and without saying so the participant
+       cannot tell whether they corrected themselves or counted twice. */
+    var keyed = $('done-keyed');
+    if (keyed) {
+      keyed.textContent = 'Saved against ' + state.email + ', session ' + SESSION +
+        '. Sending again from this device replaces it rather than adding a second set.';
+    }
     try { localStorage.removeItem(KEY); } catch (e) {}
     show('s-done');
   }
