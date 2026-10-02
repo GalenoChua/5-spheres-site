@@ -56,12 +56,24 @@ export default async (request) => {
 
   /* No token configured means the endpoint is closed, not open. Failing shut is
      the only safe default for something that can return email addresses. */
-  if (!tokenOk(token, expected)) {
-    /* Say which half is wrong, without saying anything about the value.
+  /* A query string eats a plus: "a+b" arrives as "a b". That is a transport
+     artefact, not a different token, so restore it and try again rather than
+     making the token's character set a thing anybody has to remember. Both
+     comparisons are constant time and both are against the real value, so this
+     accepts nothing it should not. */
+  const unmangled = token.indexOf(' ') > -1 ? token.split(' ').join('+') : token;
+  if (!tokenOk(token, expected) && !tokenOk(unmangled, expected)) {
+    /* Say which half is wrong without saying anything about the value.
        "configured" is whether the function can see QUAD_TOKEN at all, which
        separates a scope or deploy-context problem from a value that does not
-       match. It reveals nothing an attacker could not already assume. */
-    return json(401, { error: 'unauthorised', configured: Boolean(expected) });
+       match. "sameLength" distinguishes a value cut short in transit, by an
+       unescaped & or #, from one the same size that simply differs. */
+    return json(401, {
+      error: 'unauthorised',
+      configured: Boolean(expected),
+      sameLength: Boolean(expected) && token.length === expected.length,
+      received: token.length
+    });
   }
 
   const session = String(url.searchParams.get('session') || '').trim();
