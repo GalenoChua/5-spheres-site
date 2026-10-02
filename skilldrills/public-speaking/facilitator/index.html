@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Drill facilitator</title>
+<style>
+  :root{
+    --ink:#1d2a52; --paper:#faf6ef; --paper-warm:#f3ecdf; --ember:#e8862e;
+    --line:#d9cfbe; --muted:#6b6557; --good:#2f7a52; --warn:#b4541f;
+    --sans: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --serif: Fraunces, Georgia, "Times New Roman", serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5}
+  .wrap{max-width:900px;margin:0 auto;padding:22px 18px 70px}
+  h1{font-family:var(--serif);font-weight:600;font-size:1.45rem;margin:0 0 3px}
+  .sub{color:var(--muted);font-size:.86rem;margin:0 0 18px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+  input[type=text],input[type=password]{width:100%;font:inherit;padding:10px;
+    border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink)}
+  button{font:inherit;cursor:pointer;border-radius:7px;border:1px solid var(--ink);
+         background:var(--ink);color:#fff;padding:10px 16px;font-weight:600}
+  button.ghost{background:transparent;color:var(--ink);font-weight:400}
+  button.small{padding:8px 13px;font-size:.88rem}
+  button.unready{border-style:dashed}
+  button[disabled]{opacity:.4;cursor:default}
+  .msg{border-radius:7px;padding:10px 12px;margin:10px 0;font-size:.9rem}
+  .msg.err{background:#fdecec;border:1px solid #e9bcbc;color:#8d2b2b}
+  .msg.note{background:var(--paper-warm);border:1px solid var(--line);color:var(--ink)}
+  .now{background:var(--paper-warm);border-left:3px solid var(--ember);
+       border-radius:0 7px 7px 0;padding:14px 16px;margin-bottom:14px}
+  .now .k{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .now .v{font-family:var(--serif);font-size:1.5rem;margin:2px 0 4px}
+  .now .n{font-size:.88rem;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:.92rem}
+  th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+  th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr.live td{background:var(--paper-warm)}
+  tr.spoken td:first-child{color:var(--muted)}
+  .pill{display:inline-block;font-size:.74rem;padding:2px 9px;border-radius:99px;
+        border:1px solid var(--line);background:var(--paper);white-space:nowrap}
+  .pill.done{background:#eaf4ee;border-color:#bcd9c7;color:var(--good)}
+  .pill.waiting{background:#fdf2e8;border-color:#e9cfae;color:var(--warn)}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  .stamp{color:var(--muted);font-size:.82rem;font-variant-numeric:tabular-nums}
+  .stamp.stale{color:var(--warn);font-weight:600}
+  .hidden{display:none}
+  .foot{color:var(--muted);font-size:.8rem;margin-top:16px;max-width:76ch}
+  code{background:var(--paper-warm);padding:1px 5px;border-radius:4px;font-size:.88em}
+  @media (max-width:520px){
+    th,td{padding:8px 5px}
+    .wrap{padding-left:12px;padding-right:12px}
+    .card{padding:12px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Drill facilitator</h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="card" id="gate">
+    <label style="display:block;margin-bottom:10px">
+      <span style="display:block;font-size:.9rem;margin-bottom:5px">Facilitator token</span>
+      <input type="password" id="token" autocomplete="off">
+    </label>
+    <button id="unlock">Open the session</button>
+    <div id="gate-msg"></div>
+  </div>
+
+  <div id="panel" class="hidden">
+    <div class="now">
+      <div class="k">On the floor</div>
+      <div class="v" id="now-name">Nobody</div>
+      <div class="n" id="now-count"></div>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>Who</th><th>Point written</th><th class="n">Cards in</th><th></th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="bar">
+        <button class="ghost small" id="close-floor">Close the floor</button>
+        <button class="ghost small" id="refresh">Refresh now</button>
+        <span class="stamp" id="stamp"></span>
+      </div>
+      <div id="panel-msg"></div>
+    </div>
+
+    <p class="foot">
+      Everyone joins at <code id="joinurl"></code> and the card they see follows whoever is
+      on the floor, so nobody picks a name. Cards in counts the room as it was when that
+      person went up. Close the floor between speakers so the room stops being asked for
+      cards.
+    </p>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var API = '/.netlify/functions/';
+  var params = new URLSearchParams(location.search);
+  var SESSION = (params.get('session') || 'ps-2026-10-22').toLowerCase();
+  var token = '';
+  var speakers = [];
+  var current = null;
+  var timer = null;
+  var staging = false;        /* a floor write is in flight */
+  var lastPoll = 0;
+
+  document.getElementById('sub').textContent = 'Session ' + SESSION;
+  document.getElementById('joinurl').textContent =
+    location.origin + '/skilldrills/public-speaking/?session=' + SESSION;
+
+  function esc(s) {
+    return String(s === null || s === undefined ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function say(id, kind, text) {
+    document.getElementById(id).innerHTML =
+      text ? '<div class="msg ' + kind + '">' + esc(text) + '</div>' : '';
+  }
+  function callStage(body) {
+    return fetch(API + 'drill-stage', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (!r.ok) { throw new Error(j.error || ('error ' + r.status)); }
+        return j;
+      });
+    });
+  }
+
+  /* Every floor write locks the whole table until it settles. Without this the
+     last click does not win: four rapid taps landed on the third, because the
+     writes raced each other and whichever returned last took the floor. */
+  function setCurrent(ref) {
+    if (staging) { return Promise.resolve(); }
+    staging = true;
+    draw();
+    return callStage({ session: SESSION, token: token, current: ref || '' })
+      .then(function (j) { current = j.current || null; return poll(); })
+      ['finally'](function () { staging = false; draw(); });
+  }
+
+  function poll() {
+    return fetch(API + 'drill-roster?session=' + encodeURIComponent(SESSION), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        speakers = j.speakers || [];
+        current = j.current || null;
+        lastPoll = Date.now();
+        draw();
+      })['catch'](function () { /* a dropped poll is not worth a message */ });
+  }
+
+  function draw() {
+    var live = null;
+    var html = '';
+    speakers.forEach(function (s) {
+      if (s.ref === current) { live = s; }
+      var onFloor = s.ref === current;
+      var cls = (onFloor ? 'live' : '') + (s.hasSpoken && !onFloor ? ' spoken' : '');
+      html += '<tr class="' + cls + '">' +
+        '<td>' + esc(s.name) + '</td>' +
+        '<td>' + (s.ready
+          ? '<span class="pill done">yes</span>'
+          : '<span class="pill waiting">not yet</span>') + '</td>' +
+        '<td class="n">' + s.scores + ' of ' + s.expected +
+          (s.done ? ' <span class="pill done">all in</span>' : '') + '</td>' +
+        '<td style="text-align:right">' +
+          (onFloor
+            ? '<span class="pill">on the floor</span>'
+            : '<button class="small' + (s.ready ? '' : ' unready') +
+              '" data-ref="' + s.ref + '" data-name="' + esc(s.name) +
+              '" data-ready="' + (s.ready ? '1' : '0') + '"' +
+              (staging ? ' disabled' : '') + '>' +
+              (s.hasSpoken ? 'Put up again' : 'Put up') + '</button>') +
+        '</td></tr>';
+    });
+    document.getElementById('rows').innerHTML =
+      html || '<tr><td colspan="4" style="color:var(--muted)">Nobody has joined yet.</td></tr>';
+
+    document.getElementById('now-name').textContent = live ? live.name : 'Nobody';
+    document.getElementById('now-count').textContent = live
+      ? live.scores + ' of ' + live.expected + ' cards in'
+      : 'The floor is closed. The room is not being asked for cards.';
+
+    document.getElementById('close-floor').disabled = staging || !current;
+
+    var age = lastPoll ? Math.round((Date.now() - lastPoll) / 1000) : null;
+    var stamp = document.getElementById('stamp');
+    if (age === null) {
+      stamp.textContent = '';
+    } else if (age > 12) {
+      stamp.textContent = 'last update ' + age + 's ago';
+      stamp.classList.add('stale');
+    } else {
+      stamp.textContent = 'updated just now';
+      stamp.classList.remove('stale');
+    }
+
+    var btns = document.querySelectorAll('#rows button[data-ref]');
+    for (var k = 0; k < btns.length; k++) {
+      btns[k].onclick = function () {
+        var b = this;
+        if (b.getAttribute('data-ready') !== '1' &&
+            !window.confirm(b.getAttribute('data-name') +
+              ' has not written their point yet. Put them up anyway?')) {
+          return;
+        }
+        say('panel-msg', '', '');
+        setCurrent(b.getAttribute('data-ref'))['catch'](function (e) {
+          say('panel-msg', 'err', 'Could not change the floor: ' + e.message);
+        });
+      };
+    }
+  }
+
+  document.getElementById('unlock').onclick = function () {
+    token = document.getElementById('token').value.trim();
+    if (!token) { say('gate-msg', 'err', 'The token, from the Netlify environment.'); return; }
+    say('gate-msg', '', '');
+    var btn = this;
+    btn.disabled = true;
+    /* Verify writes nothing. An earlier version proved the token by writing the
+       floor state it thought it had, which at that point was nothing, so
+       opening or reloading this page knocked the speaker off the floor. */
+    callStage({ token: token, verify: true }).then(function () {
+      try { sessionStorage.setItem('drill-token', token); } catch (e) {}
+      document.getElementById('gate').classList.add('hidden');
+      document.getElementById('panel').classList.remove('hidden');
+      poll();
+      if (!timer) { timer = setInterval(poll, 4000); }
+      setInterval(draw, 2000);   /* keeps the staleness stamp honest */
+    })['catch'](function (e) {
+      btn.disabled = false;
+      say('gate-msg', 'err', e.message === 'no' ? 'That token is not right.' : e.message);
+    });
+  };
+
+  document.getElementById('close-floor').onclick = function () {
+    say('panel-msg', '', '');
+    setCurrent('')['catch'](function (e) {
+      say('panel-msg', 'err', 'Could not close the floor: ' + e.message);
+    });
+  };
+  document.getElementById('refresh').onclick = poll;
+
+  /* A backgrounded tab has its timers throttled to about once a minute, so a
+     facilitator who switches to their slides comes back to a stale count with
+     no way of knowing it. Poll the moment the tab is looked at again. */
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && token) { poll(); }
+  });
+  window.addEventListener('focus', function () { if (token) { poll(); } });
+
+  /* Survive a refresh mid-session without retyping the token. sessionStorage,
+     not localStorage: it should not outlive the tab. */
+  try {
+    var saved = sessionStorage.getItem('drill-token');
+    if (saved) {
+      document.getElementById('token').value = saved;
+      document.getElementById('unlock').click();
+    }
+  } catch (e) {}
+}());
+</script>
+</body>
+</html>

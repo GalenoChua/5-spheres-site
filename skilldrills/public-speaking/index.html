@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Public Speaking Drill, the scoring card</title>
+<style>
+  :root{
+    --ink:#1d2a52; --paper:#faf6ef; --paper-warm:#f3ecdf; --ember:#e8862e;
+    --line:#d9cfbe; --muted:#6b6557; --warn:#b4541f; --good:#2f7a52;
+    --sans: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --serif: Fraunces, Georgia, "Times New Roman", serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+       line-height:1.5;-webkit-text-size-adjust:100%}
+  .wrap{max-width:640px;margin:0 auto;padding:22px 18px 90px}
+  h1{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:0 0 4px;letter-spacing:-.01em}
+  .who{color:var(--muted);font-size:.86rem;margin:0 0 18px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+  .card h2{font-family:var(--serif);font-size:1.1rem;margin:0 0 10px;font-weight:600}
+  .sec{border-top:1px solid var(--line);margin-top:14px;padding-top:13px}
+  .sec:first-of-type{border-top:0;margin-top:0;padding-top:0}
+  .sec h3{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;
+          color:var(--muted);margin:0 0 4px;font-weight:700}
+  .sec .anchor{color:var(--muted);font-size:.78rem;margin:0 0 11px}
+  .item{display:block;margin-bottom:13px}
+  .item .q{display:block;font-size:.94rem;margin-bottom:5px}
+  .item .hint{display:block;color:var(--muted);font-size:.81rem;margin-bottom:6px}
+  /* A group of radios needs to be a group, or a screen reader reads five
+     unlabelled buttons with no question attached to them. */
+  fieldset.item{border:0;padding:0;margin:0 0 13px;min-width:0}
+  fieldset.item legend{padding:0;margin-bottom:6px;display:block;width:100%}
+  .qname{font-weight:600;font-size:.94rem}
+  .qtext{display:block;color:var(--muted);font-size:.84rem;margin-top:1px}
+  /* One label per option. A label holding several controls activates only its
+     first, so a single label round the row makes a tap on "5" select 1. */
+  .scale{display:flex;gap:6px}
+  .scale label{flex:1;margin:0}
+  .scale input{position:absolute;opacity:0;width:0;height:0}
+  .scale label span{display:block;text-align:center;border:1px solid var(--line);border-radius:6px;
+       padding:12px 0;font-size:.95rem;cursor:pointer;background:var(--paper);user-select:none}
+  .scale input:checked + span{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .scale input:focus-visible + span{outline:2px solid var(--ember);outline-offset:1px}
+  textarea,input[type=text],input[type=email]{width:100%;font:inherit;font-size:1rem;padding:10px;
+    border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink)}
+  textarea{min-height:76px;resize:vertical}
+  textarea[aria-invalid="true"],input[aria-invalid="true"]{border-color:var(--warn);
+    box-shadow:0 0 0 2px rgba(180,84,31,.18)}
+  .count{text-align:right;color:var(--muted);font-size:.76rem;margin-top:3px}
+  .flap{background:var(--paper-warm);border:1px dashed var(--ember);border-radius:8px;padding:12px}
+  .flap .lock{font-size:.82rem;color:var(--warn);margin:0 0 8px;font-weight:600}
+  button{font:inherit;cursor:pointer;border-radius:7px;border:1px solid var(--ink);
+         background:var(--ink);color:#fff;padding:13px 18px;font-weight:600;width:100%}
+  button.ghost{background:transparent;color:var(--ink);font-weight:400;padding:10px 14px}
+  button[disabled]{opacity:.45;cursor:default}
+  .msg{border-radius:7px;padding:11px 13px;margin:12px 0;font-size:.92rem}
+  .msg.err{background:#fdecec;border:1px solid #e9bcbc;color:#8d2b2b}
+  .msg.ok{background:#eaf4ee;border:1px solid #bcd9c7;color:var(--good)}
+  .msg.note{background:var(--paper-warm);border:1px solid var(--line);color:var(--ink)}
+  .waiting{text-align:center;color:var(--muted);padding:28px 10px}
+  .waiting .big{font-family:var(--serif);font-size:1.25rem;color:var(--ink);margin-bottom:6px}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ember);
+       margin-right:7px;vertical-align:middle;animation:p 1.6s ease-in-out infinite}
+  @keyframes p{0%,100%{opacity:.25}50%{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.dot{animation:none;opacity:.7}}
+  /* Below 400px the 1-to-5 buttons fall under a 44px tap target unless the
+     padding gives way first. */
+  @media (max-width:400px){
+    .wrap{padding-left:12px;padding-right:12px}
+    .card{padding:12px}
+    .scale{gap:4px}
+  }
+  .hidden{display:none}
+  .foot{color:var(--muted);font-size:.8rem;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>The scoring card</h1>
+  <p class="who" id="whoami"></p>
+
+  <!-- ───────── who you are ───────── -->
+  <div class="card" id="signin">
+    <h2 id="signin-title">Before we start</h2>
+    <p class="who" id="session-note" style="margin-bottom:14px"></p>
+    <p style="font-size:.92rem;margin:0 0 14px">Each person speaks for ninety seconds and
+    takes one question. Everybody else writes down what they heard, then scores them.</p>
+    <label class="item">
+      <span class="q">Your name</span>
+      <input type="text" id="me-name" autocomplete="name" maxlength="60" placeholder="First name">
+    </label>
+    <label class="item">
+      <span class="q">Your email</span>
+      <span class="hint">So your own sheet reaches you after the session.</span>
+      <input type="email" id="me-email" autocomplete="email" inputmode="email"
+             maxlength="120" placeholder="you@example.com">
+    </label>
+    <button id="join">Join the session</button>
+    <div id="signin-msg"></div>
+  </div>
+
+  <!-- ───────── your own point, before you speak ───────── -->
+  <div class="card hidden" id="mine">
+    <h2 id="mine-title">When it is your turn</h2>
+    <div class="sec">
+      <h3>Your message</h3>
+      <div class="flap">
+        <p class="lock">Kept covered. The room writes down what they heard before this is shown.</p>
+        <label class="item" style="margin:0">
+          <span class="q">The one point you want them to leave with</span>
+          <span class="hint">One sentence, before you speak.</span>
+          <textarea id="my-intent" maxlength="600"
+                    placeholder="If they remember one thing, it is..."></textarea>
+          <div class="count" id="my-intent-count"></div>
+        </label>
+      </div>
+    </div>
+    <div class="sec">
+      <h3>Score yourself</h3>
+      <p class="anchor">1 is low, 5 is high.</p>
+      <div id="my-outcome"></div>
+      <div id="my-what"></div>
+      <div id="my-five"></div>
+      <div id="my-reserve"></div>
+    </div>
+    <div class="sec">
+      <label class="item" style="margin:0">
+        <span class="q">The one thing you want to change first</span>
+        <span class="hint">Optional. Yours to keep.</span>
+        <textarea id="my-fix" maxlength="600"></textarea>
+      </label>
+    </div>
+    <button id="save-mine">Save my card</button>
+    <div id="mine-msg"></div>
+  </div>
+
+  <!-- ───────── waiting ───────── -->
+  <div class="card hidden" id="idle">
+    <div class="waiting">
+      <div class="big"><span class="dot"></span>Waiting for the next speaker</div>
+      <div>Keep this page open.</div>
+    </div>
+  </div>
+
+  <!-- ───────── already scored this speaker ───────── -->
+  <div class="card hidden" id="done">
+    <div class="waiting">
+      <div class="big" id="done-title">Your card is in</div>
+      <div id="done-sub">Nothing else to do until the floor moves.</div>
+    </div>
+    <button class="ghost" id="reopen">Change my answers</button>
+  </div>
+
+  <!-- ───────── scoring somebody ───────── -->
+  <div class="card hidden" id="scoring">
+    <h2 id="scoring-title">Scoring</h2>
+    <div id="scoring-note"></div>
+    <div class="sec">
+      <h3>What they said</h3>
+      <label class="item">
+        <span class="q">In your own words, what was their one point?</span>
+        <span class="hint">Write this before anything else.</span>
+        <textarea id="s-relay" maxlength="600" placeholder="They were saying that..."></textarea>
+        <div class="count" id="s-relay-count"></div>
+      </label>
+      <p class="anchor">1 is low, 5 is high.</p>
+      <div id="s-what"></div>
+    </div>
+    <div class="sec">
+      <h3>How they said it</h3>
+      <p class="anchor">1 is low, 5 is high.</p>
+      <div id="s-five"></div>
+    </div>
+    <div class="sec">
+      <h3>What you were left with</h3>
+      <p class="anchor">1 is low, 5 is high.</p>
+      <div id="s-outcome"></div>
+      <div id="s-reserve"></div>
+    </div>
+    <div class="sec">
+      <label class="item" style="margin:0">
+        <span class="q">The one thing to change first</span>
+        <span class="hint">Optional. One line is plenty.</span>
+        <textarea id="s-fix" maxlength="600"></textarea>
+      </label>
+    </div>
+    <button id="send">Send my card</button>
+    <div id="score-msg"></div>
+  </div>
+
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var API = '/.netlify/functions/';
+  var DEFAULT_SESSION = 'ps-2026-10-22';
+  var qs = new URLSearchParams(location.search);
+  var SESSION = (qs.get('session') || DEFAULT_SESSION).toLowerCase();
+  var SESSION_GIVEN = Boolean(qs.get('session'));
+  var KEY = 'drill:' + SESSION;
+
+  /* Shared rows are [key, name, question]. The name is what makes a row read as
+     a question rather than as a new section heading on a phone. */
+  var OUTCOME = [
+    ['confident', 'Confident', 'Did they seem in command?'],
+    ['clear', 'Clear', 'Did you understand what they meant?'],
+    ['believed', 'Believed', 'Did you believe them?']
+  ];
+  var WHAT = [
+    ['held', 'Structure', 'Did it hold together?'],
+    ['aimed', 'Aim', 'Did it feel aimed at you?']
+  ];
+  var FIVE = [
+    ['pause', 'Pause', 'Gave moments their weight.'],
+    ['pace', 'Pace', 'Held your attention rather than outrunning it.'],
+    ['volume', 'Volume', 'Used loud and quiet for emphasis.'],
+    ['emotion', 'Emotion', 'There was resonance in the voice.'],
+    ['tonality', 'Tonality', 'Range, playful through to dead serious.']
+  ];
+  var RES_OBS = [['reserve', 'Reserve',
+    'They were asked one question. Was there more behind the answer?']];
+
+  /* The self card asks about you, in the first person. Sharing the observer
+     wording made it ask "did they seem in command" of your own turn. */
+  var OUTCOME_SELF = [
+    ['confident', 'Confident', 'Did you feel in command?'],
+    ['clear', 'Clear', 'Do you think they understood you?'],
+    ['believed', 'Believed', 'Do you think they believed you?']
+  ];
+  var WHAT_SELF = [
+    ['held', 'Structure', 'Did it hold together?'],
+    ['aimed', 'Aim', 'Was it built for the people in front of you?']
+  ];
+  var FIVE_SELF = [
+    ['pause', 'Pause', 'Did you give moments their weight?'],
+    ['pace', 'Pace', 'Did you hold them rather than outrun them?'],
+    ['volume', 'Volume', 'Did you use loud and quiet for emphasis?'],
+    ['emotion', 'Emotion', 'Was there resonance in your voice?'],
+    ['tonality', 'Tonality', 'Did you use your range?']
+  ];
+  var RES_SELF = [['reserve', 'Reserve', 'How much more did you have that you did not say?']];
+
+  var me = { name: '', email: '', ref: '' };
+  var currentRef = null;
+  var currentName = '';
+  var sentFor = {};          /* speaker ref -> true. Shows the done panel, never locks. */
+  var reopened = {};         /* speaker ref -> true, after "Change my answers" */
+  var polling = null;
+
+  /* ---------------------------------------------------------- building ---- */
+  function esc(s) {
+    return String(s === null || s === undefined ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function scale(ns, row) {
+    var name = ns + '-' + row[0];
+    return '<fieldset class="item" role="radiogroup">' +
+      '<legend><span class="qname">' + esc(row[1]) + '</span>' +
+      '<span class="qtext">' + esc(row[2]) + '</span></legend>' +
+      '<span class="scale">' +
+      [1, 2, 3, 4, 5].map(function (i) {
+        return '<label><input type="radio" name="' + name + '" value="' + i +
+               '" aria-label="' + esc(row[1]) + ', ' + i + ' of 5">' +
+               '<span>' + i + '</span></label>';
+      }).join('') +
+      '</span></fieldset>';
+  }
+  function build(id, ns, rows) {
+    document.getElementById(id).innerHTML = rows.map(function (r) {
+      return scale(ns, r);
+    }).join('');
+  }
+  function val(ns, k) {
+    var el = document.querySelector('input[name="' + ns + '-' + k + '"]:checked');
+    return el ? Number(el.value) : null;
+  }
+  function group(ns, rows) {
+    var o = {};
+    rows.forEach(function (r) { o[r[0]] = val(ns, r[0]); });
+    return o;
+  }
+  function anyScored(o) {
+    return Object.keys(o).some(function (k) { return o[k] !== null; });
+  }
+  function clearGroup(ns) {
+    var els = document.querySelectorAll('input[name^="' + ns + '-"]');
+    for (var i = 0; i < els.length; i++) { els[i].checked = false; }
+  }
+  function show(id, on) { document.getElementById(id).classList.toggle('hidden', !on); }
+  function say(id, kind, text) {
+    document.getElementById(id).innerHTML =
+      text ? '<div class="msg ' + kind + '">' + esc(text) + '</div>' : '';
+  }
+  function counter(area, out) {
+    var ta = document.getElementById(area);
+    var el = document.getElementById(out);
+    if (!ta || !el) { return; }
+    var max = Number(ta.getAttribute('maxlength'));
+    var draw = function () {
+      var left = max - ta.value.length;
+      el.textContent = left < 80 ? left + ' characters left' : '';
+    };
+    ta.addEventListener('input', draw);
+    draw();
+  }
+
+  build('s-outcome', 's', OUTCOME);
+  build('s-what', 's', WHAT);
+  build('s-five', 's', FIVE);
+  build('s-reserve', 's', RES_OBS);
+  build('my-outcome', 'my', OUTCOME_SELF);
+  build('my-what', 'my', WHAT_SELF);
+  build('my-five', 'my', FIVE_SELF);
+  build('my-reserve', 'my', RES_SELF);
+  counter('s-relay', 's-relay-count');
+  counter('my-intent', 'my-intent-count');
+
+  document.getElementById('session-note').textContent =
+    SESSION_GIVEN ? 'Session ' + SESSION : 'Session ' + SESSION + ', the default.';
+
+  /* The same digest the server uses, so the page recognises itself in the
+     roster without anybody's address coming back down. */
+  function refFor(session, email) {
+    var data = new TextEncoder().encode(session + ':' + email.toLowerCase());
+    return crypto.subtle.digest('SHA-256', data).then(function (buf) {
+      var b = new Uint8Array(buf), s = '';
+      for (var i = 0; i < 6; i++) { s += ('0' + b[i].toString(16)).slice(-2); }
+      return s;
+    });
+  }
+
+  function post(fn, body) {
+    return fetch(API + fn, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (!r.ok) { throw new Error(j.error || ('error ' + r.status)); }
+        return j;
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------- joining ---- */
+  document.getElementById('join').onclick = function () {
+    var nameEl = document.getElementById('me-name');
+    var mailEl = document.getElementById('me-email');
+    var name = nameEl.value.trim();
+    var email = mailEl.value.trim().toLowerCase();
+    nameEl.removeAttribute('aria-invalid');
+    mailEl.removeAttribute('aria-invalid');
+    if (!name) {
+      nameEl.setAttribute('aria-invalid', 'true');
+      nameEl.focus();
+      say('signin-msg', 'err', 'Your name, so the room knows who is speaking.');
+      return;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      mailEl.setAttribute('aria-invalid', 'true');
+      mailEl.focus();
+      say('signin-msg', 'err', 'That email does not look right.');
+      return;
+    }
+    say('signin-msg', '', '');
+    this.disabled = true;
+    var btn = this;
+    me.name = name;
+    me.email = email;
+    refFor(SESSION, email).then(function (r) {
+      me.ref = r;
+      try { localStorage.setItem(KEY, JSON.stringify(me)); } catch (e) {}
+      return post('drill-score', {
+        session: SESSION, role: 'self', speaker: email, scorerName: name
+      });
+    }).then(function () {
+      enter();
+    })['catch'](function (e) {
+      btn.disabled = false;
+      say('signin-msg', 'err', 'Could not join: ' + e.message + '. Try again.');
+    });
+  };
+
+  document.getElementById('save-mine').onclick = function () {
+    var ta = document.getElementById('my-intent');
+    var intent = ta.value.trim();
+    ta.removeAttribute('aria-invalid');
+    if (!intent) {
+      ta.setAttribute('aria-invalid', 'true');
+      ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      ta.focus();
+      say('mine-msg', 'err', 'Write the one point first.');
+      return;
+    }
+    post('drill-score', {
+      session: SESSION, role: 'self', speaker: me.email, scorerName: me.name,
+      intent: intent, outcome: group('my', OUTCOME_SELF), what: group('my', WHAT_SELF),
+      reserve: val('my', 'reserve'), five: group('my', FIVE_SELF),
+      fix: document.getElementById('my-fix').value.trim()
+    }).then(function () {
+      say('mine-msg', 'ok', currentRef === me.ref
+        ? 'Saved.'
+        : 'Saved. You can change it any time before you speak.');
+    })['catch'](function (e) {
+      say('mine-msg', 'err', 'Not saved: ' + e.message);
+    });
+  };
+
+  /* ------------------------------------------------------------ scoring ---- */
+  document.getElementById('send').onclick = function () {
+    var btn = this;
+    var ta = document.getElementById('s-relay');
+    var relay = ta.value.trim();
+    ta.removeAttribute('aria-invalid');
+    if (!relay) {
+      /* The button is two screens below this box, so pointing at it is not
+         enough: take them there. */
+      ta.setAttribute('aria-invalid', 'true');
+      ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      ta.focus();
+      say('score-msg', 'err', 'Write what you heard first, at the top. That is the measurement.');
+      return;
+    }
+    var outcome = group('s', OUTCOME);
+    var five = group('s', FIVE);
+    var what = group('s', WHAT);
+    if (!anyScored(outcome) && !anyScored(five) && !anyScored(what) && val('s', 'reserve') === null) {
+      if (!window.confirm('You have not scored anything. Send just what you wrote?')) { return; }
+    }
+    btn.disabled = true;
+    say('score-msg', '', '');
+    var forRef = currentRef;
+    var forName = currentName;
+    post('drill-score', {
+      session: SESSION, role: 'room', speakerRef: forRef,
+      scorer: me.email, scorerName: me.name,
+      relay: relay, outcome: outcome, reserve: val('s', 'reserve'),
+      what: what, five: five,
+      fix: document.getElementById('s-fix').value.trim()
+    }).then(function () {
+      sentFor[forRef] = true;
+      reopened[forRef] = false;
+      document.getElementById('done-title').textContent =
+        'Your card for ' + (forName || 'the speaker') + ' is in';
+      render();
+    })['catch'](function (e) {
+      btn.disabled = false;
+      say('score-msg', 'err', 'Not sent: ' + e.message + '. Your answers are still here, try again.');
+    });
+  };
+
+  document.getElementById('reopen').onclick = function () {
+    reopened[currentRef] = true;
+    render();
+    say('score-msg', 'note', 'Change what you need and send again. It replaces your first card.');
+  };
+
+  function resetScoring() {
+    document.getElementById('s-relay').value = '';
+    document.getElementById('s-relay').removeAttribute('aria-invalid');
+    document.getElementById('s-fix').value = '';
+    clearGroup('s');
+    document.getElementById('send').disabled = false;
+    say('score-msg', '', '');
+    counter('s-relay', 's-relay-count');
+    document.getElementById('s-relay-count').textContent = '';
+  }
+  function scoringHasContent() {
+    return Boolean(document.getElementById('s-relay').value.trim()) ||
+           anyScored(group('s', OUTCOME)) || anyScored(group('s', FIVE)) ||
+           anyScored(group('s', WHAT)) || val('s', 'reserve') !== null;
+  }
+
+  /* ----------------------------------------------------------- the loop ---- */
+  function poll() {
+    return fetch(API + 'drill-roster?session=' + encodeURIComponent(SESSION), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var was = currentRef;
+        var wasName = currentName;
+        currentRef = j.current || null;
+        currentName = '';
+        var list = j.speakers || [];
+        list.forEach(function (s) { if (s.ref === currentRef) { currentName = s.name; } });
+        if (was !== currentRef) {
+          var lost = scoringHasContent() && was && !sentFor[was];
+          resetScoring();
+          if (lost) {
+            say('scoring-note', 'note', 'The floor moved to ' +
+              (currentName || 'the next speaker') + '. Your unsent card for ' +
+              (wasName || 'the previous speaker') + ' was cleared.');
+          } else {
+            say('scoring-note', '', '');
+          }
+        }
+        render();
+        document.getElementById('foot').textContent =
+          list.length + ' in the room. Session ' + SESSION + '.';
+      })['catch'](function () { /* a dropped poll is not worth a message */ });
+  }
+
+  function render() {
+    var iAmUp = Boolean(currentRef) && currentRef === me.ref;
+    var someoneElseUp = Boolean(currentRef) && !iAmUp;
+    var alreadySent = someoneElseUp && sentFor[currentRef] && !reopened[currentRef];
+    var scoringNow = someoneElseUp && !alreadySent;
+
+    show('scoring', scoringNow);
+    show('done', Boolean(alreadySent));
+    show('idle', !currentRef && !iAmUp);
+    show('mine', iAmUp || !currentRef);
+
+    if (scoringNow) {
+      document.getElementById('scoring-title').textContent =
+        'Scoring ' + (currentName || 'the speaker');
+    }
+    document.getElementById('mine-title').textContent =
+      iAmUp ? 'You are up' : 'When it is your turn';
+  }
+
+  function enter() {
+    show('signin', false);
+    document.getElementById('whoami').textContent = me.name + ', ' + me.email;
+    /* Draw before the first poll answers. On a cold function that round trip is
+       several seconds, and a blank page in a live room reads as broken. */
+    render();
+    poll();
+    if (!polling) { polling = setInterval(poll, 4000); }
+  }
+
+  /* A backgrounded tab has its timers throttled, so a phone that has been
+     locked comes back a minute behind the room. Poll the moment it wakes. */
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && me.ref) { poll(); }
+  });
+  window.addEventListener('focus', function () { if (me.ref) { poll(); } });
+
+  /* Somebody who refreshes mid-session, or whose phone slept, comes straight
+     back in rather than typing their address again under time pressure. */
+  try {
+    var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (saved && saved.email && saved.ref) { me = saved; enter(); }
+  } catch (e) {}
+}());
+</script>
+</body>
+</html>
