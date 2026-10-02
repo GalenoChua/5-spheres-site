@@ -51,7 +51,22 @@ function tokenOk(given, expected) {
 
 export default async (request) => {
   const url = new URL(request.url);
-  const token = url.searchParams.get('token') || '';
+
+  /* A POST carries the token in the body, where no character can break it. The
+     query string is kept for links that already exist, but it is the weaker
+     path: a token with an & in it arrives cut off at that point, a # never
+     arrives at all, and whatever does arrive is left in browser history and
+     server logs. */
+  let posted = {};
+  if (request.method === 'POST') {
+    try {
+      posted = await request.json();
+    } catch {
+      return json(400, { error: 'not json' });
+    }
+  }
+
+  const token = String(posted.token || url.searchParams.get('token') || '');
   const expected = process.env.QUAD_TOKEN || '';
 
   /* No token configured means the endpoint is closed, not open. Failing shut is
@@ -76,7 +91,7 @@ export default async (request) => {
     });
   }
 
-  const session = String(url.searchParams.get('session') || '').trim();
+  const session = String(posted.session || url.searchParams.get('session') || '').trim();
   if (!/^[a-z0-9-]{6,64}$/.test(session)) {
     return json(400, { error: 'session' });
   }
@@ -85,7 +100,7 @@ export default async (request) => {
      one throwaway NPS visibly moves the score in a room of six, so there has to
      be a way to take one out. Token-protected, one address at a time, and it
      says what it did rather than failing quietly. */
-  const remove = String(url.searchParams.get('delete') || '').trim().toLowerCase();
+  const remove = String(posted.delete || url.searchParams.get('delete') || '').trim().toLowerCase();
   if (remove) {
     if (!/^\S+@\S+\.\S+$/.test(remove)) {
       return json(400, { error: 'delete must be an email address' });
@@ -214,7 +229,7 @@ export default async (request) => {
       : null
   };
 
-  if (url.searchParams.get('full') === '1') {
+  if (posted.full === true || url.searchParams.get('full') === '1') {
     return json(200, { ...summary, rows });
   }
   return json(200, summary);
