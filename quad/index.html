@@ -749,7 +749,7 @@
   /* Something to leave with, whatever happens to the network. */
   $('go-copy').addEventListener('click', function () {
     var low = lowest();
-    var lines = ['The Sensing Quad — ' + (state.name || '') , ''];
+    var lines = ['The Sensing Quad, ' + (state.name || '') , ''];
     lines.push('Round 1 → Round 1 again → Round 2');
     DIMS.forEach(function (d) {
       lines.push('  ' + d.q + '  ' + state.a[d.key]

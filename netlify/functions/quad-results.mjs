@@ -57,7 +57,11 @@ export default async (request) => {
   /* No token configured means the endpoint is closed, not open. Failing shut is
      the only safe default for something that can return email addresses. */
   if (!tokenOk(token, expected)) {
-    return json(401, { error: 'unauthorised' });
+    /* Say which half is wrong, without saying anything about the value.
+       "configured" is whether the function can see QUAD_TOKEN at all, which
+       separates a scope or deploy-context problem from a value that does not
+       match. It reveals nothing an attacker could not already assume. */
+    return json(401, { error: 'unauthorised', configured: Boolean(expected) });
   }
 
   const session = String(url.searchParams.get('session') || '').trim();
