@@ -194,8 +194,9 @@
 
     document.getElementById('now-name').textContent = live ? live.name : 'Nobody';
     document.getElementById('now-count').textContent = live
-      ? live.scores + ' of ' + live.expected + ' cards in'
-      : 'The floor is closed. The room is not being asked for cards.';
+      ? live.scores + ' of ' + live.expected + ' cards in, ' + speakers.length + ' in the room'
+      : 'The floor is closed. The room is not being asked for cards. ' +
+        speakers.length + ' in the room.';
 
     document.getElementById('close-floor').disabled = staging || !current;
 

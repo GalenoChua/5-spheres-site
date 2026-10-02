@@ -100,10 +100,16 @@ export default async (request) => {
      against the room as it stands. */
   speakers.forEach((s) => {
     const frozen = sizes[s.ref];
-    s.expected = Math.max((frozen || speakers.length) - 1, 0);
+    const base = Math.max((frozen || speakers.length) - 1, 0);
+    /* Never below the cards already received. The frozen figure is read from a
+       listing, and listings here are eventually consistent: a speaker put up
+       seconds after the last person joined can be frozen against a roster that
+       has not caught up, and would then read as finished while cards are still
+       arriving. Clamping means the count can only ever be generous. */
+    s.expected = Math.max(base, s.scores);
     s.done = s.expected > 0 && s.scores >= s.expected;
     s.hasSpoken = Boolean(frozen);
   });
 
-  return json(200, { session, current, speakers });
+  return json(200, { session, current, roomNow: speakers.length, speakers });
 };

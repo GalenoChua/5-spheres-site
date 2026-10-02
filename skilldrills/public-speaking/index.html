@@ -251,6 +251,7 @@
   var currentName = '';
   var sentFor = {};          /* speaker ref -> true. Shows the done panel, never locks. */
   var reopened = {};         /* speaker ref -> true, after "Change my answers" */
+  var sentPayload = {};      /* speaker ref -> the card as sent, so reopening restores it */
   var polling = null;
 
   /* ---------------------------------------------------------- building ---- */
@@ -287,6 +288,13 @@
   }
   function anyScored(o) {
     return Object.keys(o).some(function (k) { return o[k] !== null; });
+  }
+  function setGroup(ns, obj) {
+    Object.keys(obj || {}).forEach(function (k) {
+      if (obj[k] === null || obj[k] === undefined) { return; }
+      var el = document.querySelector('input[name="' + ns + '-' + k + '"][value="' + obj[k] + '"]');
+      if (el) { el.checked = true; }
+    });
   }
   function clearGroup(ns) {
     var els = document.querySelectorAll('input[name^="' + ns + '-"]');
@@ -446,6 +454,14 @@
     }).then(function () {
       sentFor[forRef] = true;
       reopened[forRef] = false;
+      /* Keep what was sent. The floor moving away and back clears the form, so
+         without this "Change my answers" reopens an empty card and sending it
+         again overwrites good scores with blanks. */
+      sentPayload[forRef] = {
+        relay: relay, outcome: outcome, reserve: val('s', 'reserve'),
+        what: what, five: five,
+        fix: document.getElementById('s-fix').value.trim()
+      };
       document.getElementById('done-title').textContent =
         'Your card for ' + (forName || 'the speaker') + ' is in';
       render();
@@ -457,8 +473,18 @@
 
   document.getElementById('reopen').onclick = function () {
     reopened[currentRef] = true;
+    var was = sentPayload[currentRef];
+    if (was) {
+      document.getElementById('s-relay').value = was.relay || '';
+      document.getElementById('s-fix').value = was.fix || '';
+      clearGroup('s');
+      setGroup('s', was.outcome);
+      setGroup('s', was.what);
+      setGroup('s', was.five);
+      if (was.reserve) { setGroup('s', { reserve: was.reserve }); }
+    }
     render();
-    say('score-msg', 'note', 'Change what you need and send again. It replaces your first card.');
+    say('score-msg', 'note', 'Your answers are as you sent them. Change what you need and send again.');
   };
 
   function resetScoring() {
