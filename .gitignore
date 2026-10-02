@@ -109,3 +109,11 @@ video/*/verify_*.png
 # Self-contained local previews. Built by scratchpad/_selfcontained.py so a page can be
 # looked at from disk without a server running. Megabytes of inlined fonts, never deployed.
 /PREVIEW-*.html
+
+# Local environment files. Nothing with a token in it goes near this repository:
+# the publish directory is the repository root, so a committed .env is not just
+# in the history, it is downloadable at /.env on the live site. Local values for
+# netlify dev belong here or on the command line, never in a tracked file.
+.env
+.env.*
+!.env.example
