@@ -119,8 +119,8 @@
       </div>
     </div>
     <div class="sec">
-      <h3>Score yourself</h3>
-      <p class="anchor">1 is low, 5 is high.</p>
+      <h3 id="self-stage">Score yourself, before you speak</h3>
+      <p class="anchor" id="self-anchor">1 is low, 5 is high. How you expect it to land.</p>
       <div id="my-outcome"></div>
       <div id="my-what"></div>
       <div id="my-five"></div>
@@ -250,6 +250,8 @@
   var currentRef = null;
   var currentName = '';
   var sentFor = {};          /* speaker ref -> true. Shows the done panel, never locks. */
+  var iHaveSpoken = false;   /* decides which half of the self card is being filled */
+  var secondCardOpened = false;
   var reopened = {};         /* speaker ref -> true, after "Change my answers" */
   var sentPayload = {};      /* speaker ref -> the card as sent, so reopening restores it */
   var polling = null;
@@ -408,13 +410,14 @@
     }
     post('drill-score', {
       session: SESSION, role: 'self', speaker: me.email, scorerName: me.name,
-      intent: intent, outcome: group('my', OUTCOME_SELF), what: group('my', WHAT_SELF),
+      intent: intent, when: iHaveSpoken ? 'after' : 'before',
+      outcome: group('my', OUTCOME_SELF), what: group('my', WHAT_SELF),
       reserve: val('my', 'reserve'), five: group('my', FIVE_SELF),
       fix: document.getElementById('my-fix').value.trim()
     }).then(function () {
-      say('mine-msg', 'ok', currentRef === me.ref
-        ? 'Saved.'
-        : 'Saved. You can change it any time before you speak.');
+      say('mine-msg', 'ok', iHaveSpoken
+        ? 'Saved. Both of your cards are in.'
+        : 'Saved. You will score yourself again after you have spoken.');
     })['catch'](function (e) {
       say('mine-msg', 'err', 'Not saved: ' + e.message);
     });
@@ -513,7 +516,10 @@
         currentRef = j.current || null;
         currentName = '';
         var list = j.speakers || [];
-        list.forEach(function (s) { if (s.ref === currentRef) { currentName = s.name; } });
+        list.forEach(function (s) {
+          if (s.ref === currentRef) { currentName = s.name; }
+          if (s.ref === me.ref && s.hasSpoken) { iHaveSpoken = true; }
+        });
         if (was !== currentRef) {
           var lost = scoringHasContent() && was && !sentFor[was];
           resetScoring();
@@ -524,6 +530,16 @@
           } else {
             say('scoring-note', '', '');
           }
+        }
+        /* Open the second card blank. Leaving the first card's answers in place
+           would have them adjusting from their own anchor, which suppresses the
+           movement the two cards exist to measure. */
+        if (iHaveSpoken && !secondCardOpened) {
+          secondCardOpened = true;
+          clearGroup('my');
+          document.getElementById('my-fix').value = '';
+          say('mine-msg', 'note', 'Score it again from scratch. Your first card is saved, ' +
+            'and seeing it now would pull this one toward it.');
         }
         render();
         document.getElementById('foot').textContent =
@@ -547,7 +563,14 @@
         'Scoring ' + (currentName || 'the speaker');
     }
     document.getElementById('mine-title').textContent =
-      iAmUp ? 'You are up' : 'When it is your turn';
+      iAmUp ? 'You are up' : (iHaveSpoken ? 'Now you have spoken' : 'When it is your turn');
+    document.getElementById('self-stage').textContent =
+      iHaveSpoken ? 'Score yourself, now you have spoken' : 'Score yourself, before you speak';
+    document.getElementById('self-anchor').textContent = iHaveSpoken
+      ? '1 is low, 5 is high. How you think it actually landed.'
+      : '1 is low, 5 is high. How you expect it to land.';
+    document.getElementById('save-mine').textContent =
+      iHaveSpoken ? 'Save my second card' : 'Save my first card';
   }
 
   function enter() {

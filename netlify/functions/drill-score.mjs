@@ -144,27 +144,57 @@ export default async (request) => {
   /* When somebody joined, kept separate from when they last saved. The roster is
      ordered by this, so rows never reshuffle under the facilitator's finger when
      a latecomer arrives. Saving your card again must not move you. */
+  let prior = null;
   if (role === 'self') {
     try {
-      const prior = await store.get(`${session}/${refFor(session, speaker)}/${refFor(session, speaker)}`,
-                                    { type: 'json' });
-      record.joinedAt = (prior && prior.joinedAt) || now;
+      prior = await store.get(`${session}/${refFor(session, speaker)}/${refFor(session, speaker)}`,
+                              { type: 'json' });
     } catch {
-      record.joinedAt = now;
+      prior = null;
     }
+    record.joinedAt = (prior && prior.joinedAt) || now;
   }
 
   record.five = scores(body.five, FIVE);
+  record.what = scores(body.what, WHAT);
+  record.fix = clip(body.fix, 600);
 
   if (role === 'self') {
     /* The flap. Written before delivering and never shown to the room until
        their write-backs are in, which is the only thing making the relay a
        measurement rather than a vote. */
-    record.intent = clip(body.intent, 600);
+    /* Keep whatever was written before. Saving the second half does not resend
+       the point, and silently blanking the flap would destroy the one thing the
+       relay is measured against. */
+    record.intent = clip(body.intent, 600) || (prior && prior.intent) || '';
+
+    /* The speaker scores themselves twice: once before they stand up and once
+       after they sit down. The distance between those two, against what the
+       room said, is the only thing on the sheet that reads a movement rather
+       than a position. Both halves live in one record, because the key is
+       session/speaker/scorer and a second write would otherwise replace the
+       first. */
+    const half = body.when === 'after' ? 'after' : 'before';
+    const side = {
+      at: now,
+      outcome: record.outcome,
+      five: record.five,
+      what: record.what,
+      reserve: record.reserve,
+      fix: record.fix
+    };
+    record.before = (prior && prior.before) || null;
+    record.after = (prior && prior.after) || null;
+    /* Joining writes a self record with nothing on it, and that must not count
+       as having scored yourself: a sheet has to be able to tell "not filled in"
+       from "filled in as all nulls". */
+    if (anyScored(side.outcome) || anyScored(side.five) || anyScored(side.what) ||
+        side.reserve !== null || side.fix.length > 0) {
+      record[half] = side;
+      record.when = half;
+    }
   } else {
     record.relay = clip(body.relay, 600);
-    record.what = scores(body.what, WHAT);
-    record.fix = clip(body.fix, 600);
   }
 
   /* An empty card is a page bug or a bot, not a participant. Reject it rather
