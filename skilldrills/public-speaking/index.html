@@ -160,11 +160,18 @@
       <div class="big"><span class="dot"></span>Waiting for the next speaker</div>
       <div>Keep this page open.</div>
     </div>
-    <div class="sec">
-      <h3>Who is in the room</h3>
-      <p class="anchor" id="room-count"></p>
-      <ul class="roster" id="room-list"></ul>
-    </div>
+  </div>
+
+  <div class="card hidden" id="room">
+    <h2>Who is in the room</h2>
+    <p class="anchor" id="room-count"></p>
+    <ul class="roster" id="room-list"></ul>
+  </div>
+
+  <div class="card hidden" id="sheetbar">
+    <h2>Your own numbers</h2>
+    <p class="anchor" id="sheet-state"></p>
+    <button class="ghost" id="show-sheet">Show me my sheet</button>
   </div>
 
   <!-- ───────── already scored this speaker ───────── -->
@@ -216,6 +223,7 @@
   <div class="card hidden" id="sheet">
     <h2 id="sheet-title">Your sheet</h2>
     <div id="sheet-body"></div>
+    <button class="ghost" id="hide-sheet" style="margin-top:14px">Close</button>
   </div>
 
   <p class="foot" id="foot"></p>
@@ -282,7 +290,7 @@
   var roster = [];
   var released = false;
   var savedAfter = false;
-  var sheetDrawn = false;
+  var sheetOpen = false;
   var reopened = {};         /* speaker ref -> true, after "Change my answers" */
   var sentPayload = {};      /* speaker ref -> the card as sent, so reopening restores it */
   var polling = null;
@@ -626,8 +634,16 @@
     show('done', Boolean(alreadySent));
     show('idle', !currentRef && !iAmUp && !showMine);
     show('mine', showMine);
-    show('sheet', released && !currentRef);
-    if (released && !sheetDrawn) { sheetDrawn = true; loadSheet(); }
+
+    /* The roster and the sheet button stay put rather than appearing only when
+       nothing else is on screen. Somebody waiting could not find either. */
+    show('room', !scoringNow);
+    show('sheetbar', !scoringNow && !sheetOpen);
+    show('sheet', sheetOpen);
+    document.getElementById('sheet-state').textContent = released
+      ? 'Your sheet is ready.'
+      : 'Not until the facilitator sends them out. Nobody else sees yours.';
+    document.getElementById('show-sheet').disabled = !released;
 
     if (scoringNow) {
       document.getElementById('scoring-title').textContent =
@@ -656,11 +672,14 @@
   function loadSheet() {
     post('drill-my-sheet', { session: SESSION, ref: me.ref, secret: me.secret })
       .then(function (d) {
-        if (!d.released) { sheetDrawn = false; return; }
+        if (!d.released) {
+          sheetOpen = false;
+          render();
+          return;
+        }
         document.getElementById('sheet-title').textContent = 'Your sheet, ' + (d.name || me.name);
         document.getElementById('sheet-body').innerHTML = sheetHtml(d);
       })['catch'](function (e) {
-        sheetDrawn = false;
         document.getElementById('sheet-body').innerHTML =
           '<div class="msg err">Could not load your sheet: ' + esc(e.message) + '</div>';
       });
@@ -725,6 +744,17 @@
          'Nobody else has seen your numbers.</p>';
     return h;
   }
+
+  document.getElementById('show-sheet').onclick = function () {
+    sheetOpen = true;
+    document.getElementById('sheet-body').innerHTML = '<p class="anchor">Fetching it…</p>';
+    render();
+    loadSheet();
+  };
+  document.getElementById('hide-sheet').onclick = function () {
+    sheetOpen = false;
+    render();
+  };
 
   function enter() {
     show('signin', false);
