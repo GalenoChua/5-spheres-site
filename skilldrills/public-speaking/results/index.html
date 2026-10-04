@@ -112,31 +112,87 @@
            n(v) + '</div><div class="n">' + esc(sub || '') + '</div></div>';
   }
 
+  /* The group view is the half that gets shown to the room, so it reads as
+     something a facilitator can say out loud rather than a grid they have to
+     translate. No names appear here by design. */
+  function groupLines(g) {
+    var L = [];
+    L.push({ h: 'The room' });
+    L.push({ p: g.spoke + ' of the ' + g.inTheRoom + ' people here took the floor and were '
+              + 'scored by everybody else.' });
+
+    if (g.appeared !== null) {
+      L.push({ s: 'How it landed' });
+      L.push({ p: "Across every speaker, the room's score for being in command, being followed "
+                + 'and being believed came to ' + g.appeared + ' out of 100.' });
+    }
+    if (g.relay !== null) {
+      L.push({ s: 'What survived' });
+      L.push({ p: 'On average ' + g.relay + ' per cent of what a speaker meant came back in what '
+                + 'the room wrote down. That number usually comes in lower than people expect, '
+                + 'and it is the one worth taking away.' });
+    }
+
+    var parts = [];
+    if (g.overRating) { parts.push(g.overRating + ' put themselves above where the room put them'); }
+    if (g.aligned) { parts.push(g.aligned + ' were close to it'); }
+    if (g.underRating) { parts.push(g.underRating + ' put themselves below'); }
+    if (parts.length) {
+      L.push({ s: 'What people thought of themselves' });
+      L.push({ p: parts.join(', ') + '.' });
+      if (g.underRating > g.overRating) {
+        L.push({ p: 'More people underestimated themselves than overestimated themselves, which '
+                  + 'is the opposite of what most rooms guess.' });
+      }
+      if (g.corrected) {
+        L.push({ p: g.corrected + " moved their own read closer to the room's between scoring "
+                  + 'themselves before speaking and scoring themselves after, with nobody having '
+                  + 'shown them anything.' });
+      }
+    }
+
+    var ranked = FIVE.filter(function (k) { return g.five[k] !== null; })
+      .sort(function (a, b) { return g.five[a] - g.five[b]; });
+    if (ranked.length) {
+      var low = ranked[0];
+      var high = ranked[ranked.length - 1];
+      L.push({ s: 'The five' });
+      L.push({ p: 'Across the room the strongest was ' + high + ' at ' + g.five[high]
+                + ' out of 5, and the weakest was ' + low + ' at ' + g.five[low] + '.' });
+      var firsts = FIVE.filter(function (k) { return g.changeFirst[k] > 0; })
+        .sort(function (a, b) { return g.changeFirst[b] - g.changeFirst[a]; });
+      if (firsts.length) {
+        var w = firsts[0];
+        L.push({ p: w.charAt(0).toUpperCase() + w.slice(1) + ' was the thing to change first for '
+                  + g.changeFirst[w] + ' of you, more than any other.' });
+      }
+    }
+
+    L.push({ s: 'What this is' });
+    L.push({ p: 'One morning, ninety seconds each. Nobody is named on this page, and nobody '
+              + 'else has seen your own numbers.' });
+    return L;
+  }
+
+  function blocks(L) {
+    var h = '';
+    L.forEach(function (b) {
+      if (b.h) { h += '<h2>' + esc(b.h) + '</h2>'; }
+      else if (b.s) { h += '<h3>' + esc(b.s) + '</h3>'; }
+      else if (b.q) { h += '<p class="quoted">' + esc(b.q) + '</p>'; }
+      else if (b.list) {
+        h += '<ul class="plain">' + b.list.map(function (x) {
+          return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+      } else { h += '<p>' + esc(b.p) + '</p>'; }
+    });
+    return h;
+  }
+
   function groupBlock(d) {
-    var g = d.group;
-    var h = '<div class="card"><h2>The group</h2>';
-    h += '<div class="nums">' +
-      num('Appeared', g.appeared, 'mean across ' + g.spoke + ' speakers') +
-      num('Relay', g.relay, 'how much of the point survived') +
-      num('Calibration', g.calibration, 'mean distance from the room') +
-      num('Corrected', g.corrected, 'moved toward the room after speaking') +
-    '</div>';
-    h += '<p class="note">' + esc(d.note) + '</p>';
-
-    h += '<h3>Where people sat against the room</h3><table><tr>' +
-      '<th>Thought they landed above</th><th>Close to the room</th><th>Below</th></tr><tr>' +
-      '<td class="n">' + g.overRating + '</td><td class="n">' + g.aligned +
-      '</td><td class="n">' + g.underRating + '</td></tr></table>';
-
-    h += '<h3>The five, as the room scored them</h3><div class="scroll"><table><tr>' +
-      FIVE.map(function (k) { return '<th>' + k + '</th>'; }).join('') + '</tr><tr>' +
-      FIVE.map(function (k) { return '<td class="n">' + n(g.five[k]) + '</td>'; }).join('') +
-      '</tr><tr>' +
-      FIVE.map(function (k) { return '<td class="n">' + g.changeFirst[k] + ' first</td>'; }).join('') +
-      '</tr></table></div>';
-    h += '<p class="note">The second row counts how many people had that as the weakest of ' +
-         'their five, which is the one the room would change first.</p>';
-    return h + '</div>';
+    return '<div class="card">' + blocks(groupLines(d.group)) +
+      '<div class="row" style="margin-top:16px">' +
+      '<button class="ghost small" id="copy-group">Copy this to read out</button></div>' +
+      '<div id="copied-group"></div></div>';
   }
 
   var FIVE_WORDS = {
@@ -233,15 +289,7 @@
          + (p.cardsGiven ? ', and they scored others ' + p.cardsGiven + ' times.' : '.') + '</div>';
       return h + '</div>';
     }
-    lines(p).forEach(function (b) {
-      if (b.h) { h += '<h2>' + esc(b.h) + '</h2>'; }
-      else if (b.s) { h += '<h3>' + esc(b.s) + '</h3>'; }
-      else if (b.q) { h += '<p class="quoted">' + esc(b.q) + '</p>'; }
-      else if (b.list) {
-        h += '<ul class="plain">' + b.list.map(function (x) {
-          return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
-      } else { h += '<p>' + esc(b.p) + '</p>'; }
-    });
+    h += blocks(lines(p));
     h += '<div class="row" style="margin-top:16px">' +
          '<button class="ghost small" data-copy="' + esc(p.ref) + '">Copy this to send</button>' +
          '<span class="note" style="margin:0">' + esc(p.email) + '</span>' +
@@ -249,9 +297,9 @@
     return h + '</div>';
   }
 
-  function asText(p) {
+  function asText(L) {
     var out = [];
-    lines(p).forEach(function (b) {
+    L.forEach(function (b) {
       if (b.h) { out.push(b.h, ''); }
       else if (b.s) { out.push('', b.s.toUpperCase()); }
       else if (b.q) { out.push(b.q); }
@@ -265,6 +313,18 @@
     var h = groupBlock(d);
     (d.people || []).forEach(function (p) { h += sheet(p); });
     $('out').innerHTML = h;
+    var gb = $('copy-group');
+    if (gb) {
+      gb.onclick = function () {
+        var box = $('copied-group');
+        box.innerHTML = '<p class="note">Select all of this and paste it wherever you need it.</p>'
+          + '<textarea readonly></textarea>';
+        var ta = box.querySelector('textarea');
+        ta.value = asText(groupLines(d.group));
+        ta.focus();
+        ta.select();
+      };
+    }
     var btns = document.querySelectorAll('button[data-copy]');
     for (var i = 0; i < btns.length; i++) {
       btns[i].onclick = function () {
@@ -274,7 +334,7 @@
         box.innerHTML = '<p class="note">Select all of this and paste it into an email.</p>' +
           '<textarea readonly></textarea>';
         var ta = box.querySelector('textarea');
-        ta.value = asText(p);
+        ta.value = asText(lines(p));
         ta.focus();
         ta.select();
       };

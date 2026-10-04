@@ -72,6 +72,15 @@
     .card{padding:12px}
     .scale{gap:4px}
   }
+  ul.roster{list-style:none;margin:0;padding:0}
+  ul.roster li{display:flex;justify-content:space-between;align-items:center;gap:10px;
+       padding:7px 0;border-bottom:1px solid var(--line);font-size:.93rem}
+  ul.roster li:last-child{border-bottom:0}
+  ul.roster .me{font-weight:600}
+  .state{font-size:.78rem;padding:2px 9px;border-radius:99px;border:1px solid var(--line);
+         background:var(--paper);color:var(--muted);white-space:nowrap}
+  .state.ready{background:#eaf4ee;border-color:#bcd9c7;color:var(--good)}
+  .state.spoken{background:var(--paper-warm);border-color:#e9cfae;color:var(--warn)}
   .hidden{display:none}
   .foot{color:var(--muted);font-size:.8rem;margin-top:18px}
 </style>
@@ -142,6 +151,11 @@
     <div class="waiting">
       <div class="big"><span class="dot"></span>Waiting for the next speaker</div>
       <div>Keep this page open.</div>
+    </div>
+    <div class="sec">
+      <h3>Who is in the room</h3>
+      <p class="anchor" id="room-count"></p>
+      <ul class="roster" id="room-list"></ul>
     </div>
   </div>
 
@@ -252,6 +266,7 @@
   var sentFor = {};          /* speaker ref -> true. Shows the done panel, never locks. */
   var iHaveSpoken = false;   /* decides which half of the self card is being filled */
   var secondCardOpened = false;
+  var roster = [];
   var reopened = {};         /* speaker ref -> true, after "Change my answers" */
   var sentPayload = {};      /* speaker ref -> the card as sent, so reopening restores it */
   var polling = null;
@@ -516,6 +531,7 @@
         currentRef = j.current || null;
         currentName = '';
         var list = j.speakers || [];
+        roster = list;
         list.forEach(function (s) {
           if (s.ref === currentRef) { currentName = s.name; }
           if (s.ref === me.ref && s.hasSpoken) { iHaveSpoken = true; }
@@ -547,12 +563,32 @@
       })['catch'](function () { /* a dropped poll is not worth a message */ });
   }
 
+  /* Who has written their point and who has not. The facilitator sees this
+     anyway, and in a room of twelve it lets people help each other rather than
+     the facilitator asking aloud twelve times. */
+  function drawRoom() {
+    var ul = document.getElementById('room-list');
+    var count = document.getElementById('room-count');
+    if (!ul || !roster.length) { return; }
+    var ready = 0;
+    roster.forEach(function (s) { if (s.ready) { ready += 1; } });
+    count.textContent = ready + ' of ' + roster.length + ' have written their one point.';
+    ul.innerHTML = roster.map(function (s) {
+      var state = s.hasSpoken ? '<span class="state spoken">has spoken</span>'
+                : (s.ready ? '<span class="state ready">point written</span>'
+                           : '<span class="state">still writing</span>');
+      return '<li><span class="' + (s.ref === me.ref ? 'me' : '') + '">' +
+             esc(s.name) + (s.ref === me.ref ? ' (you)' : '') + '</span>' + state + '</li>';
+    }).join('');
+  }
+
   function render() {
     var iAmUp = Boolean(currentRef) && currentRef === me.ref;
     var someoneElseUp = Boolean(currentRef) && !iAmUp;
     var alreadySent = someoneElseUp && sentFor[currentRef] && !reopened[currentRef];
     var scoringNow = someoneElseUp && !alreadySent;
 
+    drawRoom();
     show('scoring', scoringNow);
     show('done', Boolean(alreadySent));
     show('idle', !currentRef && !iAmUp);
