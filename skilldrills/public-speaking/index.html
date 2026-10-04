@@ -384,6 +384,18 @@
     });
   }
 
+  /* Kept on this device. It is what lets this person read their own sheet
+     without being able to read anybody else's, because a ref is a digest of the
+     address and a colleague could work one out. */
+  function makeSecret() {
+    if (me.secret) { return false; }
+    var b = new Uint8Array(16);
+    crypto.getRandomValues(b);
+    me.secret = Array.prototype.map.call(b, function (x) {
+      return ('0' + x.toString(16)).slice(-2); }).join('');
+    return true;
+  }
+
   function post(fn, body) {
     return fetch(API + fn, {
       method: 'POST',
@@ -424,15 +436,7 @@
     me.email = email;
     refFor(SESSION, email).then(function (r) {
       me.ref = r;
-      /* Kept on this device. It is what lets this person read their own sheet
-         afterwards without being able to read anybody else's, because a ref is
-         a digest of the address and a colleague could work one out. */
-      if (!me.secret) {
-        var b = new Uint8Array(16);
-        crypto.getRandomValues(b);
-        me.secret = Array.prototype.map.call(b, function (x) {
-          return ('0' + x.toString(16)).slice(-2); }).join('');
-      }
+      makeSecret();
       try { localStorage.setItem(KEY, JSON.stringify(me)); } catch (e) {}
       return post('drill-score', {
         session: SESSION, role: 'self', speaker: email, scorerName: name, secret: me.secret
@@ -458,6 +462,7 @@
     }
     post('drill-score', {
       session: SESSION, role: 'self', speaker: me.email, scorerName: me.name,
+      secret: me.secret,
       intent: intent, when: iHaveSpoken ? 'after' : 'before',
       outcome: group('my', OUTCOME_SELF), what: group('my', WHAT_SELF),
       reserve: val('my', 'reserve'), five: group('my', FIVE_SELF),
@@ -680,8 +685,12 @@
         document.getElementById('sheet-title').textContent = 'Your sheet, ' + (d.name || me.name);
         document.getElementById('sheet-body').innerHTML = sheetHtml(d);
       })['catch'](function (e) {
+        var why = (e.message === 'who' || e.message === 'not yours')
+          ? 'This device cannot prove it is yours. Reload the page once and try again. '
+            + 'If it still refuses, you joined from a different device or a different address.'
+          : e.message;
         document.getElementById('sheet-body').innerHTML =
-          '<div class="msg err">Could not load your sheet: ' + esc(e.message) + '</div>';
+          '<div class="msg err">' + esc(why) + '</div>';
       });
   }
 
@@ -758,6 +767,15 @@
 
   function enter() {
     show('signin', false);
+    /* Somebody who joined before this existed has a name, an address and a ref
+       on their device and no secret, so their own sheet refuses them. Claim one
+       and tell the server, which keeps the first one it is given. */
+    if (makeSecret()) {
+      try { localStorage.setItem(KEY, JSON.stringify(me)); } catch (e) {}
+      post('drill-score', { session: SESSION, role: 'self', speaker: me.email,
+                            scorerName: me.name, secret: me.secret })
+        ['catch'](function () { /* the next save will carry it anyway */ });
+    }
     document.getElementById('whoami').textContent = me.name + ', ' + me.email;
     /* Draw before the first poll answers. On a cold function that round trip is
        several seconds, and a blank page in a live room reads as broken. */
