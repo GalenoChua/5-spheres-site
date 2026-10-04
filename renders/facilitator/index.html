@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Facilitator, a render</title>
+<style>
+  :root{
+    --ink:#1d2a52; --paper:#faf6ef; --warm:#f3ecdf; --ember:#e8862e;
+    --line:#ded4c3; --muted:#6b6557; --good:#2f7a52; --warn:#b4541f;
+    --sans:"Source Sans 3",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:Fraunces,Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5}
+  .banner{background:var(--ember);color:#fff;padding:9px 18px;font-size:.84rem;text-align:center}
+  .wrap{max-width:1040px;margin:0 auto;padding:24px 20px 80px}
+
+  header.top{display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+             flex-wrap:wrap;margin-bottom:22px}
+  h1{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:0}
+  .sub{color:var(--muted);font-size:.86rem}
+
+  /* ── the live strip ─────────────────────────────────────── */
+  .live{background:var(--ink);color:#fff;border-radius:14px;padding:20px 22px;margin-bottom:24px}
+  .live .k{font-size:.7rem;letter-spacing:.11em;text-transform:uppercase;opacity:.62;font-weight:700}
+  .live .row1{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .live .name{font-family:var(--serif);font-size:1.8rem;line-height:1.1;margin:5px 0 2px}
+  .live .meta{font-size:.9rem;opacity:.78}
+  .live .acts{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+  button{font:inherit;cursor:pointer;border-radius:8px;padding:9px 15px;font-weight:600;
+         border:1px solid var(--ink);background:var(--ink);color:#fff}
+  .live button{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff}
+  .live button.go{background:var(--ember);border-color:var(--ember)}
+  button.ghost{background:transparent;color:var(--ink);font-weight:500}
+  button.sm{padding:6px 11px;font-size:.84rem}
+
+  .meter{display:flex;gap:4px;margin-top:14px}
+  .meter i{flex:1;height:7px;border-radius:99px;background:rgba(255,255,255,.18)}
+  .meter i.on{background:var(--ember)}
+  .meter-l{font-size:.82rem;opacity:.75;margin-top:7px}
+
+  /* ── sessions ───────────────────────────────────────────── */
+  h2.sec{font-size:.72rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);
+         font-weight:700;margin:0 0 13px}
+  .ses{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:12px;
+       display:flex;align-items:center;gap:16px;padding:14px 16px;flex-wrap:wrap}
+  .ses .dot{width:9px;height:9px;border-radius:50%;background:var(--line);flex:none}
+  .ses.running .dot{background:var(--ember)}
+  .ses.released .dot{background:var(--good)}
+  .ses .main{flex:1 1 230px;min-width:0}
+  .ses .t{font-family:var(--serif);font-size:1.04rem;font-weight:600}
+  .ses .d{font-size:.82rem;color:var(--muted);margin-top:1px}
+  .ses .nums{display:flex;gap:16px;flex:none}
+  .ses .nums div{text-align:right}
+  .ses .nums b{font-family:var(--serif);font-size:1.15rem;display:block;
+                font-variant-numeric:tabular-nums}
+  .ses .nums span{font-size:.69rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .tag{font-size:.72rem;padding:2px 9px;border-radius:99px;border:1px solid var(--line);
+       background:var(--paper);color:var(--muted);white-space:nowrap}
+  .tag.run{background:#fdf2e8;border-color:#e9cfae;color:var(--warn)}
+  .tag.rel{background:#eaf4ee;border-color:#bcd9c7;color:var(--good)}
+
+  /* ── the room, at a glance ──────────────────────────────── */
+  .grid{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:24px}
+  table{width:100%;border-collapse:collapse;font-size:.91rem}
+  th,td{text-align:left;padding:8px 7px;border-bottom:1px solid var(--line)}
+  th{font-size:.69rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr.on td{background:var(--warm)}
+  .pill{font-size:.72rem;padding:2px 8px;border-radius:99px;border:1px solid var(--line);
+        background:var(--paper);white-space:nowrap}
+  .pill.ok{background:#eaf4ee;border-color:#bcd9c7;color:var(--good)}
+  .pill.no{background:#fdf2e8;border-color:#e9cfae;color:var(--warn)}
+
+  .foot{color:var(--muted);font-size:.82rem;max-width:72ch;margin-top:22px}
+  code{background:var(--warm);padding:1px 6px;border-radius:4px;font-size:.86em}
+  @media (max-width:620px){ .ses .nums{width:100%;justify-content:flex-start} }
+</style>
+</head>
+<body>
+<div class="banner">This is a render, and nothing on it is wired to real data.</div>
+<div class="wrap">
+
+  <header class="top">
+    <h1>Facilitator</h1>
+    <span class="sub">G &middot; three sessions this month</span>
+  </header>
+
+  <div class="live">
+    <div class="row1">
+      <div>
+        <div class="k">On the floor now</div>
+        <div class="name">Arun Prasetyo</div>
+        <div class="meta">ASC pitch drill &middot; speaker 4 of 12 &middot; point written</div>
+      </div>
+      <div style="text-align:right">
+        <div class="k">Cards in</div>
+        <div class="name">8<span style="font-size:1rem;opacity:.6"> of 11</span></div>
+      </div>
+    </div>
+    <div class="meter">
+      <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i>
+      <i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i>
+    </div>
+    <div class="meter-l">Three still writing. The floor stays open until you close it.</div>
+    <div class="acts">
+      <button class="go">Next speaker</button>
+      <button>Close the floor</button>
+      <button>Put the room on a screen</button>
+      <button>Send everyone their sheet</button>
+    </div>
+  </div>
+
+  <h2 class="sec">The room</h2>
+  <div class="grid">
+    <table>
+      <tr><th>Who</th><th>Point</th><th class="n">Cards in</th><th class="n">Gave</th><th></th></tr>
+      <tr class="on"><td>Arun Prasetyo</td><td><span class="pill ok">written</span></td>
+        <td class="n">8 of 11</td><td class="n">3</td><td class="n"><span class="pill">on the floor</span></td></tr>
+      <tr><td>Bo Nguyen</td><td><span class="pill ok">written</span></td>
+        <td class="n">11 of 11</td><td class="n">4</td><td class="n"><button class="ghost sm">Put up</button></td></tr>
+      <tr><td>Chhaiya Chhuon</td><td><span class="pill ok">written</span></td>
+        <td class="n">11 of 11</td><td class="n">4</td><td class="n"><button class="ghost sm">Put up</button></td></tr>
+      <tr><td>Dara Kim</td><td><span class="pill no">not yet</span></td>
+        <td class="n">0 of 11</td><td class="n">3</td><td class="n"><button class="ghost sm">Put up</button></td></tr>
+      <tr><td>Ewa Jankowska</td><td><span class="pill no">not yet</span></td>
+        <td class="n">0 of 11</td><td class="n">1</td><td class="n"><button class="ghost sm">Put up</button></td></tr>
+    </table>
+    <p class="foot">Two have not written their point. Putting one of them up asks you to
+      confirm, because their relay cannot be scored.</p>
+  </div>
+
+  <h2 class="sec">Sessions</h2>
+
+  <div class="ses running">
+    <span class="dot"></span>
+    <div class="main">
+      <div class="t">ASC pitch drill</div>
+      <div class="d">Public Speaking &middot; today, 09:00 &middot; <code>asc-2026-10-07</code></div>
+    </div>
+    <div class="nums">
+      <div><b>12</b><span>in</span></div>
+      <div><b>3</b><span>done</span></div>
+      <div><b>not yet</b><span>appeared</span></div>
+    </div>
+    <span class="tag run">running</span>
+  </div>
+
+  <div class="ses released">
+    <span class="dot"></span>
+    <div class="main">
+      <div class="t">The Sensing Drill</div>
+      <div class="d">Sensing Quad &middot; 17 September &middot; <code>sensing-drill-2026-09-17</code></div>
+    </div>
+    <div class="nums">
+      <div><b>5</b><span>in</span></div>
+      <div><b>5</b><span>done</span></div>
+      <div><b>3.4</b><span>round two</span></div>
+    </div>
+    <span class="tag rel">sent out</span>
+  </div>
+
+  <div class="ses">
+    <span class="dot"></span>
+    <div class="main">
+      <div class="t">Public Speaking Drill</div>
+      <div class="d">Public Speaking &middot; 22 October &middot; <code>ps-2026-10-22</code></div>
+    </div>
+    <div class="nums">
+      <div><b>9</b><span>booked</span></div>
+      <div><b>0</b><span>done</span></div>
+      <div><b>not yet</b><span>appeared</span></div>
+    </div>
+    <span class="tag">not started</span>
+  </div>
+
+  <p class="foot">One place for both instruments. A session knows which it is, so the
+  controls change with it: the Quad has no floor to open and the drill has no re-score.
+  Everything a participant sees is their own, and the room screen names nobody.</p>
+
+</div>
+</body>
+</html>

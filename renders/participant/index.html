@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Your record, a render</title>
+<style>
+  :root{
+    --ink:#1d2a52; --paper:#faf6ef; --warm:#f3ecdf; --ember:#e8862e;
+    --line:#ded4c3; --muted:#6b6557; --good:#2f7a52; --warn:#b4541f;
+    --sans:"Source Sans 3",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:Fraunces,Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55}
+  .banner{background:var(--ember);color:#fff;padding:9px 18px;font-size:.84rem;
+          letter-spacing:.03em;text-align:center}
+  .wrap{max-width:720px;margin:0 auto;padding:26px 18px 90px}
+
+  header.me{display:flex;align-items:baseline;justify-content:space-between;
+            gap:14px;flex-wrap:wrap;margin-bottom:6px}
+  h1{font-family:var(--serif);font-weight:600;font-size:1.6rem;margin:0}
+  .who{color:var(--muted);font-size:.86rem}
+  .intro{color:var(--muted);font-size:.9rem;margin:0 0 26px;max-width:58ch}
+
+  /* ── the one thing at the top ───────────────────────────── */
+  .promise{background:var(--ink);color:#fff;border-radius:14px;padding:20px 22px;margin-bottom:26px}
+  .promise .k{font-size:.7rem;letter-spacing:.11em;text-transform:uppercase;opacity:.65;font-weight:700}
+  .promise .v{font-family:var(--serif);font-size:1.26rem;margin:7px 0 10px;line-height:1.35}
+  .promise .due{font-size:.86rem;opacity:.75}
+  .promise .bar{height:5px;background:rgba(255,255,255,.2);border-radius:99px;margin-top:13px;overflow:hidden}
+  .promise .bar i{display:block;height:100%;background:var(--ember);border-radius:99px}
+
+  /* ── the spine ──────────────────────────────────────────── */
+  h2.sec{font-size:.72rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);
+         font-weight:700;margin:0 0 14px}
+  .spine{position:relative;padding-left:26px}
+  .spine:before{content:"";position:absolute;left:7px;top:6px;bottom:18px;width:2px;background:var(--line)}
+  .stop{position:relative;margin-bottom:18px}
+  .stop:before{content:"";position:absolute;left:-23px;top:20px;width:12px;height:12px;
+               border-radius:50%;background:var(--paper);border:2px solid var(--line)}
+  .stop.drill:before{border-color:var(--ember);background:var(--ember)}
+  .stop.quad:before{border-color:var(--ink);background:var(--ink)}
+
+  .cardx{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .cardx .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+              padding:13px 16px;border-bottom:1px solid var(--line);background:var(--warm)}
+  .cardx .top b{font-family:var(--serif);font-size:1rem;font-weight:600}
+  .cardx .top span{font-size:.79rem;color:var(--muted);white-space:nowrap}
+  .cardx .in{padding:15px 16px}
+  .cardx p{margin:0 0 9px;font-size:.94rem;max-width:56ch}
+  .cardx p:last-child{margin-bottom:0}
+
+  .pair{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px}
+  .fig{flex:1 1 92px;background:var(--paper);border:1px solid var(--line);
+       border-radius:9px;padding:9px 11px}
+  .fig .n{font-family:var(--serif);font-size:1.5rem;line-height:1;font-variant-numeric:tabular-nums}
+  .fig .l{font-size:.69rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
+          font-weight:700;margin-top:5px}
+  .fig.hero{background:var(--warm);border-color:var(--ember)}
+
+  details{border-top:1px solid var(--line);margin-top:13px;padding-top:11px}
+  summary{cursor:pointer;font-size:.86rem;color:var(--muted);list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary:before{content:"Show what they wrote  +";}
+  details[open] summary:before{content:"Hide  −";}
+  details ul{list-style:none;margin:11px 0 0;padding:0}
+  details li{padding:7px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+  details li:last-child{border-bottom:0}
+
+  /* ── movement over time ─────────────────────────────────── */
+  .trend{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px 18px;margin-bottom:26px}
+  .trend table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:11px}
+  .trend th,.trend td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+  .trend th{font-size:.69rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .trend td.n{text-align:right;font-variant-numeric:tabular-nums}
+  .up{color:var(--good)} .down{color:var(--warn)}
+
+  .foot{color:var(--muted);font-size:.82rem;margin-top:30px;max-width:62ch}
+  @media (max-width:520px){ .fig{flex:1 1 100%} .spine{padding-left:20px} }
+</style>
+</head>
+<body>
+<div class="banner">This is a render, and nothing on it is wired to real data.</div>
+<div class="wrap">
+
+  <header class="me">
+    <h1>Your record</h1>
+    <span class="who">Sereyrath Chan &middot; sereyrath@example.com</span>
+  </header>
+  <p class="intro">Everything you have done with us, and what you said you would do next.
+  Only you see this page.</p>
+
+  <div class="promise">
+    <div class="k">What you said you would do</div>
+    <div class="v">Ask one more question than feels comfortable, and make it about them
+      rather than about my reply.</div>
+    <div class="due">Set on 17 September for ninety days. Thirty-one days left.</div>
+    <div class="bar"><i style="width:65%"></i></div>
+  </div>
+
+  <h2 class="sec">What you have done</h2>
+  <div class="spine">
+
+    <div class="stop drill">
+      <div class="cardx">
+        <div class="top"><b>Public Speaking Drill</b><span>7 October</span></div>
+        <div class="in">
+          <div class="pair">
+            <div class="fig hero"><div class="n">71</div><div class="l">Appeared</div></div>
+            <div class="fig"><div class="n">44</div><div class="l">Relay</div></div>
+            <div class="fig"><div class="n">+6</div><div class="l">Gap</div></div>
+          </div>
+          <p>Ten people scored your ninety seconds. You put yourself at 77 before you spoke
+            and 71 after, so delivering it moved you 6 points closer to them.</p>
+          <p>Of the five, the room scored you lowest on pace.</p>
+          <details>
+            <summary></summary>
+            <ul>
+              <li>Cold chain losses in week one, and they have a fix that works.</li>
+              <li>Half the harvest spoils before the port. Two provinces are already down to eight per cent.</li>
+              <li>Something about logistics. I did not catch the number.</li>
+              <li>They cut spoilage from a third to eight per cent.</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <div class="stop quad">
+      <div class="cardx">
+        <div class="top"><b>The Sensing Drill</b><span>17 September</span></div>
+        <div class="in">
+          <div class="pair">
+            <div class="fig hero"><div class="n">3.4</div><div class="l">Round two</div></div>
+            <div class="fig"><div class="n">+0.4</div><div class="l">Change</div></div>
+            <div class="fig"><div class="n">5</div><div class="l">In the room</div></div>
+          </div>
+          <p>You went up on three of the four and held on the fourth. Your weakest was
+            sensing yourself, which is also the one you chose to work on.</p>
+          <p>You arrived at 3 on mental clarity and left at 4.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2 class="sec" style="margin-top:30px">Across the two</h2>
+  <div class="trend">
+    <p style="margin:0;font-size:.94rem;max-width:56ch">The number worth watching is the
+      distance between your own read and the room's. It has closed each time.</p>
+    <table>
+      <tr><th>Date</th><th>What</th><th class="n">You said</th><th class="n">They said</th><th class="n">Apart</th></tr>
+      <tr><td>17 Sep</td><td>Sensing</td><td class="n">4.0</td><td class="n">3.4</td><td class="n down">0.6</td></tr>
+      <tr><td>7 Oct</td><td>Speaking</td><td class="n">77</td><td class="n">71</td><td class="n up">6</td></tr>
+    </table>
+    <p class="foot" style="margin-top:12px">The two sit on different scales, so the columns
+      are not comparable to each other. Each row compares you to the room on the day.</p>
+  </div>
+
+  <p class="foot">Each of these is a reading from a single occasion, taken by the people
+  who were there. Nobody else has seen your numbers.</p>
+
+</div>
+</body>
+</html>
