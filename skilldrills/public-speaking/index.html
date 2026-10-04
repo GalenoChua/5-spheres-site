@@ -666,13 +666,6 @@
   }
 
   /* Their own sheet, on their own phone, once the facilitator releases it. */
-  var FIVE_WORDS = {
-    pause: 'pause, letting a moment have its weight',
-    pace: 'pace, holding them rather than outrunning them',
-    volume: 'volume, using loud and quiet for emphasis',
-    emotion: 'emotion, letting it carry rather than only informing',
-    tonality: 'tonality, using your range'
-  };
 
   function loadSheet() {
     post('drill-my-sheet', { session: SESSION, ref: me.ref, secret: me.secret })
@@ -715,33 +708,30 @@
       h += '</ul>';
       if (d.intent) {
         h += '<p style="margin-top:10px">' + (caught === 0
-          ? 'Nobody wrote down the thing you came to say. That is the finding worth sitting '
-            + 'with, because everything else here is about how you said it.'
-          : caught + ' of the ' + d.scorers + ' came back with your point close to the way you '
-            + 'wrote it.') + '</p>';
+          ? 'Nobody wrote down your point. Everything else here is about how you said it.'
+          : caught + ' of ' + d.scorers + ' wrote your point back close to how you wrote it.') + '</p>';
       }
       h += '</div>';
     }
 
     h += '<div class="sec"><h3>How it landed</h3><p>They scored you on whether you seemed in ' +
-         'command, whether they followed you, and whether they believed you. Across the room ' +
-         'that came to ' + d.appeared + ' out of 100.</p>';
+         'command, whether they followed you, and whether they believed you. That came to ' + d.appeared + ' out of 100.</p>';
     if (d.assumedBefore !== null && d.assumedAfter !== null) {
       h += '<p>You put yourself at ' + d.assumedBefore + ' before you spoke and ' +
-           d.assumedAfter + ' after you sat down. ' + (d.closed >= 10
-        ? 'Delivering it moved your own read ' + d.closed + ' points closer to theirs.'
+           d.assumedAfter + ' after. ' + (d.closed >= 10
+        ? 'Delivering it moved you ' + d.closed + ' points closer to them.'
         : (d.closed <= -10
-          ? 'Delivering it moved your own read further from theirs.'
+          ? 'Delivering it moved you further from them.'
           : (Math.abs(d.gapAfter) <= 15
-            ? 'You knew where you stood and the room agreed with you.'
-            : 'Your read of yourself did not move, and the room is ' +
+            ? 'You knew where you stood and the room agreed.'
+            : 'Your own score did not move, and the room is ' +
               Math.abs(d.gapAfter) + ' points from it.'))) + '</p>';
     }
     h += '</div>';
 
     if (d.changeFirst) {
       h += '<div class="sec"><h3>Change this first</h3><p class="quoted">' +
-           esc(FIVE_WORDS[d.changeFirst] || d.changeFirst) + '</p></div>';
+           esc(d.changeFirst) + '</p></div>';
     }
     if (d.whatTheySaid && d.whatTheySaid.length) {
       h += '<div class="sec"><h3>In their words</h3><ul class="plain">' +
@@ -749,8 +739,7 @@
         '</ul></div>';
     }
     h += '<p class="foot" style="margin-top:16px">' + d.scorers + ' people, ninety seconds, ' +
-         'one morning. One occasion is not a pattern, so treat this as somewhere to start. ' +
-         'Nobody else has seen your numbers.</p>';
+         'one morning. Nobody else has seen your numbers.</p>';
     return h;
   }
 

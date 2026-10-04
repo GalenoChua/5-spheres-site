@@ -131,13 +131,6 @@
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var FIVE = ['pause', 'pace', 'volume', 'emotion', 'tonality'];
-  var FIVE_WORDS = {
-    pause: 'pause, letting a moment have its weight',
-    pace: 'pace, holding them rather than outrunning them',
-    volume: 'volume, using loud and quiet for emphasis',
-    emotion: 'emotion, letting it carry rather than only informing',
-    tonality: 'tonality, using your range'
-  };
 
   function esc(s) {
     return String(s === null || s === undefined ? '' : s)
@@ -165,18 +158,15 @@
     if (g.relay !== null) {
       S.push({ t: 'What survived',
         p: 'On average ' + g.relay + ' per cent of what a speaker meant came back in what the '
-         + 'room wrote down. That number usually comes in lower than people expect, and it is '
-         + 'the one worth taking away.' });
+         + 'room wrote down. It is usually lower than people expect.' });
     }
     var parts = [];
-    if (g.overRating) { parts.push(g.overRating + ' put themselves above where the room put them'); }
-    if (g.aligned) { parts.push(g.aligned + ' were close to it'); }
+    if (g.overRating) { parts.push(g.overRating + ' put themselves above the room'); }
+    if (g.aligned) { parts.push(g.aligned + ' were close'); }
     if (g.underRating) { parts.push(g.underRating + ' put themselves below'); }
     if (parts.length) {
       var p = parts.join(', ') + '.';
       if (g.underRating > g.overRating) {
-        p += ' More people underestimated themselves than overestimated themselves, which is '
-           + 'the opposite of what most rooms guess.';
       }
       if (g.corrected) {
         p += ' ' + g.corrected + " moved their own read closer to the room's between scoring "
@@ -189,20 +179,17 @@
       .sort(function (a, b) { return g.five[a] - g.five[b]; });
     if (ranked.length) {
       var low = ranked[0]; var high = ranked[ranked.length - 1];
-      var t = 'Across the room the strongest was ' + high + ' at ' + g.five[high]
-            + ' out of 5, and the weakest was ' + low + ' at ' + g.five[low] + '.';
+      var t = 'Strongest across the room was ' + high + ' at ' + g.five[high] + ' out of 5. Weakest was ' + low + ' at ' + g.five[low] + '.';
       var firsts = FIVE.filter(function (k) { return g.changeFirst[k] > 0; })
         .sort(function (a, b) { return g.changeFirst[b] - g.changeFirst[a]; });
       if (firsts.length) {
         var w = firsts[0];
-        t += ' ' + w.charAt(0).toUpperCase() + w.slice(1) + ' was the thing to change first for '
-           + g.changeFirst[w] + ' of you, more than any other.';
+        t += ' ' + w.charAt(0).toUpperCase() + w.slice(1) + ' was the first thing to change for ' + g.changeFirst[w] + ' of you.';
       }
       S.push({ t: 'The five', p: t });
     }
     S.push({ t: 'What this is',
-      p: 'One morning, ninety seconds each. Nobody is named here, and nobody else has seen '
-       + 'your own numbers.' });
+      p: 'One morning, ninety seconds each. Nobody is named here.' });
     return S;
   }
 
@@ -233,16 +220,15 @@
         'You put yourself at ' + p.assumedAfter + '.';
     }
     var t = 'You put yourself at ' + p.assumedBefore + ' before you spoke and ' +
-            p.assumedAfter + ' after you sat down. ';
+            p.assumedAfter + ' after. ';
     if (p.closed >= 10) {
-      t += 'Delivering it moved your own read ' + p.closed +
-           ' points closer to theirs, before anybody showed you a score.';
+      t += 'Delivering it moved you ' + p.closed + ' points closer to them, before you saw any score.';
     } else if (p.closed <= -10) {
-      t += 'Delivering it moved your own read further from theirs rather than closer.';
+      t += 'Delivering it moved you further from them.';
     } else if (Math.abs(p.gapAfter) <= 15) {
-      t += 'You knew where you stood before you spoke and the room agreed with you.';
+      t += 'You knew where you stood and the room agreed.';
     } else {
-      t += 'Your read of yourself did not move, and the room is ' +
+      t += 'Your own score did not move, and the room is ' +
            Math.abs(p.gapAfter) + ' points from it.';
     }
     return t;
@@ -251,15 +237,12 @@
     var c = caughtCount(p); var k = p.scorers;
     if (!p.intent) { return ''; }
     if (c === 0) {
-      return 'Nobody wrote down the thing you came to say. That is the finding worth sitting '
-           + 'with, because everything else here is about how you said it.';
+      return 'Nobody wrote down your point. Everything else here is about how you said it.';
     }
     if (c < k / 2) {
-      return c + ' of the ' + k + ' came back with your point close to the way you wrote it. '
-           + 'The rest carried the subject and left the substance behind.';
+      return c + ' of ' + k + ' wrote your point back close to how you wrote it. The other ' + (k - c) + ' got the subject and missed the rest.';
     }
-    return c + ' of the ' + k + ' came back with your point close to the way you wrote it, '
-         + 'which is higher than most people manage.';
+    return c + ' of ' + k + ' wrote your point back close to how you wrote it.';
   }
 
   function personCard(p) {
@@ -315,7 +298,7 @@
 
     if (p.changeFirst) {
       h += sec('', '<div class="callout"><b>Change this first</b>' +
-        esc(FIVE_WORDS[p.changeFirst] || p.changeFirst) + '</div>');
+        esc(p.changeFirst) + '</div>');
     }
     if (p.whatTheySaid.length) {
       h += sec('In their words', '<ul class="plain">' +
@@ -323,8 +306,7 @@
     }
 
     h += sec('', '<p class="note">' + p.scorers + ' people, ninety seconds, one morning. ' +
-      'One occasion is not a pattern, so treat this as somewhere to start. Nobody else has ' +
-      'seen your numbers.</p>');
+      'Nobody else has seen your numbers.</p>');
 
     h += '</div><div class="foot"><div class="row">' +
       '<button class="ghost small" data-copy="' + esc(p.ref) + '">Copy as text</button>' +
@@ -344,22 +326,19 @@
       if (caughtLine(p)) { L.push('', caughtLine(p)); }
     }
     L.push('', 'HOW IT LANDED');
-    L.push('They each scored you on whether you seemed in command, whether they followed you, '
-         + 'and whether they believed you. Across the room that came to ' + p.appeared
+    L.push('They scored you on whether you seemed in command, whether they followed you, and whether they believed you. That came to ' + p.appeared
          + ' out of 100.');
     if (movementLine(p)) { L.push('', movementLine(p)); }
     if (p.changeFirst) {
       L.push('', 'WHAT TO CHANGE FIRST');
-      L.push('Of the five, the room scored you lowest on ' +
-        (FIVE_WORDS[p.changeFirst] || p.changeFirst) + '.');
+      L.push('Of the five, the room scored you lowest on ' + p.changeFirst + '.');
     }
     if (p.whatTheySaid.length) {
       L.push('', 'In their words:');
       p.whatTheySaid.forEach(function (f) { L.push('  ' + f); });
     }
     L.push('', 'WHAT THIS IS');
-    L.push(p.scorers + ' people, ninety seconds, one morning. One occasion is not a pattern, '
-         + 'so treat this as somewhere to start. Nobody else has seen your numbers.');
+    L.push(p.scorers + ' people, ninety seconds, one morning. Nobody else has seen your numbers.');
     return L.join('\n');
   }
   function roomText(g) {

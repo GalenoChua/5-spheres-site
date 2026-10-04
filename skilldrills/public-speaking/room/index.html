@@ -117,8 +117,7 @@
     if (g.relay !== null) {
       h += '<div class="sec"><h2>What survived</h2><p>On average ' + g.relay +
         ' per cent of what a speaker meant came back in what the room wrote down. ' +
-        'That number usually comes in lower than people expect, and it is the one worth ' +
-        'taking away.</p></div>';
+        'It is usually lower than people expect.</p></div>';
     }
 
     h += '<div class="sec"><h2>What people thought of themselves</h2>' +
@@ -126,14 +125,10 @@
       '<div class="third"><div class="v">' + g.overRating + '</div>' +
         '<div class="k">put themselves above the room</div></div>' +
       '<div class="third"><div class="v">' + g.aligned + '</div>' +
-        '<div class="k">were close to it</div></div>' +
+        '<div class="k">were close</div></div>' +
       '<div class="third"><div class="v">' + g.underRating + '</div>' +
         '<div class="k">put themselves below</div></div>' +
       '</div>';
-    if (g.underRating > g.overRating) {
-      h += '<p style="margin-top:14px">More people underestimated themselves than ' +
-        'overestimated themselves, which is the opposite of what most rooms guess.</p>';
-    }
     h += '</div>';
 
     var ranked = FIVE.filter(function (k) { return g.five[k] !== null; })
@@ -149,15 +144,13 @@
       if (firsts.length) {
         var w = firsts[0];
         h += '<p style="margin-top:14px">' + w.charAt(0).toUpperCase() + w.slice(1) +
-          ' was the thing to change first for ' + g.changeFirst[w] +
-          ' of you, more than any other.</p>';
+          ' was the first thing to change for ' + g.changeFirst[w] + ' of you.</p>';
       }
       h += '</div>';
     }
 
-    h += '<p class="foot">One morning, ninety seconds each. One occasion is not a pattern, ' +
-      'so treat this as somewhere to start. Your own numbers are on your own phone and ' +
-      'nobody else has seen them.</p>';
+    h += '<p class="foot">One morning, ninety seconds each. Your own numbers are on ' +
+      'your own phone.</p>';
 
     $('out').innerHTML = h;
   }
