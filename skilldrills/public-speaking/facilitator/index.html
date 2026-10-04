@@ -77,6 +77,10 @@
       <div class="k">On the floor</div>
       <div class="v" id="now-name">Nobody</div>
       <div class="n" id="now-count"></div>
+      <div class="bar" style="margin-top:12px">
+        <button class="small" id="release">Send everyone their sheet</button>
+        <span class="stamp" id="release-state"></span>
+      </div>
     </div>
 
     <div class="card">
@@ -90,10 +94,6 @@
         <button class="ghost small" id="close-floor">Close the floor</button>
         <button class="ghost small" id="refresh">Refresh now</button>
         <span class="stamp" id="stamp"></span>
-      </div>
-      <div class="bar">
-        <button class="small" id="release">Send everyone their sheet</button>
-        <span class="stamp" id="release-state"></span>
       </div>
       <div id="panel-msg"></div>
     </div>
@@ -123,6 +123,7 @@
   var staging = false;        /* a floor write is in flight */
   var lastPoll = 0;
   var released = false;
+  var armed = false;
 
   document.getElementById('sub').textContent = 'Session ' + SESSION;
   document.getElementById('joinurl').textContent =
@@ -212,10 +213,12 @@
 
     document.getElementById('close-floor').disabled = staging || !current;
     var rb = document.getElementById('release');
-    rb.textContent = released ? 'Take the sheets back' : 'Send everyone their sheet';
+    rb.disabled = false;
+    rb.textContent = released ? 'Take the sheets back'
+      : (armed ? 'Press again to send them' : 'Send everyone their sheet');
     document.getElementById('release-state').textContent = released
-      ? 'Everyone can see their own sheet on their phone.'
-      : 'Nobody can see their sheet yet.';
+      ? 'Everyone can open their own sheet.'
+      : 'Nobody can see a sheet yet.';
 
     var age = lastPoll ? Math.round((Date.now() - lastPoll) / 1000) : null;
     var stamp = document.getElementById('stamp');
@@ -280,13 +283,27 @@
      somebody is still speaking would change the last turns of the room. */
   document.getElementById('release').onclick = function () {
     var want = !released;
-    if (want && !window.confirm('This shows every person their own sheet, on their own phone. ' +
-        'Do it after the last speaker, not during.')) { return; }
+    /* Two presses rather than a modal. A browser can suppress window.confirm,
+       and a dismissed one looks exactly like a button that does nothing. */
+    if (want && !armed) {
+      armed = true;
+      draw();
+      say('panel-msg', 'note', 'This shows every person their own sheet on their own phone. '
+        + 'Press again to send them, or anything else to carry on.');
+      return;
+    }
+    armed = false;
     say('panel-msg', '', '');
+    this.disabled = true;
     callStage({ session: SESSION, token: token, release: want })
-      .then(poll)['catch'](function (e) {
+      .then(poll)
+      .then(function () {
+        say('panel-msg', 'note', want
+          ? 'Sent. Everybody can open their own sheet now.'
+          : 'Taken back. Nobody can see a sheet.');
+      })['catch'](function (e) {
         say('panel-msg', 'err', 'Could not change that: ' + e.message);
-      });
+      })['finally'](function () { draw(); });
   };
 
   /* A backgrounded tab has its timers throttled to about once a minute, so a
