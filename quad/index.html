@@ -378,6 +378,11 @@
     <p>I&rsquo;ll send your scores and the group&rsquo;s numbers this week. The thing to work
       on is <b id="done-focus"></b>.</p>
     <p class="muted" id="done-keyed"></p>
+    <div id="mine-box" class="note-field" style="margin-top:18px">
+      <p class="muted" id="mine-state"></p>
+      <button class="btn" id="mine-show" type="button" disabled>Show me my numbers</button>
+      <div id="mine-out"></div>
+    </div>
     <p class="muted">The drill board is at <a href="/skilldrills/">5spheresofempathy.com/skilldrills</a>
       if you want the next one.</p>
     <a class="btn" href="/resources/pme-sensing-quad/">Keep the quad card</a>
@@ -440,6 +445,24 @@
 
   var DIMS = ROLES.reduce(function (a, r) { return a.concat(r.dims); }, []);
   var KEY = '5s-quad-v2';
+  /* Separate from the working state, which is cleared on submit. Losing this
+     would mean losing the only proof that these numbers are yours. */
+  var MEKEY = '5s-quad-me:' + SESSION;
+  var me = (function () {
+    try { return JSON.parse(localStorage.getItem(MEKEY) || 'null') || {}; }
+    catch (e) { return {}; }
+  }());
+  function keepMe(email) {
+    if (!me.secret) {
+      var b = new Uint8Array(16);
+      crypto.getRandomValues(b);
+      me.secret = Array.prototype.map.call(b, function (x) {
+        return ('0' + x.toString(16)).slice(-2); }).join('');
+    }
+    me.email = email;
+    try { localStorage.setItem(MEKEY, JSON.stringify(me)); } catch (e) {}
+    return me.secret;
+  }
   var blank = function () {
     return { name: '', email: '', a: {}, a2: {}, b: {}, s1: {}, s2: {},
              aNote: '', a2Note: '', bNote: '', started: null };
@@ -796,6 +819,7 @@
       state: { start: state.s1, end: state.s2 },
       focus: lowest().dim.key,
       notes: { a: state.aNote || '', a2: state.a2Note || '', b: state.bNote || '' },
+      secret: keepMe(state.email),
       intention: $('q-intent').value.trim(),
       nps: $('q-nps').value === '' ? null : Number($('q-nps').value),
       describe: $('q-describe').value.trim(),
@@ -871,7 +895,103 @@
       });
   });
 
+  var FOCUS_PHRASE = {
+    sense_others: 'how well you sense other people',
+    present: 'how present you are',
+    sense_self: 'how well you sense yourself',
+    sensed_by_others: 'how well other people sense you'
+  };
+
+  /* ── your own numbers, once the facilitator releases them ─────────────── */
+  function mineState(text, enabled) {
+    var st = $('mine-state');
+    var btn = $('mine-show');
+    if (st) { st.textContent = text; }
+    if (btn) { btn.disabled = !enabled; }
+  }
+
+  function checkRelease() {
+    if (!me.secret) { mineState('', false); return; }
+    fetch('/.netlify/functions/quad-release?session=' + encodeURIComponent(SESSION),
+          { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        mineState(j.released
+          ? 'Your numbers are ready.'
+          : 'Your numbers open once G sends them out. Nobody else sees yours.',
+          j.released === true);
+      })['catch'](function () { mineState('', false); });
+  }
+
+  function mineRow(label, you, room) {
+    return '<tr><td>' + esc(label) + '</td><td class="n">' + (you === null ? '—' : you) +
+           '</td><td class="n">' + (room === null ? '—' : room) + '</td></tr>';
+  }
+
+  function drawMine(d) {
+    var h = '<p>You and ' + (d.n - 1) + ' other' + (d.n === 2 ? '' : 's') +
+            ' filled this in.</p>';
+
+    h += '<table class="mine-table"><tr><th>Round two</th><th class="n">You</th>' +
+         '<th class="n">The room</th></tr>';
+    d.dimensions.forEach(function (x) {
+      h += mineRow(x.dimension, x.you.to, x.room.to);
+    });
+    h += '</table>';
+
+    var moved = d.dimensions.filter(function (x) { return x.you.change > 0; });
+    var fell = d.dimensions.filter(function (x) { return x.you.change < 0; });
+    if (moved.length || fell.length) {
+      h += '<p>Between scoring round one again and scoring round two, you went up on ' +
+           moved.length + ' of the four and down on ' + fell.length + '.</p>';
+    }
+
+    if (d.state) {
+      h += '<table class="mine-table" style="margin-top:14px">' +
+           '<tr><th>How you felt</th><th class="n">Start</th><th class="n">End</th></tr>';
+      d.state.forEach(function (x) { h += mineRow(x.layer, x.start, x.end); });
+      h += '</table>';
+    }
+
+    if (d.focusLabel) {
+      h += '<p>The thing to work on is ' + esc(FOCUS_PHRASE[d.focus] || d.focusLabel) + '.</p>';
+    }
+    if (d.intention) {
+      h += '<p>You wrote: ' + esc(d.intention) + '</p>';
+    }
+    h += '<p class="muted">' + d.n + ' people, one session. Nobody else has seen your numbers.</p>';
+    $('mine-out').innerHTML = h;
+    $('mine-show').style.display = 'none';
+  }
+
+  if ($('mine-show')) {
+    $('mine-show').addEventListener('click', function () {
+      $('mine-out').innerHTML = '<p class="muted">Fetching them…</p>';
+      fetch('/.netlify/functions/quad-my-results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session: SESSION, email: me.email, secret: me.secret })
+      }).then(function (r) {
+        return r.json().then(function (j) {
+          if (!r.ok) {
+            throw new Error(j.error === 'not yours' || j.error === 'who'
+              ? 'This device cannot prove these are yours. It has to be the same phone you '
+                + 'filled the form on.'
+              : (j.error || 'that did not work'));
+          }
+          return j;
+        });
+      }).then(function (j) {
+        if (!j.released) { mineState('Not sent out yet.', false); $('mine-out').innerHTML = ''; return; }
+        drawMine(j);
+      })['catch'](function (e) {
+        $('mine-out').innerHTML = '<p class="muted">' + esc(e.message) + '</p>';
+      });
+    });
+  }
+
   function done() {
+    checkRelease();
     /* Name the address it was saved against. A second submission replaces the
        first rather than adding a row, and without saying so the participant
        cannot tell whether they corrected themselves or counted twice. */

@@ -11,6 +11,7 @@
  * load it — the shape is versioned.
  */
 import { getStore } from '@netlify/blobs';
+import { createHash } from 'node:crypto';
 
 const MAX_BYTES = 20 * 1024;
 const SCALE = [1, 2, 3, 4, 5];
@@ -110,6 +111,14 @@ export default async (request) => {
     testimonial: clip(body.testimonial, 60),
     emailMe: body.emailMe === true
   };
+
+  /* A secret the page makes once and keeps on the device. It is what lets this
+     person read their own numbers back afterwards without being able to read
+     anybody else's: the key is their address, which a colleague knows. */
+  const offered = typeof body.secret === 'string' ? body.secret.trim() : '';
+  if (/^[0-9a-f]{16,80}$/.test(offered)) {
+    record.secretHash = createHash('sha256').update(offered).digest('hex');
+  }
 
   /* Keyed by session and email, so somebody who submits twice — a refresh, a
      second device, a genuine correction — replaces their own row rather than

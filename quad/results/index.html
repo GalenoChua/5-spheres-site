@@ -71,6 +71,10 @@
       <button id="go">Read the results</button>
       <button class="ghost" id="raw">Show everything, including rows</button>
     </div>
+    <div class="row" style="margin-top:12px">
+      <button id="release">Send everyone their numbers</button>
+      <span class="note" id="release-state" style="margin:0"></span>
+    </div>
     <div id="msg"></div>
   </div>
 
@@ -198,6 +202,54 @@
       $('raw').disabled = false;
     });
   }
+
+  /* Releasing is separate from reading. Numbers landing on every phone during a
+     session changes what people do next, so it is a deliberate act. Two presses
+     rather than a modal, which a browser can suppress. */
+  var released = false;
+  var armed = false;
+  function drawRelease() {
+    $('release').textContent = released ? 'Take the numbers back'
+      : (armed ? 'Press again to send them' : 'Send everyone their numbers');
+    $('release-state').textContent = released
+      ? 'Everyone can open their own numbers.'
+      : 'Nobody can see their numbers yet.';
+  }
+  function readRelease() {
+    var session = $('session').value.trim().toLowerCase();
+    if (!/^[a-z0-9-]{6,64}$/.test(session)) { return; }
+    fetch('/.netlify/functions/quad-release?session=' + encodeURIComponent(session),
+          { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { released = j.released === true; drawRelease(); })
+      ['catch'](function () {});
+  }
+  $('release').onclick = function () {
+    var want = !released;
+    if (want && !armed) { armed = true; drawRelease(); return; }
+    armed = false;
+    var token = $('token').value;
+    if (!token) { say('err', 'Paste the token first.'); return; }
+    $('release').disabled = true;
+    fetch('/.netlify/functions/quad-release', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ token: token, session: $('session').value.trim().toLowerCase(),
+                             released: want })
+    }).then(function (r) {
+      return r.json().then(function (j) {
+        if (!r.ok) { throw new Error(j.error === 'no' ? 'That token is not right.' : j.error); }
+        return j;
+      });
+    }).then(function (j) {
+      released = j.released;
+      say('ok', want ? 'Sent. Everybody can open their own numbers now.'
+                     : 'Taken back. Nobody can see them.');
+    })['catch'](function (e) { say('err', e.message); })
+      ['finally'](function () { $('release').disabled = false; drawRelease(); });
+  };
+  $('session').addEventListener('change', readRelease);
+  drawRelease();
+  readRelease();
 
   $('go').onclick = function () { read(false); };
   $('raw').onclick = function () { read(true); };
