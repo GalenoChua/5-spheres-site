@@ -53,8 +53,14 @@ export default async (request) => {
 
   /* Fail shut. No token configured means nobody can drive the session, which is
      a stuck session rather than an open one. */
-  if (!tokenOk(String(body.token || ''), process.env.DRILL_TOKEN || '')) {
-    return json(403, { error: 'no' });
+  const expected = process.env.DRILL_TOKEN || '';
+  if (!tokenOk(String(body.token || ''), expected)) {
+    /* Say which half is wrong without saying anything about the value.
+       "configured" is whether the function can see DRILL_TOKEN at all, which
+       separates a scope or deploy-context problem from a value that does not
+       match. Without it, an unset variable and a wrong token are the same
+       refusal, and the session cannot start either way. */
+    return json(403, { error: 'no', configured: Boolean(expected) });
   }
 
   /* Checking a token must never write. The facilitator page proves the token
