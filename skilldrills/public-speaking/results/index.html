@@ -14,76 +14,111 @@
     --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5}
-  .wrap{max-width:1000px;margin:0 auto;padding:24px 18px 70px}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 18px 80px}
   h1{font-family:var(--serif);font-weight:600;font-size:1.45rem;margin:0 0 3px}
-  .sub{color:var(--muted);font-size:.86rem;margin:0 0 18px;max-width:74ch}
-  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
-  label{display:block;margin-bottom:12px}
-  label span{display:block;font-size:.9rem;margin-bottom:5px}
-  input{width:100%;font:inherit;padding:10px;border:1px solid var(--line);
-        border-radius:7px;background:var(--paper);color:var(--ink)}
+  .lede{color:var(--muted);font-size:.88rem;margin:0 0 20px;max-width:66ch}
+
+  /* ── the gate ───────────────────────────────────────────────── */
+  .gate{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:26px}
+  .gate label{display:block;margin-bottom:12px}
+  .gate label span{display:block;font-size:.88rem;margin-bottom:5px;font-weight:600}
+  input{width:100%;font:inherit;padding:10px 11px;border:1px solid var(--line);
+        border-radius:8px;background:var(--paper);color:var(--ink)}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  button{font:inherit;cursor:pointer;border-radius:7px;border:1px solid var(--ink);
+  button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--ink);
          background:var(--ink);color:#fff;padding:11px 17px;font-weight:600}
-  button.ghost{background:transparent;color:var(--ink);font-weight:400}
-  button.small{padding:7px 12px;font-size:.86rem}
+  button.ghost{background:transparent;color:var(--ink);font-weight:500}
+  button.small{padding:7px 13px;font-size:.86rem}
   button[disabled]{opacity:.45;cursor:default}
-  .msg{border-radius:7px;padding:11px 13px;margin:12px 0;font-size:.92rem}
+  .msg{border-radius:8px;padding:11px 13px;margin:12px 0;font-size:.92rem}
   .msg.err{background:#fdecec;border:1px solid #e9bcbc;color:#8d2b2b}
   .msg.ok{background:#eaf4ee;border:1px solid #bcd9c7;color:var(--good)}
   .msg.note{background:var(--paper-warm);border:1px solid var(--line);color:var(--ink)}
-  h2{font-family:var(--serif);font-size:1.15rem;font-weight:600;margin:0 0 10px}
-  h3{font-family:var(--serif);font-size:1rem;font-weight:600;margin:20px 0 0}
-  .nums{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  @media (max-width:760px){.nums{grid-template-columns:repeat(2,1fr)}}
-  .num{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px}
-  .num .k{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
-  .num .v{font-family:var(--serif);font-size:1.9rem;line-height:1.1;margin-top:3px}
-  .num .n{font-size:.78rem;color:var(--muted);margin-top:3px}
-  .read{background:var(--paper-warm);border-left:3px solid var(--ember);padding:11px 13px;
-        border-radius:0 6px 6px 0;margin:14px 0;font-size:.93rem}
-  .read strong{display:block;margin-bottom:3px}
-  .scroll{overflow-x:auto}
-  table{width:100%;border-collapse:collapse;font-size:.89rem;margin-top:10px}
-  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
-  th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
-  td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
-  .pill{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:99px;
-        border:1px solid var(--line);background:var(--paper);white-space:nowrap}
-  .pill.ok{background:#eaf4ee;border-color:#bcd9c7;color:var(--good)}
-  .pill.no{background:#fdf2e8;border-color:#e9cfae;color:var(--warn)}
-  textarea{width:100%;min-height:190px;font-family:var(--mono);font-size:.78rem;
-    border:1px solid var(--line);border-radius:7px;background:var(--paper);
-    color:var(--ink);padding:10px}
-  .note{color:var(--muted);font-size:.83rem;margin-top:12px;max-width:80ch}
-  .card p{max-width:74ch}
+
+  /* ── cards ──────────────────────────────────────────────────── */
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;
+        padding:0;margin-bottom:18px;overflow:hidden}
+  .card.room{border-color:var(--ink)}
+  .head{padding:16px 18px;border-bottom:1px solid var(--line);background:var(--paper-warm)}
+  .card.room .head{background:var(--ink)}
+  .card.room .head h2,.card.room .head .meta{color:#fff}
+  .head h2{font-family:var(--serif);font-size:1.2rem;font-weight:600;margin:0}
+  .head .meta{font-size:.82rem;color:var(--muted);margin-top:2px}
+  .body{padding:18px}
+  .foot{padding:13px 18px;border-top:1px solid var(--line);background:var(--paper)}
+
+  /* ── the number strip ───────────────────────────────────────── */
+  .strip{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+  .stat{flex:1 1 140px;background:var(--paper);border:1px solid var(--line);
+        border-radius:9px;padding:11px 13px}
+  .stat .v{font-family:var(--serif);font-size:1.7rem;line-height:1;font-variant-numeric:tabular-nums}
+  .stat .k{font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;
+           color:var(--muted);font-weight:700;margin-top:5px}
+  .stat .n{font-size:.78rem;color:var(--muted);margin-top:2px}
+  .stat.lead{background:var(--paper-warm);border-color:var(--ember)}
+
+  /* ── sections inside a card ─────────────────────────────────── */
+  .sec{margin-top:22px}
+  .sec:first-child{margin-top:0}
+  .sec > h3{font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;
+            color:var(--muted);font-weight:700;margin:0 0 9px}
+  .body p{margin:0 0 10px;max-width:62ch}
+  .body p:last-child{margin-bottom:0}
   .quoted{background:var(--paper-warm);border-left:3px solid var(--ember);
-          padding:10px 13px;border-radius:0 6px 6px 0;font-size:1rem}
-  ul.plain{margin:8px 0 0;padding-left:18px;max-width:74ch}
-  ul.plain li{margin-bottom:5px}
+          padding:11px 14px;border-radius:0 7px 7px 0;font-size:1.02rem;max-width:none}
+
+  /* ── the relay list ─────────────────────────────────────────── */
+  ul.heard{list-style:none;margin:0;padding:0}
+  ul.heard li{display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+      padding:9px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+  ul.heard li:last-child{border-bottom:0}
+  ul.heard .who{color:var(--muted);font-size:.8rem;display:block;margin-bottom:1px}
+  .match{font-variant-numeric:tabular-nums;font-size:.82rem;color:var(--muted);
+         border:1px solid var(--line);border-radius:99px;padding:1px 9px;white-space:nowrap}
+  .match.hi{background:#eaf4ee;border-color:#bcd9c7;color:var(--good)}
+  .match.lo{background:#fdf2e8;border-color:#e9cfae;color:var(--warn)}
+
+  ul.plain{margin:0;padding-left:18px;max-width:62ch}
+  ul.plain li{margin-bottom:6px}
+  .callout{background:var(--paper-warm);border:1px solid var(--line);border-radius:9px;
+           padding:12px 14px;font-size:.96rem}
+  .callout b{display:block;font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;
+             color:var(--muted);margin-bottom:4px}
+
+  table.five{width:100%;border-collapse:collapse;font-size:.9rem}
+  table.five th,table.five td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+  table.five th{font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;
+                color:var(--muted);font-weight:700}
+  table.five td.n{font-variant-numeric:tabular-nums;text-align:right;width:62px}
+  table.five tr.low td{background:var(--paper-warm);font-weight:600}
+
+  textarea{width:100%;min-height:200px;font-family:var(--mono);font-size:.78rem;
+    border:1px solid var(--line);border-radius:8px;background:var(--paper);
+    color:var(--ink);padding:11px;margin-top:10px}
+  .note{color:var(--muted);font-size:.82rem;max-width:68ch}
   .hidden{display:none}
+  @media (max-width:560px){
+    .head,.body,.foot{padding-left:14px;padding-right:14px}
+    .stat{flex:1 1 100%}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <h1>Drill results</h1>
-  <p class="sub">The group view carries no names and can be shown to the room. The sheets
-  below it belong to the person they are about, one at a time.</p>
+  <p class="lede">The room card carries no names and can be shown to everybody. The sheets
+  below belong to the person they are about, one at a time.</p>
 
-  <div class="card">
-    <label>
-      <span>Session</span>
-      <input type="text" id="session" value="asc-2026-10-07" autocomplete="off" spellcheck="false">
-    </label>
-    <label>
-      <span>Facilitator token</span>
-      <input type="password" id="token" autocomplete="off">
-    </label>
+  <div class="gate">
+    <label><span>Session</span>
+      <input type="text" id="session" value="asc-2026-10-07" autocomplete="off" spellcheck="false"></label>
+    <label><span>Facilitator token</span>
+      <input type="password" id="token" autocomplete="off"></label>
     <div class="row">
       <button id="go">Read the session</button>
-      <button class="ghost" id="raw">Show the raw JSON</button>
+      <button class="ghost" id="raw">Raw JSON</button>
     </div>
     <div id="msg"></div>
   </div>
@@ -96,105 +131,6 @@
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var FIVE = ['pause', 'pace', 'volume', 'emotion', 'tonality'];
-  var last = null;
-
-  function esc(s) {
-    return String(s === null || s === undefined ? '' : s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
-  function say(kind, text) {
-    $('msg').innerHTML = text ? '<div class="msg ' + kind + '">' + esc(text) + '</div>' : '';
-  }
-  function n(v) { return v === null || v === undefined ? '&mdash;' : v; }
-  function signed(v) { return v === null || v === undefined ? '&mdash;' : (v > 0 ? '+' + v : v); }
-  function num(k, v, sub) {
-    return '<div class="num"><div class="k">' + esc(k) + '</div><div class="v">' +
-           n(v) + '</div><div class="n">' + esc(sub || '') + '</div></div>';
-  }
-
-  /* The group view is the half that gets shown to the room, so it reads as
-     something a facilitator can say out loud rather than a grid they have to
-     translate. No names appear here by design. */
-  function groupLines(g) {
-    var L = [];
-    L.push({ h: 'The room' });
-    L.push({ p: g.spoke + ' of the ' + g.inTheRoom + ' people here took the floor and were '
-              + 'scored by everybody else.' });
-
-    if (g.appeared !== null) {
-      L.push({ s: 'How it landed' });
-      L.push({ p: "Across every speaker, the room's score for being in command, being followed "
-                + 'and being believed came to ' + g.appeared + ' out of 100.' });
-    }
-    if (g.relay !== null) {
-      L.push({ s: 'What survived' });
-      L.push({ p: 'On average ' + g.relay + ' per cent of what a speaker meant came back in what '
-                + 'the room wrote down. That number usually comes in lower than people expect, '
-                + 'and it is the one worth taking away.' });
-    }
-
-    var parts = [];
-    if (g.overRating) { parts.push(g.overRating + ' put themselves above where the room put them'); }
-    if (g.aligned) { parts.push(g.aligned + ' were close to it'); }
-    if (g.underRating) { parts.push(g.underRating + ' put themselves below'); }
-    if (parts.length) {
-      L.push({ s: 'What people thought of themselves' });
-      L.push({ p: parts.join(', ') + '.' });
-      if (g.underRating > g.overRating) {
-        L.push({ p: 'More people underestimated themselves than overestimated themselves, which '
-                  + 'is the opposite of what most rooms guess.' });
-      }
-      if (g.corrected) {
-        L.push({ p: g.corrected + " moved their own read closer to the room's between scoring "
-                  + 'themselves before speaking and scoring themselves after, with nobody having '
-                  + 'shown them anything.' });
-      }
-    }
-
-    var ranked = FIVE.filter(function (k) { return g.five[k] !== null; })
-      .sort(function (a, b) { return g.five[a] - g.five[b]; });
-    if (ranked.length) {
-      var low = ranked[0];
-      var high = ranked[ranked.length - 1];
-      L.push({ s: 'The five' });
-      L.push({ p: 'Across the room the strongest was ' + high + ' at ' + g.five[high]
-                + ' out of 5, and the weakest was ' + low + ' at ' + g.five[low] + '.' });
-      var firsts = FIVE.filter(function (k) { return g.changeFirst[k] > 0; })
-        .sort(function (a, b) { return g.changeFirst[b] - g.changeFirst[a]; });
-      if (firsts.length) {
-        var w = firsts[0];
-        L.push({ p: w.charAt(0).toUpperCase() + w.slice(1) + ' was the thing to change first for '
-                  + g.changeFirst[w] + ' of you, more than any other.' });
-      }
-    }
-
-    L.push({ s: 'What this is' });
-    L.push({ p: 'One morning, ninety seconds each. Nobody is named on this page, and nobody '
-              + 'else has seen your own numbers.' });
-    return L;
-  }
-
-  function blocks(L) {
-    var h = '';
-    L.forEach(function (b) {
-      if (b.h) { h += '<h2>' + esc(b.h) + '</h2>'; }
-      else if (b.s) { h += '<h3>' + esc(b.s) + '</h3>'; }
-      else if (b.q) { h += '<p class="quoted">' + esc(b.q) + '</p>'; }
-      else if (b.list) {
-        h += '<ul class="plain">' + b.list.map(function (x) {
-          return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
-      } else { h += '<p>' + esc(b.p) + '</p>'; }
-    });
-    return h;
-  }
-
-  function groupBlock(d) {
-    return '<div class="card">' + blocks(groupLines(d.group)) +
-      '<div class="row" style="margin-top:16px">' +
-      '<button class="ghost small" id="copy-group">Copy this to read out</button></div>' +
-      '<div id="copied-group"></div></div>';
-  }
-
   var FIVE_WORDS = {
     pause: 'pause, letting a moment have its weight',
     pace: 'pace, holding them rather than outrunning them',
@@ -203,142 +139,275 @@
     tonality: 'tonality, using your range'
   };
 
-  /* The sheet is written to the person who spoke, so the numbers sit inside
-     sentences. A grid of tiles is a dashboard, and a dashboard is for whoever is
-     running the session rather than for whoever just stood up. */
-  function lines(p) {
-    var L = [];
-    var n = p.scorers;
-    var caught = p.relay.filter(function (r) { return r.match !== null && r.match >= 35; }).length;
+  function esc(s) {
+    return String(s === null || s === undefined ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function say(kind, text) {
+    $('msg').innerHTML = text ? '<div class="msg ' + kind + '">' + esc(text) + '</div>' : '';
+  }
+  var dash = '—';
+  function n(v) { return (v === null || v === undefined) ? dash : v; }
+  function stat(v, k, sub, lead) {
+    return '<div class="stat' + (lead ? ' lead' : '') + '"><div class="v">' + n(v) +
+           '</div><div class="k">' + esc(k) + '</div><div class="n">' + esc(sub || '') + '</div></div>';
+  }
+  function sec(title, inner) {
+    return '<div class="sec">' + (title ? '<h3>' + esc(title) + '</h3>' : '') + inner + '</div>';
+  }
 
-    L.push({ h: 'Your sheet, ' + p.name });
-    L.push({ p: n + ' people in the room scored your ninety seconds. Here is what came back.' });
+  /* ─────────────────────────── the room ─────────────────────── */
+  function roomSentences(g) {
+    var S = [];
+    S.push({ t: 'How it landed',
+      p: "Across every speaker, the room's score for being in command, being followed and "
+       + 'being believed came to ' + g.appeared + ' out of 100.' });
+    if (g.relay !== null) {
+      S.push({ t: 'What survived',
+        p: 'On average ' + g.relay + ' per cent of what a speaker meant came back in what the '
+         + 'room wrote down. That number usually comes in lower than people expect, and it is '
+         + 'the one worth taking away.' });
+    }
+    var parts = [];
+    if (g.overRating) { parts.push(g.overRating + ' put themselves above where the room put them'); }
+    if (g.aligned) { parts.push(g.aligned + ' were close to it'); }
+    if (g.underRating) { parts.push(g.underRating + ' put themselves below'); }
+    if (parts.length) {
+      var p = parts.join(', ') + '.';
+      if (g.underRating > g.overRating) {
+        p += ' More people underestimated themselves than overestimated themselves, which is '
+           + 'the opposite of what most rooms guess.';
+      }
+      if (g.corrected) {
+        p += ' ' + g.corrected + " moved their own read closer to the room's between scoring "
+           + 'themselves before speaking and scoring themselves after, with nobody having shown '
+           + 'them anything.';
+      }
+      S.push({ t: 'What people thought of themselves', p: p });
+    }
+    var ranked = FIVE.filter(function (k) { return g.five[k] !== null; })
+      .sort(function (a, b) { return g.five[a] - g.five[b]; });
+    if (ranked.length) {
+      var low = ranked[0]; var high = ranked[ranked.length - 1];
+      var t = 'Across the room the strongest was ' + high + ' at ' + g.five[high]
+            + ' out of 5, and the weakest was ' + low + ' at ' + g.five[low] + '.';
+      var firsts = FIVE.filter(function (k) { return g.changeFirst[k] > 0; })
+        .sort(function (a, b) { return g.changeFirst[b] - g.changeFirst[a]; });
+      if (firsts.length) {
+        var w = firsts[0];
+        t += ' ' + w.charAt(0).toUpperCase() + w.slice(1) + ' was the thing to change first for '
+           + g.changeFirst[w] + ' of you, more than any other.';
+      }
+      S.push({ t: 'The five', p: t });
+    }
+    S.push({ t: 'What this is',
+      p: 'One morning, ninety seconds each. Nobody is named here, and nobody else has seen '
+       + 'your own numbers.' });
+    return S;
+  }
+
+  function roomCard(d) {
+    var g = d.group;
+    var h = '<div class="card room"><div class="head"><h2>The room</h2>' +
+            '<div class="meta">' + g.spoke + ' of ' + g.inTheRoom +
+            ' took the floor</div></div><div class="body">';
+    h += '<div class="strip">' +
+      stat(g.appeared, 'Appeared', 'out of 100', true) +
+      stat(g.relay, 'Relay', 'per cent that survived') +
+      stat(g.corrected, 'Corrected', 'moved toward the room') +
+    '</div>';
+    roomSentences(g).forEach(function (s) { h += sec(s.t, '<p>' + esc(s.p) + '</p>'); });
+    h += '</div><div class="foot"><div class="row">' +
+      '<button class="ghost small" id="copy-room">Copy to read out</button></div>' +
+      '<div id="copied-room"></div></div></div>';
+    return h;
+  }
+
+  /* ──────────────────────── one person ──────────────────────── */
+  function caughtCount(p) {
+    return p.relay.filter(function (r) { return r.match !== null && r.match >= 35; }).length;
+  }
+  function movementLine(p) {
+    if (p.assumedBefore === null || p.assumedAfter === null) {
+      return p.assumedAfter === null ? '' :
+        'You put yourself at ' + p.assumedAfter + '.';
+    }
+    var t = 'You put yourself at ' + p.assumedBefore + ' before you spoke and ' +
+            p.assumedAfter + ' after you sat down. ';
+    if (p.closed >= 10) {
+      t += 'Delivering it moved your own read ' + p.closed +
+           ' points closer to theirs, before anybody showed you a score.';
+    } else if (p.closed <= -10) {
+      t += 'Delivering it moved your own read further from theirs rather than closer.';
+    } else if (Math.abs(p.gapAfter) <= 15) {
+      t += 'You knew where you stood before you spoke and the room agreed with you.';
+    } else {
+      t += 'Your read of yourself did not move, and the room is ' +
+           Math.abs(p.gapAfter) + ' points from it.';
+    }
+    return t;
+  }
+  function caughtLine(p) {
+    var c = caughtCount(p); var k = p.scorers;
+    if (!p.intent) { return ''; }
+    if (c === 0) {
+      return 'Nobody wrote down the thing you came to say. That is the finding worth sitting '
+           + 'with, because everything else here is about how you said it.';
+    }
+    if (c < k / 2) {
+      return c + ' of the ' + k + ' came back with your point close to the way you wrote it. '
+           + 'The rest carried the subject and left the substance behind.';
+    }
+    return c + ' of the ' + k + ' came back with your point close to the way you wrote it, '
+         + 'which is higher than most people manage.';
+  }
+
+  function personCard(p) {
+    var h = '<div class="card"><div class="head"><h2>' + esc(p.name) + '</h2>' +
+            '<div class="meta">' + esc(p.email) + ' &middot; ' +
+            (p.scorers ? 'scored by ' + p.scorers + ' people' : 'did not take the floor') +
+            ' &middot; gave ' + p.cardsGiven + ' cards</div></div><div class="body">';
+
+    if (!p.scorers) {
+      h += '<div class="msg note">Nobody scored this person, so there is no sheet.</div>';
+      return h + '</div></div>';
+    }
+
+    h += '<div class="strip">' +
+      stat(p.appeared, 'Appeared', 'out of 100', true) +
+      stat(p.relayMean, 'Relay', 'per cent that survived') +
+      stat(p.assumedAfter, 'You said', 'your own read') +
+    '</div>';
 
     if (p.intent) {
-      L.push({ s: 'What you meant' });
-      L.push({ q: p.intent });
-    }
-    if (p.relay.length) {
-      L.push({ s: p.intent ? 'What they wrote down, before seeing that'
-                           : 'What they wrote down' });
-      L.push({ list: p.relay.map(function (r) { return r.wrote; }) });
-      if (p.intent) {
-        if (caught === 0) {
-          L.push({ p: 'Nobody wrote down the thing you came to say. That is the finding worth '
-                    + 'sitting with, because everything else here is about how you said it.' });
-        } else if (caught < n / 2) {
-          L.push({ p: caught + ' of the ' + n + ' came back with your point close to the way you '
-                    + 'wrote it. The rest carried the subject and left the substance behind.' });
-        } else {
-          L.push({ p: caught + ' of the ' + n + ' came back with your point close to the way you '
-                    + 'wrote it, which is higher than most people manage.' });
-        }
-      }
-    } else if (!p.intent) {
-      L.push({ p: 'You did not write down the one point before you spoke, so there is nothing '
-                + 'to compare what they heard against. That comparison is the heart of the '
-                + 'exercise, so it is worth doing next time.' });
+      h += sec('What you meant', '<p class="quoted">' + esc(p.intent) + '</p>');
+    } else {
+      h += sec('What you meant', '<div class="msg note">No point was written before speaking, ' +
+        'so there is nothing to compare what they heard against. That comparison is the heart ' +
+        'of the exercise.</div>');
     }
 
-    if (p.appeared !== null) {
-      L.push({ s: 'How it landed' });
-      L.push({ p: 'They each scored you on whether you seemed in command, whether they followed '
-                + 'you, and whether they believed you. Across the room that came to '
-                + p.appeared + ' out of 100.' });
-      if (p.assumedBefore !== null && p.assumedAfter !== null) {
-        L.push({ p: 'You put yourself at ' + p.assumedBefore + ' before you spoke and '
-                  + p.assumedAfter + ' after you sat down.' });
-        if (p.closed >= 10) {
-          L.push({ p: 'Delivering it moved your own read ' + p.closed + ' points closer to '
-                    + 'theirs, before anybody showed you a score.' });
-        } else if (p.closed <= -10) {
-          L.push({ p: 'Delivering it moved your own read further from theirs rather than closer.' });
-        } else if (Math.abs(p.gapAfter) <= 15) {
-          L.push({ p: 'You knew where you stood before you spoke and the room agreed with you.' });
-        } else {
-          L.push({ p: 'Your read of yourself did not move, and the room is '
-                    + Math.abs(p.gapAfter) + ' points from it.' });
-        }
-      } else if (p.assumedAfter !== null) {
-        L.push({ p: 'You put yourself at ' + p.assumedAfter + '.' });
-      }
+    if (p.relay.length) {
+      var items = p.relay.map(function (r) {
+        var cls = r.match === null ? '' : (r.match >= 35 ? ' hi' : (r.match < 15 ? ' lo' : ''));
+        return '<li><span><span class="who">' + esc(r.scorerName) + '</span>' + esc(r.wrote) +
+          '</span><span class="match' + cls + '">' +
+          (r.match === null ? dash : r.match + '%') + '</span></li>';
+      }).join('');
+      h += sec('What they wrote down, before seeing that',
+        '<ul class="heard">' + items + '</ul>' +
+        (caughtLine(p) ? '<p style="margin-top:12px">' + esc(caughtLine(p)) + '</p>' : ''));
     }
+
+    h += sec('How it landed',
+      '<p>They each scored you on whether you seemed in command, whether they followed you, ' +
+      'and whether they believed you. Across the room that came to ' + p.appeared +
+      ' out of 100.</p>' + (movementLine(p) ? '<p>' + esc(movementLine(p)) + '</p>' : ''));
+
+    var rows = FIVE.map(function (k) {
+      return '<tr' + (k === p.changeFirst ? ' class="low"' : '') + '><td>' + k +
+        '</td><td class="n">' + n(p.five[k].self) + '</td><td class="n">' +
+        n(p.five[k].room) + '</td></tr>';
+    }).join('');
+    h += sec('The five',
+      '<table class="five"><tr><th>&nbsp;</th><th class="n">You</th><th class="n">Room</th></tr>' +
+      rows + '</table>');
 
     if (p.changeFirst) {
-      L.push({ s: 'What to change first' });
-      L.push({ p: 'Of the five, the room scored you lowest on '
-                + (FIVE_WORDS[p.changeFirst] || p.changeFirst) + '.' });
+      h += sec('', '<div class="callout"><b>Change this first</b>' +
+        esc(FIVE_WORDS[p.changeFirst] || p.changeFirst) + '</div>');
     }
     if (p.whatTheySaid.length) {
-      L.push({ p: 'In their words:' });
-      L.push({ list: p.whatTheySaid });
+      h += sec('In their words', '<ul class="plain">' +
+        p.whatTheySaid.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>');
     }
 
-    L.push({ s: 'What this is' });
-    L.push({ p: n + ' people, ninety seconds, one morning. One occasion is not a pattern, so '
-              + 'treat this as somewhere to start. Nobody else has seen your numbers.' });
-    return L;
+    h += sec('', '<p class="note">' + p.scorers + ' people, ninety seconds, one morning. ' +
+      'One occasion is not a pattern, so treat this as somewhere to start. Nobody else has ' +
+      'seen your numbers.</p>');
+
+    h += '</div><div class="foot"><div class="row">' +
+      '<button class="ghost small" data-copy="' + esc(p.ref) + '">Copy as text</button>' +
+      '<button class="ghost small" data-mail="' + esc(p.ref) + '">Open an email to them</button>' +
+      '</div><div id="copied-' + esc(p.ref) + '"></div></div></div>';
+    return h;
   }
 
-  function sheet(p) {
-    var h = '<div class="card">';
-    if (!p.scorers) {
-      h += '<h2>' + esc(p.name) + '</h2>';
-      h += '<div class="msg note">Nobody scored this person, so there is no sheet. They were '
-         + 'in the session and did not take the floor'
-         + (p.cardsGiven ? ', and they scored others ' + p.cardsGiven + ' times.' : '.') + '</div>';
-      return h + '</div>';
+  /* ─────────────────────── the plain text ───────────────────── */
+  function personText(p) {
+    var L = ['Your sheet, ' + p.name, ''];
+    L.push(p.scorers + ' people in the room scored your ninety seconds. Here is what came back.');
+    if (p.intent) { L.push('', 'WHAT YOU MEANT', p.intent); }
+    if (p.relay.length) {
+      L.push('', 'WHAT THEY WROTE DOWN, BEFORE SEEING THAT');
+      p.relay.forEach(function (r) { L.push('  ' + r.wrote); });
+      if (caughtLine(p)) { L.push('', caughtLine(p)); }
     }
-    h += blocks(lines(p));
-    h += '<div class="row" style="margin-top:16px">' +
-         '<button class="ghost small" data-copy="' + esc(p.ref) + '">Copy this to send</button>' +
-         '<span class="note" style="margin:0">' + esc(p.email) + '</span>' +
-         '</div><div id="copied-' + esc(p.ref) + '"></div>';
-    return h + '</div>';
+    L.push('', 'HOW IT LANDED');
+    L.push('They each scored you on whether you seemed in command, whether they followed you, '
+         + 'and whether they believed you. Across the room that came to ' + p.appeared
+         + ' out of 100.');
+    if (movementLine(p)) { L.push('', movementLine(p)); }
+    if (p.changeFirst) {
+      L.push('', 'WHAT TO CHANGE FIRST');
+      L.push('Of the five, the room scored you lowest on ' +
+        (FIVE_WORDS[p.changeFirst] || p.changeFirst) + '.');
+    }
+    if (p.whatTheySaid.length) {
+      L.push('', 'In their words:');
+      p.whatTheySaid.forEach(function (f) { L.push('  ' + f); });
+    }
+    L.push('', 'WHAT THIS IS');
+    L.push(p.scorers + ' people, ninety seconds, one morning. One occasion is not a pattern, '
+         + 'so treat this as somewhere to start. Nobody else has seen your numbers.');
+    return L.join('\n');
+  }
+  function roomText(g) {
+    var L = ['The room', '', g.spoke + ' of the ' + g.inTheRoom +
+      ' people here took the floor and were scored by everybody else.'];
+    roomSentences(g).forEach(function (s) { L.push('', s.t.toUpperCase(), s.p); });
+    return L.join('\n');
   }
 
-  function asText(L) {
-    var out = [];
-    L.forEach(function (b) {
-      if (b.h) { out.push(b.h, ''); }
-      else if (b.s) { out.push('', b.s.toUpperCase()); }
-      else if (b.q) { out.push(b.q); }
-      else if (b.list) { b.list.forEach(function (x) { out.push('  ' + x); }); }
-      else { out.push(b.p); }
-    });
-    return out.join('\n');
+  function box(id, text) {
+    var el = $(id);
+    el.innerHTML = '<p class="note" style="margin-top:10px">Select all of this and paste it ' +
+      'where you need it.</p><textarea readonly></textarea>';
+    var ta = el.querySelector('textarea');
+    ta.value = text;
+    ta.focus();
+    ta.select();
   }
 
   function render(d) {
-    var h = groupBlock(d);
-    (d.people || []).forEach(function (p) { h += sheet(p); });
-    $('out').innerHTML = h;
-    var gb = $('copy-group');
-    if (gb) {
-      gb.onclick = function () {
-        var box = $('copied-group');
-        box.innerHTML = '<p class="note">Select all of this and paste it wherever you need it.</p>'
-          + '<textarea readonly></textarea>';
-        var ta = box.querySelector('textarea');
-        ta.value = asText(groupLines(d.group));
-        ta.focus();
-        ta.select();
+    $('out').innerHTML = roomCard(d) +
+      (d.people || []).map(personCard).join('');
+
+    var rb = $('copy-room');
+    if (rb) { rb.onclick = function () { box('copied-room', roomText(d.group)); }; }
+
+    var find = function (ref) {
+      return d.people.filter(function (x) { return x.ref === ref; })[0];
+    };
+    [].forEach.call(document.querySelectorAll('button[data-copy]'), function (b) {
+      b.onclick = function () {
+        var p = find(b.getAttribute('data-copy'));
+        box('copied-' + p.ref, personText(p));
       };
-    }
-    var btns = document.querySelectorAll('button[data-copy]');
-    for (var i = 0; i < btns.length; i++) {
-      btns[i].onclick = function () {
-        var ref = this.getAttribute('data-copy');
-        var p = d.people.filter(function (x) { return x.ref === ref; })[0];
-        var box = $('copied-' + ref);
-        box.innerHTML = '<p class="note">Select all of this and paste it into an email.</p>' +
-          '<textarea readonly></textarea>';
-        var ta = box.querySelector('textarea');
-        ta.value = asText(lines(p));
-        ta.focus();
-        ta.select();
+    });
+    [].forEach.call(document.querySelectorAll('button[data-mail]'), function (b) {
+      b.onclick = function () {
+        var p = find(b.getAttribute('data-mail'));
+        var body = personText(p);
+        var href = 'mailto:' + encodeURIComponent(p.email) +
+          '?subject=' + encodeURIComponent('Your drill sheet') +
+          '&body=' + encodeURIComponent(body);
+        /* Some mail clients truncate a long mailto. Put the text on screen too,
+           so nothing is lost if the draft opens short. */
+        box('copied-' + p.ref, body);
+        window.location.href = href;
       };
-    }
+    });
   }
 
   function read(raw) {
@@ -347,11 +416,9 @@
     if (!token) { say('err', 'Paste the facilitator token first.'); return; }
     if (!/^[a-z0-9-]{6,64}$/.test(session)) { say('err', 'That session id does not look right.'); return; }
     say('', '');
-    $('go').disabled = true;
-    $('raw').disabled = true;
+    $('go').disabled = true; $('raw').disabled = true;
     fetch('/.netlify/functions/drill-results', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      method: 'POST', headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ token: token, session: session })
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (j) {
@@ -364,21 +431,16 @@
         return j;
       });
     }).then(function (j) {
-      last = j;
       say('ok', j.group.inTheRoom + ' in the session, ' + j.group.spoke + ' scored by the room.');
       if (raw) {
-        $('out').innerHTML = '<div class="card"><h2>Raw</h2><textarea readonly style="min-height:420px"></textarea></div>';
-        var ta = $('out').querySelector('textarea');
-        ta.value = JSON.stringify(j, null, 1);
+        $('out').innerHTML = '<div class="card"><div class="head"><h2>Raw</h2></div>' +
+          '<div class="body"><textarea readonly style="min-height:440px"></textarea></div></div>';
+        $('out').querySelector('textarea').value = JSON.stringify(j, null, 1);
       } else {
         render(j);
       }
-    })['catch'](function (e) {
-      say('err', e.message);
-    })['finally'](function () {
-      $('go').disabled = false;
-      $('raw').disabled = false;
-    });
+    })['catch'](function (e) { say('err', e.message); })
+      ['finally'](function () { $('go').disabled = false; $('raw').disabled = false; });
   }
 
   $('go').onclick = function () { read(false); };
