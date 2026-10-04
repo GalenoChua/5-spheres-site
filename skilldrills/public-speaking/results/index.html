@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Drill results</title>
+<style>
+  :root{
+    --ink:#1d2a52; --paper:#faf6ef; --paper-warm:#f3ecdf; --ember:#e8862e;
+    --line:#d9cfbe; --muted:#6b6557; --good:#2f7a52; --warn:#b4541f;
+    --sans: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --serif: Fraunces, Georgia, "Times New Roman", serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5}
+  .wrap{max-width:1000px;margin:0 auto;padding:24px 18px 70px}
+  h1{font-family:var(--serif);font-weight:600;font-size:1.45rem;margin:0 0 3px}
+  .sub{color:var(--muted);font-size:.86rem;margin:0 0 18px;max-width:74ch}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+  label{display:block;margin-bottom:12px}
+  label span{display:block;font-size:.9rem;margin-bottom:5px}
+  input{width:100%;font:inherit;padding:10px;border:1px solid var(--line);
+        border-radius:7px;background:var(--paper);color:var(--ink)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  button{font:inherit;cursor:pointer;border-radius:7px;border:1px solid var(--ink);
+         background:var(--ink);color:#fff;padding:11px 17px;font-weight:600}
+  button.ghost{background:transparent;color:var(--ink);font-weight:400}
+  button.small{padding:7px 12px;font-size:.86rem}
+  button[disabled]{opacity:.45;cursor:default}
+  .msg{border-radius:7px;padding:11px 13px;margin:12px 0;font-size:.92rem}
+  .msg.err{background:#fdecec;border:1px solid #e9bcbc;color:#8d2b2b}
+  .msg.ok{background:#eaf4ee;border:1px solid #bcd9c7;color:var(--good)}
+  .msg.note{background:var(--paper-warm);border:1px solid var(--line);color:var(--ink)}
+  h2{font-family:var(--serif);font-size:1.15rem;font-weight:600;margin:0 0 10px}
+  h3{font-family:var(--serif);font-size:1rem;font-weight:600;margin:20px 0 0}
+  .nums{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media (max-width:760px){.nums{grid-template-columns:repeat(2,1fr)}}
+  .num{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px}
+  .num .k{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .num .v{font-family:var(--serif);font-size:1.9rem;line-height:1.1;margin-top:3px}
+  .num .n{font-size:.78rem;color:var(--muted);margin-top:3px}
+  .read{background:var(--paper-warm);border-left:3px solid var(--ember);padding:11px 13px;
+        border-radius:0 6px 6px 0;margin:14px 0;font-size:.93rem}
+  .read strong{display:block;margin-bottom:3px}
+  .scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:.89rem;margin-top:10px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .pill{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:99px;
+        border:1px solid var(--line);background:var(--paper);white-space:nowrap}
+  .pill.ok{background:#eaf4ee;border-color:#bcd9c7;color:var(--good)}
+  .pill.no{background:#fdf2e8;border-color:#e9cfae;color:var(--warn)}
+  textarea{width:100%;min-height:190px;font-family:var(--mono);font-size:.78rem;
+    border:1px solid var(--line);border-radius:7px;background:var(--paper);
+    color:var(--ink);padding:10px}
+  .note{color:var(--muted);font-size:.83rem;margin-top:12px;max-width:80ch}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Drill results</h1>
+  <p class="sub">The group view carries no names and can be shown to the room. The sheets
+  below it belong to the person they are about, one at a time.</p>
+
+  <div class="card">
+    <label>
+      <span>Session</span>
+      <input type="text" id="session" value="asc-2026-10-07" autocomplete="off" spellcheck="false">
+    </label>
+    <label>
+      <span>Facilitator token</span>
+      <input type="password" id="token" autocomplete="off">
+    </label>
+    <div class="row">
+      <button id="go">Read the session</button>
+      <button class="ghost" id="raw">Show the raw JSON</button>
+    </div>
+    <div id="msg"></div>
+  </div>
+
+  <div id="out"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var FIVE = ['pause', 'pace', 'volume', 'emotion', 'tonality'];
+  var last = null;
+
+  function esc(s) {
+    return String(s === null || s === undefined ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function say(kind, text) {
+    $('msg').innerHTML = text ? '<div class="msg ' + kind + '">' + esc(text) + '</div>' : '';
+  }
+  function n(v) { return v === null || v === undefined ? '&mdash;' : v; }
+  function signed(v) { return v === null || v === undefined ? '&mdash;' : (v > 0 ? '+' + v : v); }
+  function num(k, v, sub) {
+    return '<div class="num"><div class="k">' + esc(k) + '</div><div class="v">' +
+           n(v) + '</div><div class="n">' + esc(sub || '') + '</div></div>';
+  }
+
+  function groupBlock(d) {
+    var g = d.group;
+    var h = '<div class="card"><h2>The group</h2>';
+    h += '<div class="nums">' +
+      num('Appeared', g.appeared, 'mean across ' + g.spoke + ' speakers') +
+      num('Relay', g.relay, 'how much of the point survived') +
+      num('Calibration', g.calibration, 'mean distance from the room') +
+      num('Corrected', g.corrected, 'moved toward the room after speaking') +
+    '</div>';
+    h += '<p class="note">' + esc(d.note) + '</p>';
+
+    h += '<h3>Where people sat against the room</h3><table><tr>' +
+      '<th>Thought they landed above</th><th>Close to the room</th><th>Below</th></tr><tr>' +
+      '<td class="n">' + g.overRating + '</td><td class="n">' + g.aligned +
+      '</td><td class="n">' + g.underRating + '</td></tr></table>';
+
+    h += '<h3>The five, as the room scored them</h3><div class="scroll"><table><tr>' +
+      FIVE.map(function (k) { return '<th>' + k + '</th>'; }).join('') + '</tr><tr>' +
+      FIVE.map(function (k) { return '<td class="n">' + n(g.five[k]) + '</td>'; }).join('') +
+      '</tr><tr>' +
+      FIVE.map(function (k) { return '<td class="n">' + g.changeFirst[k] + ' first</td>'; }).join('') +
+      '</tr></table></div>';
+    h += '<p class="note">The second row counts how many people had that as the weakest of ' +
+         'their five, which is the one the room would change first.</p>';
+    return h + '</div>';
+  }
+
+  function sheet(p) {
+    var h = '<div class="card"><h2>' + esc(p.name) + '</h2>';
+    h += '<p class="sub" style="margin-bottom:12px">' + esc(p.email) + ' &middot; scored by ' +
+         p.scorers + ' ' + (p.scorers === 1 ? 'person' : 'people') +
+         ' &middot; gave ' + p.cardsGiven + ' cards</p>';
+
+    if (!p.scorers) {
+      h += '<div class="msg note">Nobody scored this person, so there is no sheet. ' +
+           'They were in the session and did not take the floor.</div>';
+      if (p.cardsGiven) {
+        h += '<p class="note">They did score others, ' + p.cardsGiven + ' times.</p>';
+      }
+      return h + '</div>';
+    }
+
+    h += '<div class="nums">' +
+      num('Appeared', p.appeared, 'what the room saw') +
+      num('Assumed before', p.assumedBefore, 'before speaking') +
+      num('Assumed after', p.assumedAfter, 'after sitting down') +
+      num('Relay', p.relayMean, 'how much of the point survived') +
+    '</div>';
+
+    h += '<div class="read"><strong>The gap</strong>Before ' + signed(p.gapBefore) +
+         ', after ' + signed(p.gapAfter) +
+         (p.closed === null ? '. Only one self card, so there is no movement to read.'
+                            : '. ' + (p.closed >= 10
+            ? 'Their read moved ' + p.closed + ' points closer to the room while they were delivering.'
+            : (p.closed <= -10
+              ? 'Their read moved further from the room rather than closer.'
+              : 'Their read did not move.'))) + '</div>';
+
+    if (!p.intent) {
+      h += '<div class="msg note">No point was written on the flap, so the relay cannot ' +
+           'be scored for this person. The write-backs are below without a match.</div>';
+    }
+    if (p.relay.length) {
+      h += '<h3>The relay</h3><div class="scroll"><table><tr><th>Who</th>' +
+           '<th>What they wrote down</th><th class="n">Match</th></tr>';
+      if (p.intent) {
+        h += '<tr><td><b>They meant</b></td><td><b>' + esc(p.intent) + '</b></td><td class="n">&mdash;</td></tr>';
+      }
+      h += p.relay.map(function (r) {
+        return '<tr><td>' + esc(r.scorerName) + '</td><td>' + esc(r.wrote) +
+               '</td><td class="n">' + (r.match === null ? '&mdash;' : r.match + '%') + '</td></tr>';
+      }).join('') + '</table></div>';
+    }
+
+    h += '<h3>The five</h3><div class="scroll"><table><tr><th>&nbsp;</th>' +
+      FIVE.map(function (k) { return '<th>' + k + '</th>'; }).join('') + '</tr>' +
+      '<tr><td>Them</td>' + FIVE.map(function (k) {
+        return '<td class="n">' + n(p.five[k].self) + '</td>'; }).join('') + '</tr>' +
+      '<tr><td>The room</td>' + FIVE.map(function (k) {
+        return '<td class="n">' + n(p.five[k].room) + '</td>'; }).join('') + '</tr></table></div>';
+    if (p.changeFirst) {
+      h += '<p class="note">Weakest of the five, as the room scored it: <b>' +
+           esc(p.changeFirst) + '</b>.</p>';
+    }
+
+    if (p.whatTheySaid.length) {
+      h += '<h3>What the room would change first</h3><ul style="margin:8px 0 0;padding-left:18px">' +
+           p.whatTheySaid.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>';
+    }
+
+    h += '<div class="row" style="margin-top:14px">' +
+         '<button class="ghost small" data-copy="' + esc(p.ref) + '">Copy this sheet to send</button>' +
+         '</div><div id="copied-' + esc(p.ref) + '"></div>';
+    return h + '</div>';
+  }
+
+  function asText(p) {
+    var L = [];
+    L.push('Your drill sheet, ' + p.name);
+    L.push('');
+    L.push('Scored by ' + p.scorers + ' people in the room.');
+    L.push('');
+    L.push('  Appeared        ' + n(p.appeared) + '   what the room saw');
+    L.push('  Assumed before  ' + n(p.assumedBefore));
+    L.push('  Assumed after   ' + n(p.assumedAfter));
+    L.push('  Relay           ' + n(p.relayMean) + '   how much of your point survived');
+    L.push('');
+    if (p.intent) {
+      L.push('You meant: ' + p.intent);
+      L.push('');
+      L.push('What people wrote down:');
+      p.relay.forEach(function (r) { L.push('  ' + r.wrote); });
+      L.push('');
+    }
+    L.push('The five, you against the room:');
+    FIVE.forEach(function (k) {
+      L.push('  ' + k.padEnd(10) + ' you ' + n(p.five[k].self) + '   room ' + n(p.five[k].room));
+    });
+    if (p.changeFirst) { L.push(''); L.push('Weakest of the five: ' + p.changeFirst); }
+    if (p.whatTheySaid.length) {
+      L.push('');
+      L.push('What the room would change first:');
+      p.whatTheySaid.forEach(function (f) { L.push('  ' + f); });
+    }
+    L.push('');
+    L.push('This is a reading from one occasion, not a measure. ' +
+           p.scorers + ' people, ninety seconds, one morning.');
+    return L.join('\n');
+  }
+
+  function render(d) {
+    var h = groupBlock(d);
+    (d.people || []).forEach(function (p) { h += sheet(p); });
+    $('out').innerHTML = h;
+    var btns = document.querySelectorAll('button[data-copy]');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].onclick = function () {
+        var ref = this.getAttribute('data-copy');
+        var p = d.people.filter(function (x) { return x.ref === ref; })[0];
+        var box = $('copied-' + ref);
+        box.innerHTML = '<p class="note">Select all of this and paste it into an email.</p>' +
+          '<textarea readonly></textarea>';
+        var ta = box.querySelector('textarea');
+        ta.value = asText(p);
+        ta.focus();
+        ta.select();
+      };
+    }
+  }
+
+  function read(raw) {
+    var token = $('token').value;
+    var session = $('session').value.trim().toLowerCase();
+    if (!token) { say('err', 'Paste the facilitator token first.'); return; }
+    if (!/^[a-z0-9-]{6,64}$/.test(session)) { say('err', 'That session id does not look right.'); return; }
+    say('', '');
+    $('go').disabled = true;
+    $('raw').disabled = true;
+    fetch('/.netlify/functions/drill-results', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ token: token, session: session })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (r.status === 403) {
+          throw new Error(j.configured
+            ? 'The token did not match. The function can see DRILL_TOKEN, so this is the value.'
+            : 'The function cannot see DRILL_TOKEN at all. Check the scope and deploy context.');
+        }
+        if (!r.ok) { throw new Error(j.error || ('error ' + r.status)); }
+        return j;
+      });
+    }).then(function (j) {
+      last = j;
+      say('ok', j.group.inTheRoom + ' in the session, ' + j.group.spoke + ' scored by the room.');
+      if (raw) {
+        $('out').innerHTML = '<div class="card"><h2>Raw</h2><textarea readonly style="min-height:420px"></textarea></div>';
+        var ta = $('out').querySelector('textarea');
+        ta.value = JSON.stringify(j, null, 1);
+      } else {
+        render(j);
+      }
+    })['catch'](function (e) {
+      say('err', e.message);
+    })['finally'](function () {
+      $('go').disabled = false;
+      $('raw').disabled = false;
+    });
+  }
+
+  $('go').onclick = function () { read(false); };
+  $('raw').onclick = function () { read(true); };
+  $('token').addEventListener('keydown', function (e) { if (e.key === 'Enter') { read(false); } });
+}());
+</script>
+</body>
+</html>
