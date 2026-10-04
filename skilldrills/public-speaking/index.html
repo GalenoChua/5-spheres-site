@@ -72,6 +72,14 @@
     .card{padding:12px}
     .scale{gap:4px}
   }
+  .quoted{background:var(--paper-warm);border-left:3px solid var(--ember);
+          padding:11px 13px;border-radius:0 7px 7px 0;margin:0}
+  ul.heard{list-style:none;margin:0;padding:0}
+  ul.heard li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+      padding:8px 0;border-bottom:1px solid var(--line);font-size:.93rem}
+  ul.heard li:last-child{border-bottom:0}
+  ul.plain{margin:0;padding-left:18px}
+  ul.plain li{margin-bottom:5px}
   ul.roster{list-style:none;margin:0;padding:0}
   ul.roster li{display:flex;justify-content:space-between;align-items:center;gap:10px;
        padding:7px 0;border-bottom:1px solid var(--line);font-size:.93rem}
@@ -205,6 +213,11 @@
     <div id="score-msg"></div>
   </div>
 
+  <div class="card hidden" id="sheet">
+    <h2 id="sheet-title">Your sheet</h2>
+    <div id="sheet-body"></div>
+  </div>
+
   <p class="foot" id="foot"></p>
 </div>
 
@@ -267,6 +280,9 @@
   var iHaveSpoken = false;   /* decides which half of the self card is being filled */
   var secondCardOpened = false;
   var roster = [];
+  var released = false;
+  var savedAfter = false;
+  var sheetDrawn = false;
   var reopened = {};         /* speaker ref -> true, after "Change my answers" */
   var sentPayload = {};      /* speaker ref -> the card as sent, so reopening restores it */
   var polling = null;
@@ -400,9 +416,18 @@
     me.email = email;
     refFor(SESSION, email).then(function (r) {
       me.ref = r;
+      /* Kept on this device. It is what lets this person read their own sheet
+         afterwards without being able to read anybody else's, because a ref is
+         a digest of the address and a colleague could work one out. */
+      if (!me.secret) {
+        var b = new Uint8Array(16);
+        crypto.getRandomValues(b);
+        me.secret = Array.prototype.map.call(b, function (x) {
+          return ('0' + x.toString(16)).slice(-2); }).join('');
+      }
       try { localStorage.setItem(KEY, JSON.stringify(me)); } catch (e) {}
       return post('drill-score', {
-        session: SESSION, role: 'self', speaker: email, scorerName: name
+        session: SESSION, role: 'self', speaker: email, scorerName: name, secret: me.secret
       });
     }).then(function () {
       enter();
@@ -430,9 +455,11 @@
       reserve: val('my', 'reserve'), five: group('my', FIVE_SELF),
       fix: document.getElementById('my-fix').value.trim()
     }).then(function () {
+      if (iHaveSpoken) { savedAfter = true; }
       say('mine-msg', 'ok', iHaveSpoken
         ? 'Saved. Both of your cards are in.'
         : 'Saved. You will score yourself again after you have spoken.');
+      render();
     })['catch'](function (e) {
       say('mine-msg', 'err', 'Not saved: ' + e.message);
     });
@@ -532,6 +559,7 @@
         currentName = '';
         var list = j.speakers || [];
         roster = list;
+        released = j.released === true;
         list.forEach(function (s) {
           if (s.ref === currentRef) { currentName = s.name; }
           if (s.ref === me.ref && s.hasSpoken) { iHaveSpoken = true; }
@@ -587,12 +615,19 @@
     var someoneElseUp = Boolean(currentRef) && !iAmUp;
     var alreadySent = someoneElseUp && sentFor[currentRef] && !reopened[currentRef];
     var scoringNow = someoneElseUp && !alreadySent;
+    /* Once both their cards are in there is nothing left for them to fill, so
+       the waiting room is the right screen rather than an empty card they have
+       already completed. */
+    var cardStillToFill = !iHaveSpoken || !savedAfter;
+    var showMine = iAmUp || (!currentRef && cardStillToFill);
 
     drawRoom();
     show('scoring', scoringNow);
     show('done', Boolean(alreadySent));
-    show('idle', !currentRef && !iAmUp);
-    show('mine', iAmUp || !currentRef);
+    show('idle', !currentRef && !iAmUp && !showMine);
+    show('mine', showMine);
+    show('sheet', released && !currentRef);
+    if (released && !sheetDrawn) { sheetDrawn = true; loadSheet(); }
 
     if (scoringNow) {
       document.getElementById('scoring-title').textContent =
@@ -607,6 +642,88 @@
       : '1 is low, 5 is high. How you expect it to land.';
     document.getElementById('save-mine').textContent =
       iHaveSpoken ? 'Save my second card' : 'Save my first card';
+  }
+
+  /* Their own sheet, on their own phone, once the facilitator releases it. */
+  var FIVE_WORDS = {
+    pause: 'pause, letting a moment have its weight',
+    pace: 'pace, holding them rather than outrunning them',
+    volume: 'volume, using loud and quiet for emphasis',
+    emotion: 'emotion, letting it carry rather than only informing',
+    tonality: 'tonality, using your range'
+  };
+
+  function loadSheet() {
+    post('drill-my-sheet', { session: SESSION, ref: me.ref, secret: me.secret })
+      .then(function (d) {
+        if (!d.released) { sheetDrawn = false; return; }
+        document.getElementById('sheet-title').textContent = 'Your sheet, ' + (d.name || me.name);
+        document.getElementById('sheet-body').innerHTML = sheetHtml(d);
+      })['catch'](function (e) {
+        sheetDrawn = false;
+        document.getElementById('sheet-body').innerHTML =
+          '<div class="msg err">Could not load your sheet: ' + esc(e.message) + '</div>';
+      });
+  }
+
+  function sheetHtml(d) {
+    var h = '';
+    var caught = (d.relay || []).filter(function (r) {
+      return r.match !== null && r.match >= 35; }).length;
+
+    h += '<p>' + d.scorers + ' people scored your ninety seconds.</p>';
+
+    if (d.intent) {
+      h += '<div class="sec"><h3>What you meant</h3>' +
+           '<p class="quoted">' + esc(d.intent) + '</p></div>';
+    }
+    if (d.relay && d.relay.length) {
+      h += '<div class="sec"><h3>What they wrote down, before seeing that</h3><ul class="heard">';
+      d.relay.forEach(function (r) {
+        var cls = r.match === null ? '' : (r.match >= 35 ? ' hi' : (r.match < 15 ? ' lo' : ''));
+        h += '<li><span>' + esc(r.wrote) + '</span><span class="state' + cls + '">' +
+             (r.match === null ? '' : r.match + '%') + '</span></li>';
+      });
+      h += '</ul>';
+      if (d.intent) {
+        h += '<p style="margin-top:10px">' + (caught === 0
+          ? 'Nobody wrote down the thing you came to say. That is the finding worth sitting '
+            + 'with, because everything else here is about how you said it.'
+          : caught + ' of the ' + d.scorers + ' came back with your point close to the way you '
+            + 'wrote it.') + '</p>';
+      }
+      h += '</div>';
+    }
+
+    h += '<div class="sec"><h3>How it landed</h3><p>They scored you on whether you seemed in ' +
+         'command, whether they followed you, and whether they believed you. Across the room ' +
+         'that came to ' + d.appeared + ' out of 100.</p>';
+    if (d.assumedBefore !== null && d.assumedAfter !== null) {
+      h += '<p>You put yourself at ' + d.assumedBefore + ' before you spoke and ' +
+           d.assumedAfter + ' after you sat down. ' + (d.closed >= 10
+        ? 'Delivering it moved your own read ' + d.closed + ' points closer to theirs.'
+        : (d.closed <= -10
+          ? 'Delivering it moved your own read further from theirs.'
+          : (Math.abs(d.gapAfter) <= 15
+            ? 'You knew where you stood and the room agreed with you.'
+            : 'Your read of yourself did not move, and the room is ' +
+              Math.abs(d.gapAfter) + ' points from it.'))) + '</p>';
+    }
+    h += '</div>';
+
+    if (d.changeFirst) {
+      h += '<div class="sec"><h3>Change this first</h3><p class="quoted">' +
+           esc(FIVE_WORDS[d.changeFirst] || d.changeFirst) + '</p></div>';
+    }
+    if (d.whatTheySaid && d.whatTheySaid.length) {
+      h += '<div class="sec"><h3>In their words</h3><ul class="plain">' +
+        d.whatTheySaid.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') +
+        '</ul></div>';
+    }
+    h += '<p class="foot" style="margin-top:16px">' + d.scorers + ' people, ninety seconds, ' +
+         'one morning. One occasion is not a pattern, so treat this as somewhere to start. ' +
+         'Nobody else has seen your numbers.</p>';
+    return h;
   }
 
   function enter() {

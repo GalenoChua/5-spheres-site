@@ -83,6 +83,11 @@ export default async (request) => {
     return json(400, { error: 'current' });
   }
 
+  /* Releasing is what puts everybody's own sheet on their own phone. It is a
+     separate act from moving the floor, because results landing while the
+     eleventh person is still speaking would change the last turns of the room. */
+  const release = body.release === true ? true : (body.release === false ? false : null);
+
   try {
     const store = getStore('drill-scores');
     const prior = (await store.get(`${session}/_stage`, { type: 'json' })) || {};
@@ -97,13 +102,14 @@ export default async (request) => {
     }
 
     await store.setJSON(`${session}/_stage`, {
-      current: current || null,
+      current: release === null ? (current || null) : (prior.current || null),
       changedAt: new Date().toISOString(),
+      released: release === null ? (prior.released === true) : release,
       sizes
     });
   } catch {
     return json(502, { error: 'store unavailable' });
   }
 
-  return json(200, { ok: true, current: current || null });
+  return json(200, { ok: true, current: current || null, released: release });
 };

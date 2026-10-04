@@ -87,10 +87,12 @@ export default async (request) => {
      follows it, so nobody has to be told which card to open. */
   let current = null;
   let sizes = {};
+  let released = false;
   try {
     const stage = await store.get(`${session}/_stage`, { type: 'json' });
     if (stage && stage.current) current = stage.current;
     if (stage && stage.sizes) sizes = stage.sizes;
+    if (stage && stage.released === true) released = true;
   } catch {
     /* A missing stage is a session that has not started, not a failure. */
   }
@@ -111,5 +113,5 @@ export default async (request) => {
     s.hasSpoken = Boolean(frozen);
   });
 
-  return json(200, { session, current, roomNow: speakers.length, speakers });
+  return json(200, { session, current, released, roomNow: speakers.length, speakers });
 };

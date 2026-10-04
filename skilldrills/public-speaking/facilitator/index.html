@@ -91,10 +91,16 @@
         <button class="ghost small" id="refresh">Refresh now</button>
         <span class="stamp" id="stamp"></span>
       </div>
+      <div class="bar">
+        <button class="small" id="release">Send everyone their sheet</button>
+        <span class="stamp" id="release-state"></span>
+      </div>
       <div id="panel-msg"></div>
     </div>
 
     <p class="foot">
+      To put the room numbers on a screen, open <code id="groupurl"></code> and share it.
+      The sheets are read afterwards at <code id="resultsurl"></code>.<br>
       Everyone joins at <code id="joinurl"></code> and the card they see follows whoever is
       on the floor, so nobody picks a name. Cards in counts the room as it was when that
       person went up. Close the floor between speakers so the room stops being asked for
@@ -116,10 +122,15 @@
   var timer = null;
   var staging = false;        /* a floor write is in flight */
   var lastPoll = 0;
+  var released = false;
 
   document.getElementById('sub').textContent = 'Session ' + SESSION;
   document.getElementById('joinurl').textContent =
     location.origin + '/skilldrills/public-speaking/?session=' + SESSION;
+  document.getElementById('groupurl').textContent =
+    '/skilldrills/public-speaking/room/?session=' + SESSION;
+  document.getElementById('resultsurl').textContent =
+    '/skilldrills/public-speaking/results/';
 
   function esc(s) {
     return String(s === null || s === undefined ? '' : s)
@@ -160,6 +171,7 @@
       .then(function (j) {
         speakers = j.speakers || [];
         current = j.current || null;
+        released = j.released === true;
         lastPoll = Date.now();
         draw();
       })['catch'](function () { /* a dropped poll is not worth a message */ });
@@ -199,6 +211,11 @@
         speakers.length + ' in the room.';
 
     document.getElementById('close-floor').disabled = staging || !current;
+    var rb = document.getElementById('release');
+    rb.textContent = released ? 'Take the sheets back' : 'Send everyone their sheet';
+    document.getElementById('release-state').textContent = released
+      ? 'Everyone can see their own sheet on their phone.'
+      : 'Nobody can see their sheet yet.';
 
     var age = lastPoll ? Math.round((Date.now() - lastPoll) / 1000) : null;
     var stamp = document.getElementById('stamp');
@@ -258,6 +275,19 @@
     });
   };
   document.getElementById('refresh').onclick = poll;
+
+  /* Releasing is separate from the floor. Sheets landing on twelve phones while
+     somebody is still speaking would change the last turns of the room. */
+  document.getElementById('release').onclick = function () {
+    var want = !released;
+    if (want && !window.confirm('This shows every person their own sheet, on their own phone. ' +
+        'Do it after the last speaker, not during.')) { return; }
+    say('panel-msg', '', '');
+    callStage({ session: SESSION, token: token, release: want })
+      .then(poll)['catch'](function (e) {
+        say('panel-msg', 'err', 'Could not change that: ' + e.message);
+      });
+  };
 
   /* A backgrounded tab has its timers throttled to about once a minute, so a
      facilitator who switches to their slides comes back to a stale count with

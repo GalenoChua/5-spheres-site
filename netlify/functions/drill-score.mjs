@@ -18,6 +18,7 @@
  */
 import { getStore } from '@netlify/blobs';
 import { refFor } from './drill-roster.mjs';
+import { createHash } from 'node:crypto';
 
 const MAX_BYTES = 24 * 1024;
 const SCALE = [1, 2, 3, 4, 5];
@@ -153,6 +154,20 @@ export default async (request) => {
       prior = null;
     }
     record.joinedAt = (prior && prior.joinedAt) || now;
+
+    /* A secret the page generates once, on join, and keeps on the device. It is
+       what lets that person read their own sheet back afterwards without being
+       able to read anybody else's: a ref is a digest of the address, so anybody
+       who knows a colleague's email can work out their ref.
+
+       First write wins. A later write cannot replace it, or somebody rejoining
+       with the same address would lock the original person out of their own
+       results. */
+    const offered = clip(body.secret, 80);
+    record.secretHash = (prior && prior.secretHash) ||
+      (/^[0-9a-f]{16,80}$/.test(offered)
+        ? createHash('sha256').update(offered).digest('hex')
+        : null);
   }
 
   record.five = scores(body.five, FIVE);
