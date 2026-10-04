@@ -57,6 +57,11 @@
     border:1px solid var(--line);border-radius:7px;background:var(--paper);
     color:var(--ink);padding:10px}
   .note{color:var(--muted);font-size:.83rem;margin-top:12px;max-width:80ch}
+  .card p{max-width:74ch}
+  .quoted{background:var(--paper-warm);border-left:3px solid var(--ember);
+          padding:10px 13px;border-radius:0 6px 6px 0;font-size:1rem}
+  ul.plain{margin:8px 0 0;padding-left:18px;max-width:74ch}
+  ul.plain li{margin-bottom:5px}
   .hidden{display:none}
 </style>
 </head>
@@ -134,107 +139,126 @@
     return h + '</div>';
   }
 
-  function sheet(p) {
-    var h = '<div class="card"><h2>' + esc(p.name) + '</h2>';
-    h += '<p class="sub" style="margin-bottom:12px">' + esc(p.email) + ' &middot; scored by ' +
-         p.scorers + ' ' + (p.scorers === 1 ? 'person' : 'people') +
-         ' &middot; gave ' + p.cardsGiven + ' cards</p>';
+  var FIVE_WORDS = {
+    pause: 'pause, letting a moment have its weight',
+    pace: 'pace, holding them rather than outrunning them',
+    volume: 'volume, using loud and quiet for emphasis',
+    emotion: 'emotion, letting it carry rather than only informing',
+    tonality: 'tonality, using your range'
+  };
 
-    if (!p.scorers) {
-      h += '<div class="msg note">Nobody scored this person, so there is no sheet. ' +
-           'They were in the session and did not take the floor.</div>';
-      if (p.cardsGiven) {
-        h += '<p class="note">They did score others, ' + p.cardsGiven + ' times.</p>';
-      }
-      return h + '</div>';
-    }
+  /* The sheet is written to the person who spoke, so the numbers sit inside
+     sentences. A grid of tiles is a dashboard, and a dashboard is for whoever is
+     running the session rather than for whoever just stood up. */
+  function lines(p) {
+    var L = [];
+    var n = p.scorers;
+    var caught = p.relay.filter(function (r) { return r.match !== null && r.match >= 35; }).length;
 
-    h += '<div class="nums">' +
-      num('Appeared', p.appeared, 'what the room saw') +
-      num('Assumed before', p.assumedBefore, 'before speaking') +
-      num('Assumed after', p.assumedAfter, 'after sitting down') +
-      num('Relay', p.relayMean, 'how much of the point survived') +
-    '</div>';
+    L.push({ h: 'Your sheet, ' + p.name });
+    L.push({ p: n + ' people in the room scored your ninety seconds. Here is what came back.' });
 
-    h += '<div class="read"><strong>The gap</strong>Before ' + signed(p.gapBefore) +
-         ', after ' + signed(p.gapAfter) +
-         (p.closed === null ? '. Only one self card, so there is no movement to read.'
-                            : '. ' + (p.closed >= 10
-            ? 'Their read moved ' + p.closed + ' points closer to the room while they were delivering.'
-            : (p.closed <= -10
-              ? 'Their read moved further from the room rather than closer.'
-              : 'Their read did not move.'))) + '</div>';
-
-    if (!p.intent) {
-      h += '<div class="msg note">No point was written on the flap, so the relay cannot ' +
-           'be scored for this person. The write-backs are below without a match.</div>';
+    if (p.intent) {
+      L.push({ s: 'What you meant' });
+      L.push({ q: p.intent });
     }
     if (p.relay.length) {
-      h += '<h3>The relay</h3><div class="scroll"><table><tr><th>Who</th>' +
-           '<th>What they wrote down</th><th class="n">Match</th></tr>';
+      L.push({ s: p.intent ? 'What they wrote down, before seeing that'
+                           : 'What they wrote down' });
+      L.push({ list: p.relay.map(function (r) { return r.wrote; }) });
       if (p.intent) {
-        h += '<tr><td><b>They meant</b></td><td><b>' + esc(p.intent) + '</b></td><td class="n">&mdash;</td></tr>';
+        if (caught === 0) {
+          L.push({ p: 'Nobody wrote down the thing you came to say. That is the finding worth '
+                    + 'sitting with, because everything else here is about how you said it.' });
+        } else if (caught < n / 2) {
+          L.push({ p: caught + ' of the ' + n + ' came back with your point close to the way you '
+                    + 'wrote it. The rest carried the subject and left the substance behind.' });
+        } else {
+          L.push({ p: caught + ' of the ' + n + ' came back with your point close to the way you '
+                    + 'wrote it, which is higher than most people manage.' });
+        }
       }
-      h += p.relay.map(function (r) {
-        return '<tr><td>' + esc(r.scorerName) + '</td><td>' + esc(r.wrote) +
-               '</td><td class="n">' + (r.match === null ? '&mdash;' : r.match + '%') + '</td></tr>';
-      }).join('') + '</table></div>';
+    } else if (!p.intent) {
+      L.push({ p: 'You did not write down the one point before you spoke, so there is nothing '
+                + 'to compare what they heard against. That comparison is the heart of the '
+                + 'exercise, so it is worth doing next time.' });
     }
 
-    h += '<h3>The five</h3><div class="scroll"><table><tr><th>&nbsp;</th>' +
-      FIVE.map(function (k) { return '<th>' + k + '</th>'; }).join('') + '</tr>' +
-      '<tr><td>Them</td>' + FIVE.map(function (k) {
-        return '<td class="n">' + n(p.five[k].self) + '</td>'; }).join('') + '</tr>' +
-      '<tr><td>The room</td>' + FIVE.map(function (k) {
-        return '<td class="n">' + n(p.five[k].room) + '</td>'; }).join('') + '</tr></table></div>';
+    if (p.appeared !== null) {
+      L.push({ s: 'How it landed' });
+      L.push({ p: 'They each scored you on whether you seemed in command, whether they followed '
+                + 'you, and whether they believed you. Across the room that came to '
+                + p.appeared + ' out of 100.' });
+      if (p.assumedBefore !== null && p.assumedAfter !== null) {
+        L.push({ p: 'You put yourself at ' + p.assumedBefore + ' before you spoke and '
+                  + p.assumedAfter + ' after you sat down.' });
+        if (p.closed >= 10) {
+          L.push({ p: 'Delivering it moved your own read ' + p.closed + ' points closer to '
+                    + 'theirs, before anybody showed you a score.' });
+        } else if (p.closed <= -10) {
+          L.push({ p: 'Delivering it moved your own read further from theirs rather than closer.' });
+        } else if (Math.abs(p.gapAfter) <= 15) {
+          L.push({ p: 'You knew where you stood before you spoke and the room agreed with you.' });
+        } else {
+          L.push({ p: 'Your read of yourself did not move, and the room is '
+                    + Math.abs(p.gapAfter) + ' points from it.' });
+        }
+      } else if (p.assumedAfter !== null) {
+        L.push({ p: 'You put yourself at ' + p.assumedAfter + '.' });
+      }
+    }
+
     if (p.changeFirst) {
-      h += '<p class="note">Weakest of the five, as the room scored it: <b>' +
-           esc(p.changeFirst) + '</b>.</p>';
+      L.push({ s: 'What to change first' });
+      L.push({ p: 'Of the five, the room scored you lowest on '
+                + (FIVE_WORDS[p.changeFirst] || p.changeFirst) + '.' });
     }
-
     if (p.whatTheySaid.length) {
-      h += '<h3>What the room would change first</h3><ul style="margin:8px 0 0;padding-left:18px">' +
-           p.whatTheySaid.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join('') + '</ul>';
+      L.push({ p: 'In their words:' });
+      L.push({ list: p.whatTheySaid });
     }
 
-    h += '<div class="row" style="margin-top:14px">' +
-         '<button class="ghost small" data-copy="' + esc(p.ref) + '">Copy this sheet to send</button>' +
+    L.push({ s: 'What this is' });
+    L.push({ p: n + ' people, ninety seconds, one morning. One occasion is not a pattern, so '
+              + 'treat this as somewhere to start. Nobody else has seen your numbers.' });
+    return L;
+  }
+
+  function sheet(p) {
+    var h = '<div class="card">';
+    if (!p.scorers) {
+      h += '<h2>' + esc(p.name) + '</h2>';
+      h += '<div class="msg note">Nobody scored this person, so there is no sheet. They were '
+         + 'in the session and did not take the floor'
+         + (p.cardsGiven ? ', and they scored others ' + p.cardsGiven + ' times.' : '.') + '</div>';
+      return h + '</div>';
+    }
+    lines(p).forEach(function (b) {
+      if (b.h) { h += '<h2>' + esc(b.h) + '</h2>'; }
+      else if (b.s) { h += '<h3>' + esc(b.s) + '</h3>'; }
+      else if (b.q) { h += '<p class="quoted">' + esc(b.q) + '</p>'; }
+      else if (b.list) {
+        h += '<ul class="plain">' + b.list.map(function (x) {
+          return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+      } else { h += '<p>' + esc(b.p) + '</p>'; }
+    });
+    h += '<div class="row" style="margin-top:16px">' +
+         '<button class="ghost small" data-copy="' + esc(p.ref) + '">Copy this to send</button>' +
+         '<span class="note" style="margin:0">' + esc(p.email) + '</span>' +
          '</div><div id="copied-' + esc(p.ref) + '"></div>';
     return h + '</div>';
   }
 
   function asText(p) {
-    var L = [];
-    L.push('Your drill sheet, ' + p.name);
-    L.push('');
-    L.push('Scored by ' + p.scorers + ' people in the room.');
-    L.push('');
-    L.push('  Appeared        ' + n(p.appeared) + '   what the room saw');
-    L.push('  Assumed before  ' + n(p.assumedBefore));
-    L.push('  Assumed after   ' + n(p.assumedAfter));
-    L.push('  Relay           ' + n(p.relayMean) + '   how much of your point survived');
-    L.push('');
-    if (p.intent) {
-      L.push('You meant: ' + p.intent);
-      L.push('');
-      L.push('What people wrote down:');
-      p.relay.forEach(function (r) { L.push('  ' + r.wrote); });
-      L.push('');
-    }
-    L.push('The five, you against the room:');
-    FIVE.forEach(function (k) {
-      L.push('  ' + k.padEnd(10) + ' you ' + n(p.five[k].self) + '   room ' + n(p.five[k].room));
+    var out = [];
+    lines(p).forEach(function (b) {
+      if (b.h) { out.push(b.h, ''); }
+      else if (b.s) { out.push('', b.s.toUpperCase()); }
+      else if (b.q) { out.push(b.q); }
+      else if (b.list) { b.list.forEach(function (x) { out.push('  ' + x); }); }
+      else { out.push(b.p); }
     });
-    if (p.changeFirst) { L.push(''); L.push('Weakest of the five: ' + p.changeFirst); }
-    if (p.whatTheySaid.length) {
-      L.push('');
-      L.push('What the room would change first:');
-      p.whatTheySaid.forEach(function (f) { L.push('  ' + f); });
-    }
-    L.push('');
-    L.push('This is a reading from one occasion, not a measure. ' +
-           p.scorers + ' people, ninety seconds, one morning.');
-    return L.join('\n');
+    return out.join('\n');
   }
 
   function render(d) {
