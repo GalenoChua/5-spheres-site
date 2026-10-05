@@ -19,9 +19,9 @@
 import { getStore } from '@netlify/blobs';
 import { refFor } from './drill-roster.mjs';
 import { createHash } from 'node:crypto';
+import { SCALE, SCALE_MAX } from './_scale.mjs';
 
 const MAX_BYTES = 24 * 1024;
-const SCALE = [1, 2, 3, 4, 5];
 const ROLES = ['self', 'room'];
 const OUTCOME = ['confident', 'clear', 'believed'];
 const FIVE = ['pause', 'pace', 'volume', 'emotion', 'tonality'];
@@ -131,7 +131,9 @@ export default async (request) => {
 
   const now = new Date().toISOString();
   const record = {
-    version: 1,
+    version: 2,
+    /* Named on the record so a reader never has to infer it. */
+    scale: SCALE_MAX,
     session,
     role,
     speaker,

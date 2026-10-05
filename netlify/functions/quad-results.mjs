@@ -10,6 +10,7 @@
  * only ever writes.
  */
 import { getStore } from '@netlify/blobs';
+import { scaleOf } from './_scale.mjs';
 
 const DIMS = [
   ['sense_others', 'How well did I sense others?'],
@@ -199,8 +200,17 @@ export default async (request) => {
   const promoters = npsScores.filter((n) => n >= 9).length;
   const detractors = npsScores.filter((n) => n <= 6).length;
 
+  /* The Quad reports raw means rather than percentages, so a table that pools a
+     five-point record with a ten-point one is nonsense that reads as a number.
+     Say which scale the rows are on, and say so loudly when they disagree. */
+  const scales = [...new Set(rows.map((r) => scaleOf(r, 'quad')))].sort();
+  const scale = scales.length === 1 ? scales[0] : null;
+  const mixedScales = scales.length > 1 ? scales : null;
+
   const summary = {
     session,
+    scale,
+    mixedScales,
     n: rows.length,
     nRescored: rescored.length,
     note: 'In dimensions, from is round one re-scored after the teaching and to is '

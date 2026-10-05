@@ -36,8 +36,11 @@
   .qtext{display:block;color:var(--muted);font-size:.84rem;margin-top:1px}
   /* One label per option. A label holding several controls activates only its
      first, so a single label round the row makes a tap on "5" select 1. */
-  .scale{display:flex;gap:6px}
-  .scale label{flex:1;margin:0}
+  /* Ten in a row is under 30px a box on a phone. Two rows of five, going to
+     one row where there is width for it. */
+  .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  @media (min-width:560px){ .scale{grid-template-columns:repeat(10,1fr)} }
+  .scale label{margin:0}
   .scale input{position:absolute;opacity:0;width:0;height:0}
   .scale label span{display:block;text-align:center;border:1px solid var(--line);border-radius:6px;
        padding:12px 0;font-size:.95rem;cursor:pointer;background:var(--paper);user-select:none}
@@ -296,6 +299,12 @@
   var polling = null;
 
   /* ---------------------------------------------------------- building ---- */
+  /* One to ten from 4 October 2026, matching the Quad. A participant who meets
+     two scales inside one programme is worse off than either scale. */
+  var SCALE_MAX = 10;
+  var SCALE = [];
+  for (var _i = 1; _i <= SCALE_MAX; _i++) { SCALE.push(_i); }
+
   function esc(s) {
     return String(s === null || s === undefined ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -306,9 +315,9 @@
       '<legend><span class="qname">' + esc(row[1]) + '</span>' +
       '<span class="qtext">' + esc(row[2]) + '</span></legend>' +
       '<span class="scale">' +
-      [1, 2, 3, 4, 5].map(function (i) {
+      SCALE.map(function (i) {
         return '<label><input type="radio" name="' + name + '" value="' + i +
-               '" aria-label="' + esc(row[1]) + ', ' + i + ' of 5">' +
+               '" aria-label="' + esc(row[1]) + ', ' + i + ' of ' + SCALE_MAX + '">' +
                '<span>' + i + '</span></label>';
       }).join('') +
       '</span></fieldset>';

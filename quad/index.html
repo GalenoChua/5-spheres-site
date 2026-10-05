@@ -62,9 +62,12 @@
             font-size: 1.05rem; line-height: 1.25; margin-bottom: 3px; }
   .dim .hint { font-size: .92rem; color: #5f636f; margin-bottom: 12px; }
 
-  .scale { display: flex; gap: 8px; }
+  /* Ten across is 29px a button on a 360px phone. Two rows of five instead,
+     which also keeps the halves of the scale readable as halves. */
+  .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  @media (min-width: 560px) { .scale { grid-template-columns: repeat(10, 1fr); } }
   .scale button {
-    flex: 1; font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.1rem;
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.1rem;
     color: var(--ink); background: var(--paper); border: 1.5px solid var(--line);
     border-radius: 12px; padding: 14px 0; cursor: pointer;
     transition: background .15s ease, border-color .15s ease, color .15s ease,
@@ -160,6 +163,7 @@
   .hp { position: absolute; left: -9999px; }
 
   @media (max-width: 560px) {
+    .scale { gap: 6px; }
     .scale button { font-size: 1rem; padding: 12px 0; }
     .quad-wrap { padding: 0 16px 60px; }
   }
@@ -489,6 +493,9 @@
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
   var $ = function (id) { return document.getElementById(id); };
+  /* One to ten from 4 October 2026. Five points had one usable threshold,
+     its own midpoint, so a band could sit nowhere else. */
+  var SCALE_MAX = 10;
   var STAGES = ['s-start', 's-a', 's-hold', 's-again', 's-b', 's-result', 's-done'];
   function show(id) {
     STAGES.forEach(function (s) { $(s).hidden = (s !== id); });
@@ -504,8 +511,8 @@
     var scale = document.createElement('div');
     scale.className = 'scale';
     scale.setAttribute('role', 'radiogroup');
-    scale.setAttribute('aria-label', d.q + ' — 1 to 5');
-    for (var n = 1; n <= 5; n++) {
+    scale.setAttribute('aria-label', d.q + ', 1 to ' + SCALE_MAX);
+    for (var n = 1; n <= SCALE_MAX; n++) {
       (function (n) {
         var b = document.createElement('button');
         b.type = 'button';
@@ -527,8 +534,8 @@
     var ends = document.createElement('div');
     ends.className = 'scale-ends';
     ends.innerHTML = '<span></span><span></span>';
-    ends.children[0].textContent = '1 — ' + lo;
-    ends.children[1].textContent = '5 — ' + hi;
+    ends.children[0].textContent = '1 is ' + lo;
+    ends.children[1].textContent = SCALE_MAX + ' is ' + hi;
     wrap.appendChild(q); wrap.appendChild(h); wrap.appendChild(scale); wrap.appendChild(ends);
     var prev = state[round][d.key];
     if (prev) { scale.children[prev - 1].setAttribute('aria-checked', 'true'); }
@@ -932,7 +939,8 @@
     var h = '<p>You and ' + (d.n - 1) + ' other' + (d.n === 2 ? '' : 's') +
             ' filled this in.</p>';
 
-    h += '<table class="mine-table"><tr><th>Round two</th><th class="n">You</th>' +
+    var outOf = d.scale ? ', out of ' + d.scale : '';
+    h += '<table class="mine-table"><tr><th>Round two' + outOf + '</th><th class="n">You</th>' +
          '<th class="n">The room</th></tr>';
     d.dimensions.forEach(function (x) {
       h += mineRow(x.dimension, x.you.to, x.room.to);
@@ -948,7 +956,8 @@
 
     if (d.state) {
       h += '<table class="mine-table" style="margin-top:14px">' +
-           '<tr><th>How you felt</th><th class="n">Start</th><th class="n">End</th></tr>';
+           '<tr><th>How you felt' + outOf + '</th><th class="n">Start</th>' +
+           '<th class="n">End</th></tr>';
       d.state.forEach(function (x) { h += mineRow(x.layer, x.start, x.end); });
       h += '</table>';
     }

@@ -9,6 +9,7 @@
  */
 import { getStore } from '@netlify/blobs';
 import { refFor } from './drill-roster.mjs';
+import { pctOf, scaleOf } from './_scale.mjs';
 
 const OUTCOME = ['confident', 'clear', 'believed'];
 const FIVE = ['pause', 'pace', 'volume', 'emotion', 'tonality'];
@@ -30,7 +31,10 @@ function tokenOk(given, expected) {
 }
 
 const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
-const pct = (m) => (m === null ? null : Math.round((m - 1) / 4 * 100));
+/* The span comes from the record, never from a constant here. A reader that
+   assumes the wrong one does not error, it returns a number that is wrong by
+   about a factor of two and looks entirely plausible. */
+const pct = (m, rec) => pctOf(m, rec, 'drill');
 const r1 = (n) => (n === null || n === undefined ? null : Math.round(n * 10) / 10);
 
 function sd(xs) {
@@ -55,15 +59,15 @@ function overlap(a, b) {
 
 function sheetFor(self, cards) {
   const perScorer = cards
-    .map((c) => OUTCOME.map((k) => c.outcome && c.outcome[k]).filter((v) => v != null))
-    .filter((vs) => vs.length)
-    .map((vs) => pct(mean(vs)));
+    .map((c) => ({ c, vs: OUTCOME.map((k) => c.outcome && c.outcome[k]).filter((v) => v != null) }))
+    .filter((x) => x.vs.length)
+    .map((x) => pct(mean(x.vs), x.c));
   const appeared = perScorer.length ? Math.round(mean(perScorer)) : null;
 
   const halfPct = (half) => {
     if (!half || !half.outcome) return null;
     const vs = OUTCOME.map((k) => half.outcome[k]).filter((v) => v != null);
-    return vs.length ? pct(mean(vs)) : null;
+    return vs.length ? pct(mean(vs), self) : null;
   };
   const assumedBefore = halfPct(self && self.before);
   const assumedAfter = halfPct(self && self.after);
@@ -104,6 +108,9 @@ function sheetFor(self, cards) {
     .sort((a, b) => five[a].room - five[b].room);
 
   return {
+    /* The raw fives, the message pair and reserve all go out unscaled, so the
+       sheet has to say what they are out of. */
+    scale: scaleOf(self || cards[0], 'drill'),
     appeared,
     assumedBefore,
     assumedAfter,
@@ -212,6 +219,13 @@ export default async (request) => {
   };
 
   const group = {
+    /* The five and reserve go out as raw scores, so the page has to say what
+       they are out of. Null where the room holds two scales at once, which
+       should not happen inside one session and is worth seeing if it does. */
+    scale: (() => {
+      const set = [...new Set(people.map((p) => p.scale).filter(Boolean))];
+      return set.length === 1 ? set[0] : null;
+    })(),
     inTheRoom: people.length,
     spoke: spoke.length,
     appeared: num((p) => p.appeared),

@@ -12,9 +12,9 @@
  */
 import { getStore } from '@netlify/blobs';
 import { createHash } from 'node:crypto';
+import { SCALE, SCALE_MAX } from './_scale.mjs';
 
 const MAX_BYTES = 20 * 1024;
-const SCALE = [1, 2, 3, 4, 5];
 const QUAD = ['sense_others', 'present', 'sense_self', 'sensed_by_others'];
 const STATE = ['physical', 'mental', 'emotional'];
 
@@ -89,7 +89,9 @@ export default async (request) => {
   const nps = Number.isInteger(body.nps) && body.nps >= 0 && body.nps <= 10 ? body.nps : null;
 
   const record = {
-    version: 3,
+    version: 4,
+    /* Named on the record so a reader never has to infer it. */
+    scale: SCALE_MAX,
     session,
     name: clip(body.name, 120),
     email,

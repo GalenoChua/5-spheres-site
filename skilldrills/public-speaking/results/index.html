@@ -179,7 +179,11 @@
       .sort(function (a, b) { return g.five[a] - g.five[b]; });
     if (ranked.length) {
       var low = ranked[0]; var high = ranked[ranked.length - 1];
-      var t = 'Strongest across the room was ' + high + ' at ' + g.five[high] + ' out of 5. Weakest was ' + low + ' at ' + g.five[low] + '.';
+      /* The scale comes from the data. A page that names it from a constant
+         keeps saying five long after the forms stopped asking for one. */
+      var outOf = g.scale ? ' out of ' + g.scale : '';
+      var t = 'Strongest across the room was ' + high + ' at ' + g.five[high] +
+              outOf + '. Weakest was ' + low + ' at ' + g.five[low] + '.';
       var firsts = FIVE.filter(function (k) { return g.changeFirst[k] > 0; })
         .sort(function (a, b) { return g.changeFirst[b] - g.changeFirst[a]; });
       if (firsts.length) {
@@ -292,7 +296,8 @@
         '</td><td class="n">' + n(p.five[k].self) + '</td><td class="n">' +
         n(p.five[k].room) + '</td></tr>';
     }).join('');
-    h += sec('The five',
+    var sc = p.scale ? ' out of ' + p.scale : '';
+    h += sec('The five' + sc,
       '<table class="five"><tr><th>&nbsp;</th><th class="n">You</th><th class="n">Room</th></tr>' +
       rows + '</table>');
 

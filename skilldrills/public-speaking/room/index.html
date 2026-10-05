@@ -134,7 +134,10 @@
     var ranked = FIVE.filter(function (k) { return g.five[k] !== null; })
       .sort(function (a, b) { return g.five[a] - g.five[b]; });
     if (ranked.length) {
-      h += '<div class="sec"><h2>The five</h2><div class="five">' +
+      /* Named from the data, so the screen cannot keep saying five after the
+         forms stopped asking for one. */
+      h += '<div class="sec"><h2>The five' + (g.scale ? ', out of ' + g.scale : '') +
+        '</h2><div class="five">' +
         FIVE.map(function (k) {
           return '<div class="f' + (k === ranked[0] ? ' low' : '') + '"><div class="v">' +
             n(g.five[k]) + '</div><div class="k">' + k + '</div></div>';

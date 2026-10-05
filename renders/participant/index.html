@@ -56,6 +56,10 @@
   .fig{flex:1 1 92px;background:var(--paper);border:1px solid var(--line);
        border-radius:9px;padding:9px 11px}
   .fig .n{font-family:var(--serif);font-size:1.5rem;line-height:1;font-variant-numeric:tabular-nums}
+  /* The unit, carried on the number itself. A 3.4 of 5 and a 3.4 of 10 are different
+     readings and this page holds both kinds of score. */
+  .fig .n small{font-family:var(--sans,inherit);font-size:.52em;font-weight:600;
+    letter-spacing:.02em;color:var(--muted);margin-left:.28em}
   .fig .l{font-size:.69rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
           font-weight:700;margin-top:5px}
   .fig.hero{background:var(--warm);border-color:var(--ember)}
@@ -108,8 +112,8 @@
         <div class="top"><b>Public Speaking Drill</b><span>7 October</span></div>
         <div class="in">
           <div class="pair">
-            <div class="fig hero"><div class="n">71</div><div class="l">Appeared</div></div>
-            <div class="fig"><div class="n">44</div><div class="l">Relay</div></div>
+            <div class="fig hero"><div class="n">71<small>%</small></div><div class="l">Appeared</div></div>
+            <div class="fig"><div class="n">44<small>%</small></div><div class="l">Relay</div></div>
             <div class="fig"><div class="n">+6</div><div class="l">Gap</div></div>
           </div>
           <p>Ten people scored your ninety seconds. You put yourself at 77 before you spoke
@@ -133,7 +137,7 @@
         <div class="top"><b>The Sensing Drill</b><span>17 September</span></div>
         <div class="in">
           <div class="pair">
-            <div class="fig hero"><div class="n">3.4</div><div class="l">Round two</div></div>
+            <div class="fig hero"><div class="n">3.4<small>of 5</small></div><div class="l">Round two</div></div>
             <div class="fig"><div class="n">+0.4</div><div class="l">Change</div></div>
             <div class="fig"><div class="n">5</div><div class="l">In the room</div></div>
           </div>
@@ -152,11 +156,10 @@
       distance between your own read and the room's. It has closed each time.</p>
     <table>
       <tr><th>Date</th><th>What</th><th class="n">You said</th><th class="n">They said</th><th class="n">Apart</th></tr>
-      <tr><td>17 Sep</td><td>Sensing</td><td class="n">4.0</td><td class="n">3.4</td><td class="n down">0.6</td></tr>
-      <tr><td>7 Oct</td><td>Speaking</td><td class="n">77</td><td class="n">71</td><td class="n up">6</td></tr>
+      <tr><td>17 Sep</td><td>Sensing</td><td class="n">4.0 of 5</td><td class="n">3.4 of 5</td><td class="n down">0.6</td></tr>
+      <tr><td>7 Oct</td><td>Speaking</td><td class="n">77%</td><td class="n">71%</td><td class="n up">6</td></tr>
     </table>
-    <p class="foot" style="margin-top:12px">The two sit on different scales, so the columns
-      are not comparable to each other. Each row compares you to the room on the day.</p>
+    <p class="foot" style="margin-top:12px">The Sensing Quad is answered 1 to 5 and the speaking drill is a percentage, so the columns are not comparable to each other. Each row compares you to the room on the day.</p>
   </div>
 
   <p class="foot">Each of these is a reading from a single occasion, taken by the people

@@ -9,6 +9,7 @@
  * another person's row, and it never returns a name or an address.
  */
 import { getStore } from '@netlify/blobs';
+import { scaleOf } from './_scale.mjs';
 import { createHash } from 'node:crypto';
 
 const DIMS = [
@@ -96,11 +97,17 @@ export default async (request) => {
     rows = [];
   }
 
+  /* Only compare against people scored on the same ruler. Pooling a
+     five-point row with a ten-point one would put this reader's number
+     beside a group mean that cannot be read against it. */
+  const myScale = scaleOf(mine, 'quad');
+  const peers = rows.filter((r) => scaleOf(r, 'quad') === myScale);
+
   const dims = DIMS.map(([key, label]) => {
     const myA2 = pick(mine, 'a2') || {};
     const myB = pick(mine, 'b') || {};
-    const groupA2 = rows.map((r) => (pick(r, 'a2') || {})[key]).filter(Number.isFinite);
-    const groupB = rows.map((r) => (pick(r, 'b') || {})[key]).filter(Number.isFinite);
+    const groupA2 = peers.map((r) => (pick(r, 'a2') || {})[key]).filter(Number.isFinite);
+    const groupB = peers.map((r) => (pick(r, 'b') || {})[key]).filter(Number.isFinite);
     return {
       dimension: label,
       you: { from: myA2[key] ?? null, to: myB[key] ?? null,
@@ -123,7 +130,9 @@ export default async (request) => {
   return json(200, {
     released: true,
     name: mine.name || '',
-    n: rows.length,
+    /* Everything below is a raw score, so the page has to say what it is out of. */
+    scale: myScale,
+    n: peers.length,
     dimensions: dims,
     state,
     focus: mine.focus || null,

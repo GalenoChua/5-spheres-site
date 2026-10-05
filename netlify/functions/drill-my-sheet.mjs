@@ -11,6 +11,7 @@
  */
 import { getStore } from '@netlify/blobs';
 import { createHash } from 'node:crypto';
+import { pctOf, scaleOf } from './_scale.mjs';
 
 const OUTCOME = ['confident', 'clear', 'believed'];
 const FIVE = ['pause', 'pace', 'volume', 'emotion', 'tonality'];
@@ -22,7 +23,10 @@ const json = (status, body) =>
   });
 
 const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
-const pct = (m) => (m === null ? null : Math.round((m - 1) / 4 * 100));
+/* The span comes from the record, never from a constant here. A reader that
+   assumes the wrong one does not error, it returns a number that is wrong by
+   about a factor of two and looks entirely plausible. */
+const pct = (m, rec) => pctOf(m, rec, 'drill');
 const r1 = (n) => (n === null || n === undefined ? null : Math.round(n * 10) / 10);
 
 const STOP = new Set(('a an the and or but if to of in on for with that this it is are was were ' +
@@ -106,15 +110,15 @@ export default async (request) => {
   }
 
   const perScorer = cards
-    .map((c) => OUTCOME.map((k) => c.outcome && c.outcome[k]).filter((v) => v != null))
-    .filter((vs) => vs.length)
-    .map((vs) => pct(mean(vs)));
+    .map((c) => ({ c, vs: OUTCOME.map((k) => c.outcome && c.outcome[k]).filter((v) => v != null) }))
+    .filter((x) => x.vs.length)
+    .map((x) => pct(mean(x.vs), x.c));
   const appeared = perScorer.length ? Math.round(mean(perScorer)) : null;
 
   const halfPct = (half) => {
     if (!half || !half.outcome) return null;
     const vs = OUTCOME.map((k) => half.outcome[k]).filter((v) => v != null);
-    return vs.length ? pct(mean(vs)) : null;
+    return vs.length ? pct(mean(vs), self) : null;
   };
   const assumedBefore = halfPct(self.before);
   const assumedAfter = halfPct(self.after);
@@ -139,6 +143,8 @@ export default async (request) => {
 
   return json(200, {
     released: true,
+    /* The fives go out unscaled, so the sheet has to say what they are out of. */
+    scale: scaleOf(self, 'drill'),
     name: self.scorerName || '',
     scorers: perScorer.length,
     appeared,
