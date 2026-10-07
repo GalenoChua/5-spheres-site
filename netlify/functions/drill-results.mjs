@@ -83,7 +83,17 @@ function sheetFor(self, cards) {
     wrote: c.relay,
     match: overlap(intent, c.relay)
   }));
-  const relayMean = relay.length ? Math.round(mean(relay.map((r) => r.match).filter((m) => m != null))) : null;
+  /* COUNT THE MATCHES, NOT THE CARDS.
+     This was `relay.length ? ... : null`, which asks whether anybody WROTE
+     something, when the question is whether anything could be COMPARED. When
+     the room wrote relay text but every overlap() returned null, relay.length
+     was truthy, mean([]) returned null, and Math.round(null) is 0.
+     Every overlap is null when the speaker's intent is empty: they never wrote
+     down the point they were trying to land. The sheet then told them Relay 0,
+     which reads as "none of what you said got across". The truth was "you never
+     said what you were aiming at", and only one of those is about speaking. */
+  const relayMatches = relay.map((r) => r.match).filter((m) => m != null);
+  const relayMean = relayMatches.length ? Math.round(mean(relayMatches)) : null;
 
   const roomMean = (field, key) => {
     const vs = cards.map((c) => c[field] && c[field][key]).filter((v) => v != null);

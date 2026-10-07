@@ -130,6 +130,7 @@ export default async (request) => {
     wrote: c.relay,
     match: overlap(intent, c.relay)
   }));
+  const relayMatches = relay.map((r) => r.match).filter((m) => m != null);
 
   const five = {};
   FIVE.forEach((k) => {
@@ -154,8 +155,11 @@ export default async (request) => {
     gapAfter,
     closed: (gapBefore != null && gapAfter != null)
       ? Math.abs(gapBefore) - Math.abs(gapAfter) : null,
-    relayMean: relay.length
-      ? Math.round(mean(relay.map((r) => r.match).filter((m) => m != null))) : null,
+    /* See the note in drill-results.mjs: count the matches, not the cards.
+       relay.length asks whether anybody wrote something; the question is
+       whether anything could be compared. Math.round(null) is 0, so a
+       speaker who never wrote their intent was told Relay 0. */
+    relayMean: relayMatches.length ? Math.round(mean(relayMatches)) : null,
     intent,
     relay,
     five,
