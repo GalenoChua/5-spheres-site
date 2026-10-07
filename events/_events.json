@@ -1,0 +1,34 @@
+{
+  "_what": "The facts about each live event, in one place. The page is checked against this, not the other way round.",
+  "_why": [
+    "On 7 October 2026 the Public Speaking Drill moved to 13:00 Europe/Warsaw on Google Meet.",
+    "The page still said 09:00 CEST on Zoom in SIX places: the meta description, the",
+    "schema.org startDate and endDate, the eyebrow, the Date/Time/Where list, the length,",
+    "and the add-to-calendar link's UTC range. Three of those are machine readable, so a",
+    "search engine and anyone who clicked 'Add to Google Calendar' would have been told a",
+    "time nobody was going to be there.",
+    "",
+    "Times are held in UTC because that is the only form with one meaning. The page says",
+    "CEST, which is correct until Europe falls back on 25 October and wrong after it, and",
+    "that is exactly the kind of thing a human gets right once and then forgets."
+  ],
+  "_howToCheck": "python scripts/check_event_facts.py",
+
+  "events": {
+    "public-speaking": {
+      "name": "Human Intelligence: The Public Speaking Drill",
+      "page": "events/public-speaking/index.html",
+      "startsUtc": "2026-10-22T11:00:00Z",
+      "endsUtc": "2026-10-22T12:50:00Z",
+      "displayZone": "Europe/Warsaw",
+      "displayZoneLabel": "CEST",
+      "displayTime": "13:00 CEST",
+      "displayDate": "Thursday 22 October",
+      "lengthMinutes": 110,
+      "lengthLabel": "110 minutes",
+      "platform": "Google Meet",
+      "retiredPlatforms": ["Zoom"],
+      "priceEur": 50
+    }
+  }
+}
