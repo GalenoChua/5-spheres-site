@@ -131,7 +131,7 @@
             <li><a class="side-item" data-slug="building-community-networking-and-partnerships" href="/bsfp-accelerator/lessons/building-community-networking-and-partnerships/"><span class="side-n">18</span><span class="side-t">Building Community, Networking and Partnerships</span><span class="side-tick" aria-hidden="true"></span></a></li>
           </ol>
         </nav>
-        <a class="side-cert" href="mailto:hello@5spheresofempathy.com?subject=Business%20Sustainability%20First%20Principles%3A%20certificate">Claim your certificate</a>
+        <a class="side-cert" href="https://app.5spheresofempathy.com/certificate?course=bsfp">Claim your certificate</a>
       </aside>
     <div class="lesson-main">
     <div class="label">Leadership, Values and Commitments &middot; Lesson 4 of 18</div>
@@ -176,43 +176,7 @@
   </div>
 </footer>
 
-<script>
-/* Course progress. No accounts, so this lives in localStorage on the learner's
-   own device. Visiting a lesson marks it done; the sidebar shows ticks and the
-   bar shows how far through they are. Clearing site data resets it, which is a
-   fair trade for not asking anyone to make an account for a free course. */
-(function () {
-  var KEY = 'bsfp-progress';
-  var TOTAL = 18;
-
-  function read() {
-    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
-  }
-  function write(o) {
-    try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
-  }
-
-  var here = document.querySelector('.side-item.current');
-  var done = read();
-  if (here && here.dataset.slug) { done[here.dataset.slug] = 1; write(done); }
-
-  document.querySelectorAll('.side-item').forEach(function (a) {
-    if (done[a.dataset.slug]) a.classList.add('done');
-  });
-
-  var n = Object.keys(done).length;
-  var count = document.querySelector('[data-progress-count]');
-  var fill = document.querySelector('[data-progress-fill]');
-  if (count) count.textContent = n;
-  if (fill) fill.style.width = Math.round((n / TOTAL) * 100) + '%';
-
-  /* Finished everything: surface the certificate rather than making them hunt. */
-  if (n >= TOTAL) {
-    var cert = document.querySelector('.side-cert');
-    if (cert) cert.classList.add('ready');
-  }
-})();
-</script>
+<script src="/bsfp-accelerator/progress.js" defer></script>
 
 
 </body>
