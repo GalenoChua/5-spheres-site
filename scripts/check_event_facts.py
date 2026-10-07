@@ -89,6 +89,18 @@ def main():
             check(hits == 0, f"{slug}: retired platform {retired!r} still appears",
                   f"{hits} time(s)")
 
+        # A duration is claimed in the <title> and the og:title as well as in the
+        # facts list, and those two are what show on every shared link. The page
+        # said 90 in seven places while the facts list said 110.
+        for retired in e.get("retiredDurations", []):
+            hits = len(re.findall(re.escape(retired), html, re.I))
+            check(hits == 0, f"{slug}: retired duration {retired!r} still appears",
+                  f"{hits} time(s)")
+
+        if e.get("availability"):
+            check(e["availability"] in html, f"{slug}: availability",
+                  f"expected {e['availability']!r}")
+
         # 5. the duration the page claims must match the times it states
         stated = (end - start).total_seconds() / 60
         check(stated == e["lengthMinutes"],
