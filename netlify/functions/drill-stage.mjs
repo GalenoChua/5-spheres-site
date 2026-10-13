@@ -77,7 +77,15 @@ export default async (request) => {
   }
 
   /* An empty ref is how the facilitator closes the floor between speakers, so
-     it is a valid value rather than a missing one. */
+     it is a valid value rather than a missing one.
+
+     ABSENT IS NOT THE SAME AS EMPTY, and the difference is load-bearing. An empty
+     string means close the floor; a `current` that was never sent means this call
+     is about something else and must leave the floor exactly where it is. Without
+     that distinction a call that only declares the session type would knock the
+     speaker off mid-sentence, which is the bug the verify path above exists to
+     avoid and which would now have a second way in. */
+  const hasCurrent = Object.prototype.hasOwnProperty.call(body, 'current');
   const current = String(body.current || '').trim();
   if (current && !/^[0-9a-f]{12}$/.test(current)) {
     return json(400, { error: 'current' });
@@ -88,6 +96,25 @@ export default async (request) => {
      eleventh person is still speaking would change the last turns of the room. */
   const release = body.release === true ? true : (body.release === false ? false : null);
 
+  /* WHETHER THIS SESSION IS A REHEARSAL, SAID RATHER THAN GUESSED.
+   *
+   * _export_drills.mjs classifies on the session NAME, against
+   * /^(preflight|preview|qa|smoke|test|demo)[-_]/. Treating an unmatched name as real is the
+   * safe direction and the right default, and on 12 October it still produced a false
+   * positive: a session called `asc-2026-10-07` holding one facilitator, one colleague and a
+   * record from diag-probe@example.com was reported as a real session in every summary.
+   *
+   * The inverse is the one that costs something, and 22 October is the session where it
+   * would. A real room named `test-run-asc` is dropped from the record and nobody finds out,
+   * because a quiet exclusion looks exactly like a session that was never scored.
+   *
+   * So the facilitator says. It is sent with the stage call they already make before the
+   * first speaker, it is written once and carried forward on every later call, and a session
+   * that never declares falls back to the name. Explicit beats inferred; inferred beats
+   * nothing. */
+  const isTest = body.test === true ? true : (body.test === false ? false : null);
+
+  let nextCurrent = null;
   try {
     const store = getStore('drill-scores');
     const prior = (await store.get(`${session}/_stage`, { type: 'json' })) || {};
@@ -101,15 +128,21 @@ export default async (request) => {
       sizes[current] = await roomSize(store, session);
     }
 
+    /* Computed once so the response cannot disagree with what was written. */
+    nextCurrent = (release === null && hasCurrent) ? (current || null) : (prior.current || null);
     await store.setJSON(`${session}/_stage`, {
-      current: release === null ? (current || null) : (prior.current || null),
+      current: nextCurrent,
       changedAt: new Date().toISOString(),
       released: release === null ? (prior.released === true) : release,
+      /* Sticky once set. A later call that says nothing must not quietly turn a declared
+         rehearsal back into an unknown, because every call after the first one says
+         nothing: the facilitator declares at the top and then only moves the floor. */
+      test: isTest === null ? (typeof prior.test === 'boolean' ? prior.test : null) : isTest,
       sizes
     });
   } catch {
     return json(502, { error: 'store unavailable' });
   }
 
-  return json(200, { ok: true, current: current || null, released: release });
+  return json(200, { ok: true, current: nextCurrent, released: release, test: isTest });
 };

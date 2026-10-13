@@ -68,7 +68,13 @@
       <span style="display:block;font-size:.9rem;margin-bottom:5px">Facilitator token</span>
       <input type="password" id="token" autocomplete="off">
     </label>
-    <button id="unlock">Open the session</button>
+    <!-- TWO BUTTONS AND NO DEFAULT. The facilitator declares whether this room counts,
+         and a default is how the wrong value gets recorded silently: _export_drills.mjs
+         classified a session of one facilitator, one colleague and a diagnostic probe as
+         real, because it judged on the name. A real room named test-run-asc would be
+         dropped just as quietly. One click either way, impossible to skip. -->
+    <button id="unlock">Open the real session</button>
+    <button id="unlock-test" class="ghost">Open a rehearsal</button>
     <div id="gate-msg"></div>
   </div>
 
@@ -249,27 +255,38 @@
     }
   }
 
-  document.getElementById('unlock').onclick = function () {
+  /* isTest is declared once, here, and carried on the stage record for the whole session.
+     The declaring call sends no `current`, and drill-stage treats an absent `current` as
+     leave-the-floor-alone, so unlocking or reloading this page cannot knock a speaker off
+     mid-sentence. That is the same bug the verify path above exists to avoid. */
+  function openSession(btn, isTest) {
     token = document.getElementById('token').value.trim();
     if (!token) { say('gate-msg', 'err', 'The token, from the Netlify environment.'); return; }
     say('gate-msg', '', '');
-    var btn = this;
-    btn.disabled = true;
+    var other = document.getElementById(btn.id === 'unlock' ? 'unlock-test' : 'unlock');
+    btn.disabled = true; other.disabled = true;
     /* Verify writes nothing. An earlier version proved the token by writing the
        floor state it thought it had, which at that point was nothing, so
        opening or reloading this page knocked the speaker off the floor. */
     callStage({ token: token, verify: true }).then(function () {
+      return callStage({ session: SESSION, token: token, test: isTest });
+    }).then(function () {
       try { sessionStorage.setItem('drill-token', token); } catch (e) {}
       document.getElementById('gate').classList.add('hidden');
       document.getElementById('panel').classList.remove('hidden');
+      var s = document.getElementById('sub');
+      if (isTest && s) { s.textContent = s.textContent + ' — REHEARSAL, this room is not counted'; }
       poll();
       if (!timer) { timer = setInterval(poll, 4000); }
       setInterval(draw, 2000);   /* keeps the staleness stamp honest */
     })['catch'](function (e) {
-      btn.disabled = false;
+      btn.disabled = false; other.disabled = false;
       say('gate-msg', 'err', e.message === 'no' ? 'That token is not right.' : e.message);
     });
-  };
+  }
+
+  document.getElementById('unlock').onclick = function () { openSession(this, false); };
+  document.getElementById('unlock-test').onclick = function () { openSession(this, true); };
 
   document.getElementById('close-floor').onclick = function () {
     say('panel-msg', '', '');
