@@ -132,6 +132,17 @@
   var $ = function (id) { return document.getElementById(id); };
   var FIVE = ['pause', 'pace', 'volume', 'emotion', 'tonality'];
 
+  /* A session in the URL wins over the field's default. drill-create hands a coach a
+     results link with their own session in it, and without this that link silently showed
+     them somebody else's room. Every other surface already honoured the parameter; this
+     one did not, which is the same class of fault as the stale default it replaced. */
+  (function () {
+    var q = new URLSearchParams(window.location.search).get('session');
+    if (q && /^[a-z0-9-]{6,64}$/.test(q.toLowerCase())) {
+      $('session').value = q.toLowerCase();
+    }
+  })();
+
   function esc(s) {
     return String(s === null || s === undefined ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

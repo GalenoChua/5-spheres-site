@@ -10,6 +10,7 @@
  * version of this lets any participant move the room on mid-answer.
  */
 import { getStore } from '@netlify/blobs';
+import { mayDrive, globalOk, globalConfigured } from './_session.mjs';
 
 const json = (status, body) =>
   new Response(JSON.stringify(body), {
@@ -17,16 +18,8 @@ const json = (status, body) =>
     headers: { 'content-type': 'application/json', 'cache-control': 'no-store' }
   });
 
-/* Compared in constant time so the endpoint does not leak the token one
-   character at a time to anybody willing to measure. */
-function tokenOk(given, expected) {
-  if (!expected || !given || given.length !== expected.length) return false;
-  let diff = 0;
-  for (let i = 0; i < given.length; i += 1) {
-    diff |= given.charCodeAt(i) ^ expected.charCodeAt(i);
-  }
-  return diff === 0;
-}
+/* The constant-time comparison moved to _session.mjs, which is the only place that now
+   decides whether a caller may drive a room. */
 
 /* How many people are in the room right now, counted from the self records. */
 async function roomSize(store, session) {
@@ -52,15 +45,22 @@ export default async (request) => {
   }
 
   /* Fail shut. No token configured means nobody can drive the session, which is
-     a stuck session rather than an open one. */
-  const expected = process.env.DRILL_TOKEN || '';
-  if (!tokenOk(String(body.token || ''), expected)) {
+     a stuck session rather than an open one.
+
+     THE SESSION IS READ BEFORE THE TOKEN IS JUDGED, because a room may now be driven by
+     its own token as well as by the site-wide one. Order matters: the session name has to
+     be validated first, so it is parsed above this and not below it. */
+  const earlySession = String(body.session || '').trim().toLowerCase();
+  const verdict = body.verify === true
+    ? { ok: globalOk(String(body.token || ''), process.env.DRILL_TOKEN || ''), by: 'global' }
+    : await mayDrive(earlySession, String(body.token || ''));
+  if (!verdict.ok) {
     /* Say which half is wrong without saying anything about the value.
        "configured" is whether the function can see DRILL_TOKEN at all, which
        separates a scope or deploy-context problem from a value that does not
        match. Without it, an unset variable and a wrong token are the same
        refusal, and the session cannot start either way. */
-    return json(403, { error: 'no', configured: Boolean(expected) });
+    return json(403, { error: 'no', configured: globalConfigured() });
   }
 
   /* Checking a token must never write. The facilitator page proves the token
@@ -71,7 +71,7 @@ export default async (request) => {
     return json(200, { ok: true, verified: true });
   }
 
-  const session = String(body.session || '').trim().toLowerCase();
+  const session = earlySession;
   if (!/^[a-z0-9-]{6,64}$/.test(session)) {
     return json(400, { error: 'session' });
   }
@@ -144,5 +144,5 @@ export default async (request) => {
     return json(502, { error: 'store unavailable' });
   }
 
-  return json(200, { ok: true, current: nextCurrent, released: release, test: isTest });
+  return json(200, { ok: true, current: nextCurrent, released: release, test: isTest, authBy: verdict.by });
 };

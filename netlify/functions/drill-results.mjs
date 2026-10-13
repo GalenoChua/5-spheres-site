@@ -8,6 +8,7 @@
  * after a session without the records being wrong.
  */
 import { getStore } from '@netlify/blobs';
+import { mayDrive, globalConfigured } from './_session.mjs';
 import { refFor } from './drill-roster.mjs';
 import { pctOf, scaleOf } from './_scale.mjs';
 
@@ -21,14 +22,8 @@ const json = (status, body) =>
     headers: { 'content-type': 'application/json', 'cache-control': 'no-store' }
   });
 
-function tokenOk(given, expected) {
-  if (!expected || !given || given.length !== expected.length) return false;
-  let diff = 0;
-  for (let i = 0; i < given.length; i += 1) {
-    diff |= given.charCodeAt(i) ^ expected.charCodeAt(i);
-  }
-  return diff === 0;
-}
+/* The constant-time comparison moved to _session.mjs, which is the only place that now
+   decides whether a caller may read a room. */
 
 const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
 /* The span comes from the record, never from a constant here. A reader that
@@ -154,14 +149,18 @@ export default async (request) => {
     return json(400, { error: 'not json' });
   }
 
-  const expected = process.env.DRILL_TOKEN || '';
-  if (!tokenOk(String(body.token || ''), expected)) {
-    return json(403, { error: 'no', configured: Boolean(expected) });
-  }
-
+  /* A coach reads their OWN room with their own token, or any room with the site-wide
+     one. The session is therefore resolved before the token is judged, and an unknown
+     session answers the same 403 as a wrong token so this cannot be used to discover
+     which session names exist. */
   const session = String(body.session || '').trim().toLowerCase();
   if (!/^[a-z0-9-]{6,64}$/.test(session)) {
     return json(400, { error: 'session' });
+  }
+
+  const verdict = await mayDrive(session, String(body.token || ''));
+  if (!verdict.ok) {
+    return json(403, { error: 'no', configured: globalConfigured() });
   }
 
   let store;

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Set up a drill</title>
+<style>
+  :root{
+    --ink:#1d2a52; --paper:#faf6ef; --paper-warm:#f3ecdf; --ember:#e8862e;
+    --line:#d9cfbe; --muted:#6b6557; --good:#2f7a52; --warn:#b4541f;
+    --sans: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --serif: Fraunces, Georgia, "Times New Roman", serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5}
+  .wrap{max-width:760px;margin:0 auto;padding:22px 18px 70px}
+  h1{font-family:var(--serif);font-weight:600;font-size:1.45rem;margin:0 0 3px}
+  h2{font-family:var(--serif);font-weight:600;font-size:1.05rem;margin:0 0 8px}
+  .sub{color:var(--muted);font-size:.86rem;margin:0 0 18px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+  label{display:block;margin-bottom:12px}
+  label span{display:block;font-size:.9rem;margin-bottom:5px}
+  input[type=text],input[type=email],input[type=password]{width:100%;font:inherit;padding:10px;
+    border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink)}
+  button{font:inherit;cursor:pointer;border-radius:7px;border:1px solid var(--ink);
+         background:var(--ink);color:#fff;padding:10px 16px;font-weight:600}
+  button.ghost{background:transparent;color:var(--ink);font-weight:400}
+  button.small{padding:7px 12px;font-size:.86rem}
+  button[disabled]{opacity:.4;cursor:default}
+  .msg{border-radius:7px;padding:10px 12px;margin:10px 0;font-size:.9rem}
+  .msg.err{background:#fdecec;border:1px solid #e9bcbc;color:#8d2b2b}
+  .msg.warn{background:#fdf3e6;border:1px solid #e8cfa6;color:#8a5516}
+  .hidden{display:none}
+  .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
+  .tok{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.05rem;
+       background:var(--paper-warm);border:1px solid var(--line);border-radius:7px;
+       padding:11px 13px;word-break:break-all;user-select:all}
+  .lnk{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;
+       background:var(--paper-warm);border:1px solid var(--line);border-radius:7px;
+       padding:8px 10px;word-break:break-all;user-select:all;margin-bottom:4px}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .note{font-size:.84rem;color:var(--muted)}
+  fieldset{border:1px solid var(--line);border-radius:8px;padding:12px;margin:0 0 12px}
+  legend{font-size:.84rem;color:var(--muted);padding:0 6px}
+  .choice{display:flex;gap:16px;flex-wrap:wrap}
+  .choice label{display:flex;gap:7px;align-items:center;margin:0;font-size:.92rem}
+  .choice input{width:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Set up a drill</h1>
+  <p class="sub">Makes a room of your own, with its own links and its own token.</p>
+
+  <div class="card" id="form">
+    <label>
+      <span>Coach token</span>
+      <input type="password" id="coach" autocomplete="off">
+    </label>
+    <label>
+      <span>Your email</span>
+      <input type="email" id="owner" autocomplete="email" placeholder="you@example.org">
+    </label>
+    <label>
+      <span>What to call it <span class="note">(for your own list, optional)</span></span>
+      <input type="text" id="label" placeholder="Lisbon cohort, 14 November">
+    </label>
+
+    <!-- No default, for the same reason the facilitator panel has none: a default is how
+         the wrong value gets recorded silently, and the exporter trusts this over the name. -->
+    <fieldset>
+      <legend>Does this room count?</legend>
+      <div class="choice">
+        <label><input type="radio" name="kind" value="real"> A real session</label>
+        <label><input type="radio" name="kind" value="test"> A rehearsal</label>
+      </div>
+    </fieldset>
+
+    <button id="make">Set up the session</button>
+    <div id="form-msg"></div>
+  </div>
+
+  <div class="card hidden" id="out">
+    <h2>Your session</h2>
+
+    <div class="msg warn">
+      <b>Save this token now.</b> It is stored only as a hash and nobody can read it back,
+      including us. If it is lost you can issue a new one for this room below, and no other
+      room is affected.
+    </div>
+
+    <div class="k">Facilitator token</div>
+    <div class="tok" id="tok"></div>
+
+    <p class="note" style="margin:12px 0 4px">Session <b id="sid"></b><span id="kindnote"></span></p>
+
+    <div class="k" style="margin-top:14px">Give this to everyone scoring</div>
+    <div class="lnk" id="l-participant"></div>
+    <div class="k" style="margin-top:12px">Put this on the screen</div>
+    <div class="lnk" id="l-room"></div>
+    <div class="k" style="margin-top:12px">Keep these for yourself</div>
+    <div class="lnk" id="l-facilitator"></div>
+    <div class="lnk" id="l-results"></div>
+
+    <div class="row" style="margin-top:16px">
+      <button class="ghost small" id="again">Set up another</button>
+      <button class="ghost small" id="rotate">Lost the token? Issue a new one</button>
+    </div>
+    <div id="out-msg"></div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+  var API = '/.netlify/functions/';
+  var made = null;
+
+  function $(id) { return document.getElementById(id); }
+  function say(where, kind, text) {
+    $(where).innerHTML = text ? '<div class="msg ' + kind + '">' + text + '</div>' : '';
+  }
+
+  function post(body) {
+    return fetch(API + 'drill-create', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      return r.json().then(function (j) {
+        if (!r.ok) {
+          /* The function separates a missing variable from a wrong value, which is the only
+             thing that makes a failure diagnosable without a deploy log. */
+          if (j.error === 'no') {
+            throw new Error(j.configured === false
+              ? 'No coach token is configured on the site yet. That is a Netlify variable, not something you typed wrong.'
+              : 'That coach token is not right.');
+          }
+          throw new Error(j.error || 'Something went wrong.');
+        }
+        return j;
+      });
+    });
+  }
+
+  function show(j, kind) {
+    made = j;
+    $('tok').textContent = j.token;
+    $('sid').textContent = j.session;
+    $('kindnote').textContent = kind === 'test' ? ' — rehearsal, this room is not counted' : '';
+    $('l-participant').textContent = j.links.participant;
+    $('l-room').textContent = j.links.room;
+    $('l-facilitator').textContent = j.links.facilitator;
+    $('l-results').textContent = j.links.results;
+    $('form').classList.add('hidden');
+    $('out').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  $('make').onclick = function () {
+    var coach = $('coach').value.trim();
+    var owner = $('owner').value.trim();
+    var picked = document.querySelector('input[name=kind]:checked');
+    if (!coach) { say('form-msg', 'err', 'The coach token first.'); return; }
+    if (!owner) { say('form-msg', 'err', 'Your email, so the room knows whose it is.'); return; }
+    if (!picked) { say('form-msg', 'err', 'Say whether this room counts. There is deliberately no default.'); return; }
+    say('form-msg', '', '');
+    var btn = this; btn.disabled = true;
+    post({
+      token: coach, owner: owner, label: $('label').value.trim(),
+      test: picked.value === 'test'
+    }).then(function (j) {
+      show(j, picked.value);
+    })['catch'](function (e) {
+      btn.disabled = false;
+      say('form-msg', 'err', e.message);
+    });
+  };
+
+  $('again').onclick = function () {
+    $('out').classList.add('hidden');
+    $('form').classList.remove('hidden');
+    $('make').disabled = false;
+    $('label').value = '';
+    var p = document.querySelector('input[name=kind]:checked');
+    if (p) { p.checked = false; }
+    say('out-msg', '', '');
+  };
+
+  $('rotate').onclick = function () {
+    if (!made) { return; }
+    say('out-msg', '', '');
+    var btn = this; btn.disabled = true;
+    post({ token: $('coach').value.trim(), owner: $('owner').value.trim(), rotate: made.session })
+      .then(function (j) {
+        $('tok').textContent = j.token;
+        made.token = j.token;
+        btn.disabled = false;
+        say('out-msg', 'warn', 'New token issued. The previous one stopped working just now, '
+          + 'and only this room was affected.');
+      })['catch'](function (e) {
+        btn.disabled = false;
+        say('out-msg', 'err', e.message);
+      });
+  };
+})();
+</script>
+</div>
+</body>
+</html>
