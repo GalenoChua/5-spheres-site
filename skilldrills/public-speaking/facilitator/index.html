@@ -268,7 +268,10 @@
     /* Verify writes nothing. An earlier version proved the token by writing the
        floor state it thought it had, which at that point was nothing, so
        opening or reloading this page knocked the speaker off the floor. */
-    callStage({ token: token, verify: true }).then(function () {
+    /* The session goes with the verify, so a room's own token can answer for it. Without
+       it the server can only check the site-wide token, which is not the one /new/ hands
+       the coach. */
+    callStage({ session: SESSION, token: token, verify: true }).then(function () {
       return callStage({ session: SESSION, token: token, test: isTest });
     }).then(function () {
       try { sessionStorage.setItem('drill-token', token); } catch (e) {}

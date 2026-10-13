@@ -49,20 +49,37 @@ export default async (request) => {
     return json(502, { error: 'store unavailable' });
   }
 
+  /* ALL OF THEM AT ONCE, NOT ONE AT A TIME.
+   *
+   * This was a sequential await inside the loop. Measured in production: five records answered
+   * in 0.71s and thirty in 2.30s, about 56ms a record over a half-second floor. A thirteen
+   * speaker room where everybody scores everybody is 13 self + 156 room + 1 stage = 170
+   * records, so about ten seconds, and ten seconds is the synchronous function limit. Around
+   * eighty records a single poll already takes longer than the four-second interval every
+   * participant and the facilitator poll on, so the page falls permanently behind.
+   *
+   * What that looks like in a live room is cards that stop advancing to the next speaker and a
+   * facilitator count that stops climbing, with no error, because the participant page
+   * swallows a dropped poll on purpose. The biggest session ever seeded is five speakers, so
+   * nothing had ever run the shape the 22nd will be.
+   *
+   * Ordering is not lost: speakers are sorted by arrival below and the scores are a tally. */
+  const keys = blobs.map((b) => b.key).filter((k) => k.split('/').length === 3);
+  const fetched = await Promise.all(keys.map(async (k) => {
+    try {
+      return [k, await store.get(k, { type: 'json' })];
+    } catch {
+      return [k, null];               /* one unreadable record is not a failed roster */
+    }
+  }));
+
   /* One pass over the session. Self records become the roster; everything else
      is counted against the speaker it scores, which is what tells the
      facilitator whether the room has finished and it is safe to move on. */
   const speakers = [];
   const scored = new Map();
-  for (const b of blobs) {
-    const parts = b.key.split('/');
-    if (parts.length !== 3) continue;          /* session/_stage and anything else */
-    let rec;
-    try {
-      rec = await store.get(b.key, { type: 'json' });
-    } catch {
-      continue;
-    }
+  for (const [key, rec] of fetched) {
+    const parts = key.split('/');
     if (!rec) continue;
     if (rec.role === 'self' && parts[1] === parts[2]) {
       speakers.push({

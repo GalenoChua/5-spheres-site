@@ -51,7 +51,15 @@ export default async (request) => {
      its own token as well as by the site-wide one. Order matters: the session name has to
      be validated first, so it is parsed above this and not below it. */
   const earlySession = String(body.session || '').trim().toLowerCase();
-  const verdict = body.verify === true
+  /* VERIFY ASKS THE SAME QUESTION AS EVERY OTHER CALL, SO IT USES THE SAME FUNCTION.
+   *
+   * This branch checked only the site-wide DRILL_TOKEN, so mayDrive, which exists to honour a
+   * room's own token, was never reached from the one call the facilitator page makes first. The
+   * 24-hex token /new/ issues and shows once could not open the panel it was issued for.
+   *
+   * mayDrive already tries the global token before the session's own, so a verify carrying no
+   * session still behaves exactly as it did. */
+  const verdict = body.verify === true && !earlySession
     ? { ok: globalOk(String(body.token || ''), process.env.DRILL_TOKEN || ''), by: 'global' }
     : await mayDrive(earlySession, String(body.token || ''));
   if (!verdict.ok) {

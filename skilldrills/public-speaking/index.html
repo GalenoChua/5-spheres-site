@@ -140,7 +140,7 @@
     </div>
     <div class="sec">
       <h3 id="self-stage">Score yourself, before you speak</h3>
-      <p class="anchor" id="self-anchor">1 is low, 5 is high. How you expect it to land.</p>
+      <p class="anchor" id="self-anchor" data-anchor="expect"></p>
       <div id="my-outcome"></div>
       <div id="my-what"></div>
       <div id="my-five"></div>
@@ -198,17 +198,17 @@
         <textarea id="s-relay" maxlength="600" placeholder="They were saying that..."></textarea>
         <div class="count" id="s-relay-count"></div>
       </label>
-      <p class="anchor">1 is low, 5 is high.</p>
+      <p class="anchor" data-anchor="plain"></p>
       <div id="s-what"></div>
     </div>
     <div class="sec">
       <h3>How they said it</h3>
-      <p class="anchor">1 is low, 5 is high.</p>
+      <p class="anchor" data-anchor="plain"></p>
       <div id="s-five"></div>
     </div>
     <div class="sec">
       <h3>What you were left with</h3>
-      <p class="anchor">1 is low, 5 is high.</p>
+      <p class="anchor" data-anchor="plain"></p>
       <div id="s-outcome"></div>
       <div id="s-reserve"></div>
     </div>
@@ -302,6 +302,30 @@
   /* One to ten from 4 October 2026, matching the Quad. A participant who meets
      two scales inside one programme is worse off than either scale. */
   var SCALE_MAX = 10;
+
+  /* THE WORDS COME FROM THE CONSTANT, NOT FROM A LITERAL.
+     SCALE_MAX moved from 5 to 10 on 4 October and five hard-coded "1 is low, 5 is high"
+     strings did not move with it, so the page built ten ticks and told the room that five was
+     the top. A founder meaning top marks ticked the midpoint, every reading came out about
+     half, and nothing complained: the loader checks that records agree with each other about
+     the scale, and a room that was all misled agrees perfectly. quad/index.html:539 already
+     derives its high anchor this way, which is why the Quad never had this. */
+  function anchorText(kind) {
+    var ends = '1 is low, ' + SCALE_MAX + ' is high.';
+    if (kind === 'landed') return ends + ' How you think it actually landed.';
+    if (kind === 'expect') return ends + ' How you expect it to land.';
+    return ends;
+  }
+  function paintAnchors() {
+    var ps = document.querySelectorAll('[data-anchor]');
+    for (var i = 0; i < ps.length; i++) {
+      ps[i].textContent = anchorText(ps[i].getAttribute('data-anchor'));
+    }
+  }
+  /* Painted at load rather than at sign-in. Called from enter() it only ran for somebody who
+     had already signed in, so every path that shows a card without going through enter()
+     displayed a blank anchor. */
+  paintAnchors();
   var SCALE = [];
   for (var _i = 1; _i <= SCALE_MAX; _i++) { SCALE.push(_i); }
 
@@ -668,8 +692,8 @@
     document.getElementById('self-stage').textContent =
       iHaveSpoken ? 'Score yourself, now you have spoken' : 'Score yourself, before you speak';
     document.getElementById('self-anchor').textContent = iHaveSpoken
-      ? '1 is low, 5 is high. How you think it actually landed.'
-      : '1 is low, 5 is high. How you expect it to land.';
+      ? anchorText('landed')
+      : anchorText('expect');
     document.getElementById('save-mine').textContent =
       iHaveSpoken ? 'Save my second card' : 'Save my first card';
   }
