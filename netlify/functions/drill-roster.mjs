@@ -127,7 +127,14 @@ export default async (request) => {
        arriving. Clamping means the count can only ever be generous. */
     s.expected = Math.max(base, s.scores);
     s.done = s.expected > 0 && s.scores >= s.expected;
-    s.hasSpoken = Boolean(frozen);
+    /* SPOKEN MEANS CAME OFF THE FLOOR, NOT WAS PUT ON IT.
+       sizes[ref] is written the moment the facilitator puts somebody up, so this used to be
+       true while they were still standing there about to talk. The page reads it as
+       iHaveSpoken, which switched their own card to the after half, in the past tense, and
+       cleared it. A speaker who had not already saved a first card lost their before reading,
+       and that reading is half of what the instrument measures. It also made this list say
+       "has spoken" about the person speaking. */
+    s.hasSpoken = Boolean(frozen) && s.ref !== current;
   });
 
   return json(200, { session, current, released, roomNow: speakers.length, speakers });

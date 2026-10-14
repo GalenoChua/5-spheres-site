@@ -125,13 +125,13 @@
   <!-- ───────── your own point, before you speak ───────── -->
   <div class="card hidden" id="mine">
     <h2 id="mine-title">When it is your turn</h2>
-    <div class="sec">
+    <div class="sec" id="my-message">
       <h3>Your message</h3>
       <div class="flap">
         <p class="lock">Kept covered. The room writes down what they heard before this is shown.</p>
         <label class="item" style="margin:0">
           <span class="q">The one point you want them to leave with</span>
-          <span class="hint">One sentence, before you speak.</span>
+          <span class="hint">One sentence, before you speak. You write this once.</span>
           <textarea id="my-intent" maxlength="600"
                     placeholder="If they remember one thing, it is..."></textarea>
           <div class="count" id="my-intent-count"></div>
@@ -140,6 +140,8 @@
     </div>
     <div class="sec">
       <h3 id="self-stage">Score yourself, before you speak</h3>
+      <p class="lock" id="self-fresh" hidden>Your first card is saved. Score this one from
+        scratch: seeing what you put before would pull this one toward it.</p>
       <p class="anchor" id="self-anchor" data-anchor="expect"></p>
       <div id="my-outcome"></div>
       <div id="my-what"></div>
@@ -214,7 +216,7 @@
     </div>
     <div class="sec">
       <label class="item" style="margin:0">
-        <span class="q">The one thing to change first</span>
+        <span class="q">Any advice you would offer them?</span>
         <span class="hint">Optional. One line is plenty.</span>
         <textarea id="s-fix" maxlength="600"></textarea>
       </label>
@@ -522,11 +524,19 @@
     });
   };
 
+  /* Kept from the first card so the second one does not ask for it again. The server has it
+     too, but the save below sends the whole record, and sending an empty intent on the second
+     card would overwrite the one they wrote before speaking. */
+  var myIntent = '';
+
   document.getElementById('save-mine').onclick = function () {
     var ta = document.getElementById('my-intent');
-    var intent = ta.value.trim();
+    var intent = iHaveSpoken ? myIntent : ta.value.trim();
     ta.removeAttribute('aria-invalid');
-    if (!intent) {
+    /* Only asked for on the first card. Asked again on the second it blocked the save of
+       somebody who had already written it, with "Write the one point first" under a box they
+       could no longer see a reason to fill. */
+    if (!intent && !iHaveSpoken) {
       ta.setAttribute('aria-invalid', 'true');
       ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
       ta.focus();
@@ -541,6 +551,7 @@
       reserve: val('my', 'reserve'), five: group('my', FIVE_SELF),
       fix: document.getElementById('my-fix').value.trim()
     }).then(function () {
+      if (!iHaveSpoken) { myIntent = intent; }
       if (iHaveSpoken) { savedAfter = true; }
       say('mine-msg', 'ok', iHaveSpoken
         ? 'Saved. Both of your cards are in.'
@@ -729,6 +740,17 @@
     }
     document.getElementById('mine-title').textContent =
       iAmUp ? 'You are up' : (iHaveSpoken ? 'Now you have spoken' : 'When it is your turn');
+    /* THE ONE POINT IS WRITTEN ONCE, BEFORE SPEAKING. On the second card the box came back
+       empty and the save demanded it again, which reads as the first card having been lost. */
+    show('my-message', !iHaveSpoken);
+    /* AND THE BLANK QUESTIONS ARE SAID OUT LOUD, ABOVE THEM RATHER THAN UNDER THE CARD.
+       The second card opens blank on purpose: seeing the first card's ticks would have the
+       speaker adjusting from their own anchor, and the movement between the two is the
+       finding. Blank boxes under a heading that looks the same read as lost work, and the note
+       explaining it sat at the bottom where somebody scrolling to the questions never met
+       it. */
+    var fresh = document.getElementById('self-fresh');
+    if (fresh) { fresh.hidden = !iHaveSpoken; }
     document.getElementById('self-stage').textContent =
       iHaveSpoken ? 'Score yourself, now you have spoken' : 'Score yourself, before you speak';
     paintSelfQuestions();
