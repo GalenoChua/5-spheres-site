@@ -716,11 +716,26 @@
        the waiting room is the right screen rather than an empty card they have
        already completed. */
     var cardStillToFill = !iHaveSpoken || !savedAfter;
-    var showMine = iAmUp || (!currentRef && cardStillToFill);
+    /* THE AFTER CARD FINDS ITS OWN GAP.
+     *
+     * This was `iAmUp || (!currentRef && cardStillToFill)`, so somebody who had just spoken
+     * could only reach their second card while the floor was empty. The facilitator puts the
+     * next speaker up straight away, which is the natural thing to do, and the card was gone.
+     * On 14 October that produced ten before cards and zero after cards, so every gap on every
+     * founder's board is expectation against the room rather than the movement the two cards
+     * exist to measure.
+     *
+     * Scoring the room still comes first: this only opens once their card for the speaker
+     * currently on the floor has been sent, which is the moment they would otherwise be shown
+     * a panel saying there is nothing to do. */
+    var myAfterDue = iHaveSpoken && !savedAfter;
+    var showMine = iAmUp || (!currentRef && cardStillToFill) || (alreadySent && myAfterDue);
 
     drawRoom();
     show('scoring', scoringNow);
-    show('done', Boolean(alreadySent));
+    /* The waiting panel loses to the after card, because one of them is work the speaker owes
+       and the other says there is none. */
+    show('done', Boolean(alreadySent) && !showMine);
     show('idle', !currentRef && !iAmUp && !showMine);
     show('mine', showMine);
 
