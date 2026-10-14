@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>People trust scoring card, ASC Credibility Programme session 2</title>
+<style>
+:root{--blue:#0f3d7b;--red:#ed1c24;--yellow:#fff200;--pale:#c7d3e8}
+*{box-sizing:border-box}
+body{margin:0;background:#081f3f;color:#fff;
+  font:16px/1.55 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  padding:22px 16px 70px}
+main{max-width:640px;margin:0 auto}
+h1{font-size:23px;margin:0 0 6px;line-height:1.2}
+.kick{color:var(--yellow);font-size:12px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;margin-bottom:10px}
+hr{border:0;height:4px;width:110px;background:var(--red);margin:14px 0 20px}
+p.lede{color:var(--pale);font-size:15px;margin:0 0 22px}
+label{display:block;font-size:13px;color:var(--pale);margin:0 0 5px}
+input[type=text]{width:100%;padding:11px 12px;border-radius:7px;border:1px solid #2a4f86;
+  background:#0c2a55;color:#fff;font-size:16px;margin-bottom:16px}
+.q{background:var(--blue);border-radius:10px;padding:16px 18px;margin:0 0 14px}
+.q b{display:block;font-size:13px;color:var(--yellow);letter-spacing:.05em;
+  text-transform:uppercase;margin-bottom:5px}
+.q span{display:block;font-size:17px;margin-bottom:13px;line-height:1.35}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.scale button{padding:13px 0;border-radius:7px;border:1px solid #2a4f86;background:#0c2a55;
+  color:#fff;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit}
+.scale button[aria-pressed=true]{background:var(--yellow);color:var(--blue);
+  border-color:var(--yellow)}
+.out{background:#0c2a55;border:1px dashed #2a4f86;border-radius:10px;padding:16px 18px;
+  margin-top:20px}
+.out code{display:block;font-size:16px;word-break:break-word;color:var(--yellow);
+  font-family:ui-monospace,Consolas,monospace;line-height:1.5}
+.out .hint{color:var(--pale);font-size:13px;margin:0 0 10px}
+.note{color:var(--pale);font-size:13px;font-style:italic;margin-top:24px;line-height:1.5}
+@media(max-width:420px){.scale button{padding:15px 0;font-size:18px}}
+</style></head><body><main>
+
+<div class="kick">ASC Credibility Programme 2026 &middot; Session 2</div>
+<h1>People trust scoring card</h1>
+<hr>
+<p class="lede">You score one person, the founder who speaks after you, on four
+questions from 1 to 5. It takes about thirty seconds. When you are done, send the one
+line at the bottom of this page into the WhatsApp group.</p>
+
+<label for="scorer">Your name</label>
+<input type="text" id="scorer" autocomplete="off" placeholder="Your first name">
+
+<label for="speaker">Who you are scoring</label>
+<input type="text" id="speaker" autocomplete="off" placeholder="Their first name">
+
+<div class="q" data-k="intra">
+  <b>1 &middot; Intrapersonal</b>
+  <span>Did they own a gap without defending it?</span>
+  <div class="scale"></div>
+</div>
+
+<div class="q" data-k="inter">
+  <b>2 &middot; Interpersonal</b>
+  <span>Did they listen without waiting to talk?</span>
+  <div class="scale"></div>
+</div>
+
+<div class="q" data-k="intragroup">
+  <b>3 &middot; Intragroup</b>
+  <span>Did they speak about people who are not here as if they were?</span>
+  <div class="scale"></div>
+</div>
+
+<div class="q" data-k="intergroup">
+  <b>4 &middot; Intergroup</b>
+  <span>Under pressure, did they stay with the question?</span>
+  <div class="scale"></div>
+</div>
+
+<div class="out">
+  <p class="hint">Copy this one line and send it to the WhatsApp group.</p>
+  <code id="line">PT2 | scorer: ... | speaker: ... | 0 0 0 0</code>
+</div>
+
+<p class="note">Scores run from 1 at the low end to 5 at the high end. These numbers
+stay inside this group. They do not go on your board and they do not reach a buyer.
+Nobody is graded on them.</p>
+
+</main>
+<script>
+// One fixed output format. On 7 October the homework went into the meeting chat in
+// free text and had to be collected again by hand; a fixed line is what makes
+// thirteen scores readable without re-asking anybody.
+var KEYS = ["intra", "inter", "intragroup", "intergroup"];
+var scores = {intra: 0, inter: 0, intragroup: 0, intergroup: 0};
+
+document.querySelectorAll(".q").forEach(function (q) {
+  var k = q.getAttribute("data-k");
+  var holder = q.querySelector(".scale");
+  for (var n = 1; n <= 5; n++) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = String(n);
+    b.setAttribute("aria-pressed", "false");
+    b.setAttribute("data-n", String(n));
+    b.addEventListener("click", function () {
+      var v = Number(this.getAttribute("data-n"));
+      scores[k] = v;
+      holder.querySelectorAll("button").forEach(function (other) {
+        other.setAttribute("aria-pressed",
+          other.getAttribute("data-n") === String(v) ? "true" : "false");
+      });
+      render();
+    });
+    holder.appendChild(b);
+  }
+});
+
+function render() {
+  var a = document.getElementById("scorer").value.trim() || "...";
+  var b = document.getElementById("speaker").value.trim() || "...";
+  var nums = KEYS.map(function (k) { return scores[k]; }).join(" ");
+  document.getElementById("line").textContent =
+    "PT2 | scorer: " + a + " | speaker: " + b + " | " + nums;
+}
+
+document.getElementById("scorer").addEventListener("input", render);
+document.getElementById("speaker").addEventListener("input", render);
+render();
+</script>
+</body></html>
