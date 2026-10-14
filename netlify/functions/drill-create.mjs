@@ -89,6 +89,30 @@ export default async (request) => {
     tokenHash: hashToken(token),
   });
 
+  /* AND INTO THE RECORD THE EXPORT ACTUALLY READS.
+   *
+   * The line above writes `test` into the drill-sessions store. _export_drills.mjs and
+   * load_people_trust.cjs read drill-scores at <session>/_stage, and nothing joined the two,
+   * so the rehearsal radio on the create page was invisible to both. Confirmed on a real
+   * session created as a rehearsal on 14 October: _stage held test: null, the export fell back
+   * to the session name, "ps-" is not in the rehearsal pattern, and a rehearsal was classified
+   * as real. The loader would have committed practice scores to a founder's surface.
+   *
+   * Written at creation only, so it cannot overwrite a later declaration from the facilitator
+   * panel: drill-stage treats `test` as sticky once set. A failure here is not worth losing the
+   * room over, so it is caught and the panel's own declaration remains the backstop. */
+  try {
+    const scores = getStore('drill-scores');
+    const prior = (await scores.get(`${session}/_stage`, { type: 'json' })) || {};
+    await scores.setJSON(`${session}/_stage`, {
+      current: prior.current ?? null,
+      changedAt: new Date().toISOString(),
+      released: prior.released === true,
+      test,
+      sizes: prior.sizes && typeof prior.sizes === 'object' ? prior.sizes : {}
+    });
+  } catch { /* the facilitator panel can still declare it */ }
+
   const base = new URL(request.url).origin;
   const q = `?session=${encodeURIComponent(session)}`;
   return json(200, {
