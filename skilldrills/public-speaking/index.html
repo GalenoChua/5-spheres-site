@@ -264,6 +264,30 @@
   var RES_OBS = [['reserve', 'Reserve',
     'They were asked one question. Was there more behind the answer?']];
 
+  /* THE SELF CARD IS FILLED TWICE AND THE TENSE HAS TO MOVE WITH IT.
+     Both halves were built once at load from the _SELF sets below, so a founder about to
+     speak was asked "Did you feel in command?" about ninety seconds they had not delivered.
+     The anchor line was the only thing that changed. The gap between the two readings is the
+     finding, and a past-tense question in the before half turns the first one into a guess
+     about a memory. Same keys, same order, so nothing downstream changes. */
+  var OUTCOME_SELF_BEFORE = [
+    ['confident', 'Confident', 'How in command do you expect to feel?'],
+    ['clear', 'Clear', 'How well do you expect them to understand you?'],
+    ['believed', 'Believed', 'How far do you expect them to believe you?']
+  ];
+  var WHAT_SELF_BEFORE = [
+    ['held', 'Structure', 'Will it hold together?'],
+    ['aimed', 'Aim', 'Is it built for the people in front of you?']
+  ];
+  var FIVE_SELF_BEFORE = [
+    ['pause', 'Pause', 'Will you give moments their weight?'],
+    ['pace', 'Pace', 'Will you hold them rather than outrun them?'],
+    ['volume', 'Volume', 'Will you use loud and quiet for emphasis?'],
+    ['emotion', 'Emotion', 'Will there be resonance in your voice?'],
+    ['tonality', 'Tonality', 'Will you use your range?']
+  ];
+  var RES_SELF_BEFORE = [['reserve', 'Reserve', 'How much are you holding back?']];
+
   /* The self card asks about you, in the first person. Sharing the observer
      wording made it ask "did they seem in command" of your own turn. */
   var OUTCOME_SELF = [
@@ -337,7 +361,8 @@
     var name = ns + '-' + row[0];
     return '<fieldset class="item" role="radiogroup">' +
       '<legend><span class="qname">' + esc(row[1]) + '</span>' +
-      '<span class="qtext">' + esc(row[2]) + '</span></legend>' +
+      '<span class="qtext" data-q="' + esc(ns + '-' + row[0]) + '">' +
+      esc(row[2]) + '</span></legend>' +
       '<span class="scale">' +
       SCALE.map(function (i) {
         return '<label><input type="radio" name="' + name + '" value="' + i +
@@ -345,6 +370,17 @@
                '<span>' + i + '</span></label>';
       }).join('') +
       '</span></fieldset>';
+  }
+  /* Repaints the question text rather than rebuilding the rows, because a rebuild would
+     throw away whatever the speaker has already ticked. */
+  function paintSelfQuestions() {
+    var rows = iHaveSpoken
+      ? [].concat(OUTCOME_SELF, WHAT_SELF, FIVE_SELF, RES_SELF)
+      : [].concat(OUTCOME_SELF_BEFORE, WHAT_SELF_BEFORE, FIVE_SELF_BEFORE, RES_SELF_BEFORE);
+    rows.forEach(function (r) {
+      var el = document.querySelector('.qtext[data-q="my-' + r[0] + '"]');
+      if (el) { el.textContent = r[2]; }
+    });
   }
   function build(id, ns, rows) {
     document.getElementById(id).innerHTML = rows.map(function (r) {
@@ -396,10 +432,14 @@
   build('s-what', 's', WHAT);
   build('s-five', 's', FIVE);
   build('s-reserve', 's', RES_OBS);
-  build('my-outcome', 'my', OUTCOME_SELF);
-  build('my-what', 'my', WHAT_SELF);
-  build('my-five', 'my', FIVE_SELF);
-  build('my-reserve', 'my', RES_SELF);
+  /* BUILT IN THE BEFORE TENSE, because the before half is always the one filled first.
+     Built from the after sets, the markup shipped asking "Did you feel in command?" to
+     somebody who had not spoken yet, and paintSelfQuestions only runs from render(), which
+     needs a sign-in. The keys are identical in both sets, so group() is unaffected. */
+  build('my-outcome', 'my', OUTCOME_SELF_BEFORE);
+  build('my-what', 'my', WHAT_SELF_BEFORE);
+  build('my-five', 'my', FIVE_SELF_BEFORE);
+  build('my-reserve', 'my', RES_SELF_BEFORE);
   counter('s-relay', 's-relay-count');
   counter('my-intent', 'my-intent-count');
 
@@ -691,6 +731,7 @@
       iAmUp ? 'You are up' : (iHaveSpoken ? 'Now you have spoken' : 'When it is your turn');
     document.getElementById('self-stage').textContent =
       iHaveSpoken ? 'Score yourself, now you have spoken' : 'Score yourself, before you speak';
+    paintSelfQuestions();
     document.getElementById('self-anchor').textContent = iHaveSpoken
       ? anchorText('landed')
       : anchorText('expect');
