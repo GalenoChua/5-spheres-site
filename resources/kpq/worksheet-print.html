@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>The KPQ Worksheet, printable</title>
+<link rel="stylesheet" href="/fonts/fonts.css">
+<style>
+  /* Source for the printable PDF at /assets/the-kpq-worksheet.pdf.
+     Deliberately NOT built on styles.css. Two reasons, both learned the hard
+     way: .hero-dark h1 is var(--paper), so a dark hero prints white on white
+     and the title vanishes; and the cream --paper background rasterises the
+     whole page, turning a 200KB PDF into 9MB. White ground, ink text. */
+  @page { size: A4; margin: 13mm 15mm 11mm; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #fff; }
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    color: #2a2f3d;
+    font-size: 9.4pt;
+    line-height: 1.38;
+    -webkit-font-smoothing: antialiased;
+  }
+  .sheet { max-width: 178mm; margin: 0 auto; }
+
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 600; color: #1d2a52;
+    font-size: 20pt; line-height: 1.08; letter-spacing: -.01em; margin-bottom: 7pt;
+  }
+  .kicker {
+    font-size: 7.6pt; font-weight: 600; letter-spacing: .15em;
+    text-transform: uppercase; color: #e8862e; margin-bottom: 7pt;
+  }
+  .standfirst { font-size: 10.2pt; color: #1d2a52; max-width: 150mm; margin-bottom: 4pt; }
+  .meta { font-size: 8pt; color: #6b6f7c; margin-bottom: 9pt; }
+
+  h2 {
+    font-family: 'Fraunces', serif; font-weight: 600; color: #1d2a52;
+    font-size: 11.6pt; margin: 10pt 0 4pt;
+    border-top: 1.5px solid #e0d9c9; padding-top: 6pt;
+  }
+  h2:first-of-type { margin-top: 8pt; }
+  p { margin-bottom: 4.5pt; }
+  strong { color: #1d2a52; }
+
+  .defs { display: flex; gap: 9pt; margin-bottom: 4pt; }
+  .def {
+    flex: 1; border: 1pt solid #e0d9c9; border-radius: 3pt;
+    padding: 7pt 9pt; font-size: 8.5pt;
+  }
+  .def b {
+    display: block; font-size: 7.4pt; font-weight: 600; letter-spacing: .13em;
+    text-transform: uppercase; color: #e8862e; margin-bottom: 3pt;
+  }
+
+  .stem {
+    background: #1d2a52; color: #fff; border-radius: 3pt;
+    padding: 7pt 10pt; margin: 5pt 0;
+    font-family: 'Fraunces', serif; font-style: italic; font-size: 9.8pt;
+  }
+
+  ol, ul { margin: 0 0 6pt 15pt; }
+  li { margin-bottom: 2pt; }
+
+  /* Ruled space to write on. A worksheet nobody can fill in is a leaflet. */
+  .rule { border-bottom: 1pt solid #c9d0de; height: 9mm; }
+  .rule.tight { height: 8mm; }
+  .writein { margin: 5pt 0 9pt; }
+  .fieldlabel {
+    font-size: 8pt; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; color: #6b6f7c; margin-bottom: 2pt;
+  }
+
+  .kpibox { border: 1pt solid #e0d9c9; border-radius: 3pt; padding: 7pt 9pt; margin-bottom: 5pt; }
+  .kpibox .n {
+    font-family: 'Fraunces', serif; font-weight: 700; color: #e8862e;
+    font-size: 10.5pt; margin-bottom: 1pt;
+  }
+  .kpibox .hint { font-size: 8pt; color: #6b6f7c; margin-bottom: 3pt; }
+
+  .note {
+    background: #f3ecdf; border-left: 2.5pt solid #e8862e;
+    padding: 7pt 9pt; font-size: 8.6pt; margin: 6pt 0;
+  }
+
+  footer {
+    margin-top: 9pt; border-top: 1.5px solid #e0d9c9; padding-top: 5pt;
+    font-size: 7.6pt; color: #6b6f7c;
+    display: flex; justify-content: space-between; gap: 10pt;
+  }
+  footer a { color: #1d2a52; text-decoration: none; }
+
+  .pagebreak { page-break-before: always; }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="kicker">Worksheet &middot; 30 min to 3 hrs</div>
+  <h1>The KPQ Worksheet</h1>
+  <p class="standfirst">This exercise helps you and your supervisor or team member to articulate the strategic purpose of their role, in their words.</p>
+  <p class="meta">It is used to design and demonstrate alignment from both sides, while reaching a consensus where unspoken needs are met, and where unaware strengths can be brought into the role. It is then used as the basis to formulate KPIs that fit.</p>
+
+  <div class="defs">
+    <div class="def">
+      <b>What are KPQs?</b>
+      KPQs are key performance questions. They sensecheck how well a role, tool, or project is completed to progress the organisation towards a goal. They also define and deeply assess the efficacy of your KPIs, and are written as open-ended questions which open up discussion.
+    </div>
+    <div class="def">
+      <b>What are KPIs?</b>
+      KPIs are Key Performance Indicators which are derived to answer your KPQs. They provide clear and measurable answers to how well implementation is being executed. KPIs are written in a S.M.A.R.T (Specific, Measurable, Achievable, Relevant and Time-Oriented/Bound) format to be useful.
+    </div>
+  </div>
+
+  <h2>Before you start</h2>
+  <p>Ensure that your strategic goals are defined prior to starting this exercise. Write the one this role serves here.</p>
+  <div class="writein">
+    <div class="fieldlabel">The strategic goal this role serves</div>
+    <div class="rule"></div>
+  </div>
+
+  <h2>Step one: write your Key Performance Question</h2>
+  <p>Either stem works. Pick the one that sounds like how you actually speak.</p>
+  <div class="stem">To what extent is [you/your role] ensuring that [Project/Programme/Organization] is [strategic goal(s)]?</div>
+  <div class="stem">How well is [name] ensuring that [project/organization] is achieving [strategic goal]?</div>
+
+  <div class="writein">
+    <div class="fieldlabel">Have a try writing your Key Performance Question</div>
+    <div class="rule"></div>
+    <div class="rule"></div>
+  </div>
+
+  <h2>Guiding tips</h2>
+  <ol>
+    <li>Use simple language and avoid jargon, anyone should be able to read this and understand the fundamental purpose of your role and gauge performance.</li>
+    <li>KPQs are frequently assessed and frequently updated to reflect strategic and organizational progression as well as changes in circumstances. We recommend a monthly and/or quarterly check-in.</li>
+    <li>Don't be afraid to 'kill your darlings', your first drafts are never perfect so keep restructuring and changing words until it resonates with you.</li>
+    <li>Align with your supervisor if these expectations are in line with the organization strategic direction.</li>
+    <li>Communicate this with your supervisor, team and most importantly, yourself.</li>
+    <li>Develop more than 1 KPQ if needed, but no more than 3 per strategic goal.</li>
+  </ol>
+
+  <footer>
+    <span>The 5 Spheres of Empathy &middot; Galeno Chua</span>
+    <span><a href="https://5spheresofempathy.com/kpq">5spheresofempathy.com/kpq</a></span>
+  </footer>
+
+  <div class="pagebreak"></div>
+
+  <div class="kicker">Worksheet &middot; page two</div>
+  <h1>Your three KPIs</h1>
+  <p class="standfirst">Each KPI answers part of the question above. Develop no more than three.</p>
+  <p class="meta">The Trampoline Park example runs risk, growth and profit. Use whichever three carry your own role.</p>
+
+  <div class="kpibox">
+    <div class="n">1 &nbsp; Biggest business risk impact</div>
+    <div class="hint">What would end this, and what keeps it under control? Example: keeping accident and incident rates at less than 1 per month.</div>
+    <div class="rule tight"></div>
+    <div class="rule tight"></div>
+  </div>
+
+  <div class="kpibox">
+    <div class="n">2 &nbsp; Growth impact</div>
+    <div class="hint">One measure, not eight. Example: ensuring Mystery Shopping and Customer Feedback scores are over 90% satisfaction with positive NPS Scores.</div>
+    <div class="rule tight"></div>
+    <div class="rule tight"></div>
+  </div>
+
+  <div class="kpibox">
+    <div class="n">3 &nbsp; Profit impact</div>
+    <div class="hint">Example: ensuring that assigned monthly budgets of $XXX are met. Exceeding the budget can be accepted if approved with a clear case. Underspending needs justifying too.</div>
+    <div class="rule tight"></div>
+    <div class="rule tight"></div>
+  </div>
+
+  <div class="kpibox">
+    <div class="n">4 &nbsp; Sustainability impact, if the role carries one</div>
+    <div class="hint">With a baseline and a plan, measure against it. Without one, measure improvement from where you stand.</div>
+    <div class="rule tight"></div>
+    <div class="rule tight"></div>
+  </div>
+
+  <h2>If your KPIs cannot change</h2>
+  <p>There is an assumption here that the KPIs can change. It works even if they can't. First, feedback is sent upwards if the KPIs just don't make sense, which prevents a future pothole from happening. If it still doesn't change, the leader and the team member can adjust the work to make strategic progress while still meeting the KPIs. Ultimately, this helps to uncover assumptions much earlier on.</p>
+
+  <div class="note">
+    <strong>Give them the template, not the question.</strong> Co-designing excellent relationships takes time, in my experience, it takes anywhere from 30 days to 3 months of constant reminders and reviews. As easy as it is to simply give the team member the KPQ, we lose the value of their ability to truly own their side of the relationship, to articulate and think forward the needs they're likely to have in executing it, and to double check that this role does exactly what it should do to serve the overall strategy.
+  </div>
+
+  <p>To conclude, relationship design is ultimately about designing a culture of excellence that serves you, or risk defaulting into a culture that nobody really wants. Give yourself the mental and emotional space, to allow intention to be your guide.</p>
+
+  <div class="writein">
+    <div class="fieldlabel">Review date, and who you agreed this with</div>
+    <div class="rule"></div>
+  </div>
+
+  <footer>
+    <span>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</span>
+    <span><a href="https://5spheresofempathy.com/kpq">5spheresofempathy.com/kpq</a></span>
+  </footer>
+
+</div>
+</body>
+</html>

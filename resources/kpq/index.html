@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The KPQ Worksheet | The 5 Spheres of Empathy</title>
+<meta name="description" content="Articulate the purpose of your job, and how it supports the strategic objectives of your organisation, in one question. A free worksheet from The 5 Spheres of Empathy.">
+<meta property="og:title" content="The KPQ Worksheet | The 5 Spheres of Empathy">
+<meta property="og:description" content="Articulate the purpose of your job, and how it supports the strategic objectives of your organisation, in one question.">
+<meta property="og:image" content="https://5spheresofempathy.com/og.png">
+<meta property="og:url" content="https://5spheresofempathy.com/resources/kpq/">
+<meta property="og:type" content="article">
+<link rel="canonical" href="https://5spheresofempathy.com/resources/kpq/">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* The builder is three inputs and a stem choice. It reuses .field from the
+     site, and only needs the stem row and the input rhythm defined here. */
+  .kpq-builder { margin: 18px 0 16px; }
+  .kpq-builder .field { margin-bottom: 10px; }
+  .kpq-stems { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 4px; }
+  .kpq-stems label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: .95rem; font-weight: 600; color: var(--ink); cursor: pointer;
+  }
+  .kpq-stems input { accent-color: var(--ember); width: 17px; height: 17px; }
+
+  /* An inline photograph. The article column is 62ch, narrower than the wrap,
+     so the figure sits full width of the wrap to break the text properly. */
+  .kpq-figure { margin: 26px 0 8px; }
+  .kpq-figure img {
+    width: 100%; border-radius: 14px; display: block;
+    /* height:auto is load-bearing. The HTML height attribute lands as a
+       presentational hint, which beats aspect-ratio and made this reserve
+       800px instead of 509 until the image finished loading. */
+    height: auto; aspect-ratio: 3/2; object-fit: cover;
+  }
+  .kpq-figure figcaption {
+    font-size: .86rem; color: var(--muted); margin-top: 9px; max-width: 62ch;
+  }
+
+  /* Three CTAs as cards. One row on desktop, stacked on a phone. */
+  .cta-cards {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 18px; margin-top: 34px; align-items: stretch;
+  }
+  .cta-card {
+    display: flex; flex-direction: column;
+    background: var(--paper); border: 1.5px solid var(--line);
+    border-radius: 14px; overflow: hidden;
+  }
+  .cta-card .shot {
+    width: 100%; height: auto; aspect-ratio: 16/10; object-fit: cover; display: block;
+    border-bottom: 1.5px solid var(--line); background: var(--paper-warm);
+  }
+  .cta-card .shot.portrait { object-position: 50% 18%; }
+  /* A book cover is 10:16 in a 16:10 slot. Cropping it cut through the
+     title, so the whole cover is shown standing on the warm ground. */
+  .cta-card .shot.cover { object-fit: contain; padding: 10px 0; background: var(--paper-warm); }
+  .cta-card .inner { padding: 20px; display: flex; flex-direction: column; flex: 1; }
+  .cta-card .label { font-size: .72rem; margin-bottom: 8px; }
+  .cta-card h3 { font-size: 1.08rem; margin-bottom: 6px; }
+  .cta-card p { font-size: .92rem; color: var(--muted); margin-bottom: 16px; }
+  .cta-card .spacer { flex: 1; }
+  .cta-card .btn {
+    width: 100%; text-align: center; font-size: .95rem; padding: 12px 18px;
+  }
+  .cta-card .field { margin-bottom: 8px; }
+  .cta-card .field input { padding: 11px 13px; font-size: .95rem; }
+  .cta-card .fineprint { font-size: .76rem; margin-top: 10px; text-align: left; }
+  .cta-card .gate-download h4 {
+    font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink);
+    font-size: 1.02rem; margin-bottom: 6px;
+  }
+
+  @media (max-width: 860px) {
+    .cta-cards { grid-template-columns: 1fr; }
+    .cta-card .shot { aspect-ratio: 2/1; }
+  }
+</style>
+</head>
+<body class="resource-page">
+
+<nav>
+  <div class="wrap">
+    <a class="mark" href="/">The 5 Spheres<span>.</span></a>
+    <div class="nav-links">
+      <a class="cta" href="/the-method/">The Method</a>
+      <div class="nav-group">
+        <a class="cta" href="/community/">Community</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/skilldrills/">Skill Drills<span>Ninety minutes on one skill</span></a>
+            <a href="/agree-to-disagree/">Agree to Disagree<span>The live leadership roundtable</span></a>
+            <a href="/sustainability-tours/">Sustainability Tours<span>Behind the scenes, in person and virtual</span></a>
+            <a href="/events/">Events<span>Live sessions on the method</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta" href="/field-notes/">Field Notes</a>
+      <div class="nav-group">
+        <a class="cta" href="/resources/">Resources</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/resources/">Tools and downloads<span>Worksheets, checklists and reference sheets</span></a>
+            <a href="/bsfp-accelerator/">Business Sustainability<span>Free eighteen lesson course</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta" href="https://app.5spheresofempathy.com/start">Log in</a>
+      <a class="cta nav-primary" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">The Field Guide</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero-dark">
+  <div class="deco"></div>
+  <div class="wrap-narrow">
+    <div class="kicker">Worksheet</div>
+    <h1>The KPQ Worksheet</h1>
+    <p>This exercise helps you and your supervisor or team member to articulate the strategic purpose of their role, in their words.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap-narrow">
+
+    <div class="article-body">
+      <p>It is used to design and demonstrate alignment from both sides, while reaching a consensus where unspoken needs are met, and where unaware strengths can be brought into the role. It is then used as the basis to formulate KPIs that fit.</p>
+    </div>
+
+    <div class="primer">
+      <div class="primer-label">What are KPQs?</div>
+      <p>KPQs are key performance questions. They sensecheck how well a role, tool, or project is completed to progress the organisation towards a goal. They also define and deeply assess the efficacy of your KPIs, and are written as open-ended questions which open up discussion.</p>
+    </div>
+
+    <div class="primer">
+      <div class="primer-label">What are KPIs?</div>
+      <p>KPIs are Key Performance Indicators which are derived to answer your KPQs. They provide clear and measurable answers to how well implementation is being executed. KPIs are written in a S.M.A.R.T (Specific, Measurable, Achievable, Relevant and Time-Oriented/Bound) format to be useful.</p>
+    </div>
+
+    <h2 style="margin-top: 44px;">If your KPIs cannot change</h2>
+
+    <div class="article-body">
+      <p>There is an assumption here that the KPIs can change. It works even if they can't.</p>
+      <p>First, feedback is sent upwards if the KPIs just don't make sense, which prevents a future pothole from happening. If it still doesn't change, the leader and the team member can adjust the work to make strategic progress while still meeting the KPIs.</p>
+      <p>Ultimately, this helps to uncover assumptions much earlier on.</p>
+    </div>
+
+    <h2 style="margin-top: 44px;">When completed mindfully</h2>
+
+    <div class="article-body">
+      <p>Ensure that your strategic goals are defined prior to starting this exercise. It helps team members and yourself stay accountable for your role through:</p>
+    </div>
+
+    <div class="after">
+      <ul>
+        <li>Self articulation of job purpose through drafting the KPQ</li>
+        <li>Self assessment of performance</li>
+        <li>Self correction on review of KPIs</li>
+      </ul>
+    </div>
+
+    <h2 style="margin-top: 44px;">Guiding tips</h2>
+
+    <div class="sense-item">
+      <span class="sense-num">1</span>
+      <div>Use simple language and avoid jargon, anyone should be able to read this and understand the fundamental purpose of your role and gauge performance.</div>
+    </div>
+    <div class="sense-item">
+      <span class="sense-num">2</span>
+      <div>KPQs are frequently assessed and frequently updated to reflect strategic and organizational progression as well as changes in circumstances. We recommend a monthly and/or quarterly check-in.</div>
+    </div>
+    <div class="sense-item">
+      <span class="sense-num">3</span>
+      <div>Don't be afraid to 'kill your darlings', your first drafts are never perfect so keep restructuring and changing words until it resonates with you.</div>
+    </div>
+    <div class="sense-item">
+      <span class="sense-num">4</span>
+      <div>Align with your supervisor if these expectations are in line with the organization strategic direction.</div>
+    </div>
+    <div class="sense-item">
+      <span class="sense-num">5</span>
+      <div>Communicate this with your supervisor, team and most importantly, yourself.</div>
+    </div>
+    <div class="sense-item">
+      <span class="sense-num">6</span>
+      <div>Develop more than 1 KPQ if needed, but no more than 3 per strategic goal.</div>
+    </div>
+
+    <h2 style="margin-top: 44px;">Sample KPQ and KPI formats</h2>
+    <p class="lead">Fill these in and the question assembles itself. Either stem works.</p>
+
+    <div class="kpq-builder">
+      <div class="field"><input type="text" id="kpq-who" placeholder="You, your role, or a name"></div>
+      <div class="field"><input type="text" id="kpq-org" placeholder="Project, programme or organisation"></div>
+      <div class="field"><input type="text" id="kpq-goal" placeholder="The strategic goal"></div>
+      <div class="kpq-stems">
+        <label><input type="radio" name="kpq-stem" value="extent" checked> To what extent</label>
+        <label><input type="radio" name="kpq-stem" value="well"> How well</label>
+      </div>
+    </div>
+
+    <div class="prompt">
+      <button class="copybtn" onclick="copyPrompt(this)">Copy</button>
+      <p class="q" id="kpq-out">To what extent is [you/your role] ensuring that [Project/Programme/Organization] is [strategic goal(s)]?</p>
+    </div>
+
+    <div class="tweak">
+      <b>Have a try writing your Key Performance Question.</b> Then put the indicators underneath it that answer it.
+    </div>
+
+    <h2 style="margin-top: 44px;">A strictly commercial example</h2>
+    <p class="lead">This is the Trampoline Park, with three KPIs under one question and the strategic reasoning for each.</p>
+
+    <div class="prompt">
+      <button class="copybtn" onclick="copyPrompt(this)">Copy</button>
+      <p class="q">How well is Sereyrath ensuring that Fly Phnom Penh is operating well, safely and profitably?</p>
+    </div>
+
+    <div class="checklist-group" style="margin-top: 26px;">
+      <div class="checklist-group-label">Biggest business risk impact</div>
+      <div class="checklist-item">
+        <span class="checklist-num">1</span>
+        <div>
+          <h3>Keeping accident and incident rates at less than 1 per month</h3>
+          <p>Safety is number one, the leadership team decided to make sure this stayed as a priority as a broken leg (or worse) could spell the end of the business. Conversely, a strong commitment to safety is felt positively by parents, building trust in the brand.</p>
+          <p>Operationally, this evolved the SOPs in the business, for example customers are told they're number one in the lobby and the cafe, but are not number one in the arena and must listen to trainers if they're told to take a break for a minute or risk being injured. This was unexpected but very well received from many parents who appreciated the structure and commitment to safety.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <div class="checklist-group-label">Growth impact</div>
+      <div class="checklist-item">
+        <span class="checklist-num">2</span>
+        <div>
+          <h3>Ensuring Mystery Shopping and Customer Feedback scores are over 90% satisfaction with positive NPS Scores</h3>
+          <p>This was tricky, as the board immediately started writing down all the revenue generating ideas and tactics to add as a KPI, from birthday bookings, to selling team building packages to increasing school bookings. The problem was that this increased the KPIs to over 8 different focuses which the board were getting involved in, micro-managing even!</p>
+          <p>This prompted the owners to take a step back and consider what the Business Manager's role and relationship was, leading to one summarised KPI about growth. And the best way to ensure growth was through phenomenal customer experience, leading to an NPS score and mystery shopping feedback as metrics to see if business growth was on track.</p>
+          <p>Strategically, this helped simplify meetings and put more ownership and autonomy on the business manager who had experience on the ground and could set her own targets based on product and programme seasonality, for example knowing when school booking seasons began and ended, and could then reorganise resources according to when particular campaigns needed to occur. Operationally, this helped reduce the length of meetings and helped structure agendas for all meetings more strategically.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <div class="checklist-group-label">Profit impact</div>
+      <div class="checklist-item">
+        <span class="checklist-num">3</span>
+        <div>
+          <h3>Ensuring that assigned monthly budgets of $XXX are met</h3>
+          <p>The business manager is assigned particular budgets to grow and maintain the business and needs to spend just below the budget. Exceeding the budget can be accepted if approved with a clear case. Underspending on the budget needs also to be justified in case of risks and assumptions occurring we might need to be aware of.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-top: 44px;">A sustainability and commercial hybrid</h2>
+    <p class="lead">The same role, where sustainability strategy and protocols already exist.</p>
+
+    <div class="prompt">
+      <button class="copybtn" onclick="copyPrompt(this)">Copy</button>
+      <p class="q">How well is Sereyrath ensuring that Fly Phnom Penh is operating well, safely and profitably in accordance with our sustainability guidelines?</p>
+    </div>
+
+    <div class="article-body" style="margin-top: 22px;">
+      <p><strong>The risk KPI does not change.</strong> This is already a sustainability and business risk KPI, specifically a social sustainability factor ensuring your end-users and community are not harmed because of your business. <strong>The growth KPI does not change either.</strong> This commercial intention stays the same.</p>
+      <p><strong>The profit KPI evolves</strong>, to include sustainability related cost measures being met, for example reduced utility bills and waste management savings. Sustainability is largely an efficiency issue, improving resource use through more oversight of the business can lead to improved analysis of what expenses can be reduced. Eventually with business growth, this evolves to include data as a percentage of the sustainability category over units or customers serviced until technology advances to the point where total volumes, waste and emissions are truly renewable and circular.</p>
+      <p><strong>Then you add a sustainability KPI</strong>, and which one depends on what you already have.</p>
+    </div>
+
+    <div class="sense-item">
+      <span class="sense-num">A</span>
+      <div><strong>Ensuring that waste, emissions or energy initiatives are complete and achieving target rates of improvement and impact.</strong> Assuming that there's a multi-year strategy and a year long action plan is in place, and our KPIs reflect the time period we're assessing for in the plan.</div>
+    </div>
+    <div class="sense-item">
+      <span class="sense-num">B</span>
+      <div><strong>Improve waste to landfill diversion outcomes until the business reaches 90% waste diversion to landfill per month, for this quarter, reaching a 50% waste diversion rate by weight starting with single-use plastics and food waste.</strong> Assuming there's no baseline due to resource constraints and the company has instead set targets to improve outcomes based on what is most visible or material to their business.</div>
+    </div>
+
+    <h2 style="margin-top: 44px;">A strictly sustainability example</h2>
+
+    <div class="article-body">
+      <p>Although sustainability has systemic work, ranging from measurement, to iteration, communication and governance, the type of work it does for the business is project based. Once the system is in place, that KPI now evolves into something different, meaning KPIs for sustainability professionals must be reviewed on a regular basis.</p>
+      <p>Depending on how ambitious the business is about sustainability, you may want to either create a hierarchy to different initiatives, or create KPIs which are systemic to project velocity.</p>
+    </div>
+
+    <div class="checklist-group">
+      <div class="checklist-group-label">Project velocity KPIs</div>
+      <div class="checklist-item">
+        <span class="checklist-num">1</span>
+        <div>
+          <p>These are KPIs related to efficiency, efficacy and productivity of the team member or department. These are executional and operational KPIs which if implemented well, will give you a better indication if the strategy is effective or not. They imply performance of work is more important to measure than impact alone (not to say impact isn't measured). This also implies that the organisation values productivity and is thus reflected in this relationship design.</p>
+          <p><strong>Budgeted Project Completion Time.</strong> Ensuring projects are kept below budgeted completed times. This blanket KPI reflects the reality that sustainability officers are typically under-resourced, having budgeted earlier on what can be expected means (firstly breathing out the sigh of indignation) then tackling the redesign of the project with the limited constraints. From experience, this budget of time for internal team members is often not made.</p>
+          <p><strong>Also:</strong> number of sustainability projects completed over the quarter. Project success rate, the percentage of projects that successfully achieve their defined objectives this quarter. Stakeholder collaboration, the number of surveys filled by suppliers, customers and community members.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <div class="checklist-group-label">Systemic impact KPIs</div>
+      <div class="checklist-item">
+        <span class="checklist-num">2</span>
+        <div>
+          <p>These are KPIs that track the extent of sustainability integration and assume that only performance matters. These are strategic level KPIs and imply that the team member we're co-designing this KPQ and KPI with is gauged mostly on their ability to deliver results. Therefore implying resource and autonomy is allocated, if not, embedded sustainability will be unintentionally more difficult to achieve. For organisations taking this route, it typically implies they value results over methodology, a 'get it done' mentality which stems from cultures with strong visionary leadership comes with both pros and cons.</p>
+          <p><strong>Policy and strategy development.</strong> Number of policies created this quarter across the business, number adopted by the team, vendors and suppliers, and impact metrics from policies adopted.</p>
+          <p><strong>Embedding sustainability in core processes.</strong> For example, version 1 of sustainability policy updates embedded into 30% of all SOPs in operations and training, namely waste reduction and energy efficiency.</p>
+          <p><strong>Supply chain sustainability.</strong> Onboard suppliers to Circular Procurement policy, for Q1, onboarding the bakery supplier to supply cookies in reusable glass jars replacing plastic packaging.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tweak">
+      <b>It's recommended to employ both Project Velocity and Systemic Impact KPIs for much smaller teams.</b> Typically Systemic Impact KPIs are more strategic and placed upon more senior team members who have already exhibited the level of performance, time management and other experience and soft skills needed to deliver projects quickly and effectively.
+    </div>
+
+    <figure class="kpq-figure">
+      <img src="/images/asc-facilitation.jpg" width="1200" height="800" loading="lazy"
+           alt="Mr. G in a working session with a team around a table, mid-conversation">
+      <figcaption>Co-designing the relationship, rather than handing over a finished one.</figcaption>
+    </figure>
+
+    <h2 style="margin-top: 44px;">Remember</h2>
+
+    <div class="article-body">
+      <p>Co-designing excellent relationships takes time, in my experience, it takes anywhere from 30 days to 3 months of constant reminders and reviews. As easy as it is to simply give the team member the KPQ, we lose the value of their ability to:</p>
+    </div>
+
+    <div class="after">
+      <ul>
+        <li>Truly own their side of the relationship</li>
+        <li>Articulate and think forward the needs they're likely to have in executing their side of the relationship (this applies equally to you too!)</li>
+        <li>Double check that this role does exactly what it should do to serve the overall strategy</li>
+      </ul>
+    </div>
+
+    <div class="article-body" style="margin-top: 20px;">
+      <p>Practice patience. Particularly to junior team members who lack the experience to think strategically, at the same time, if you find yourself losing patience, you may want to review your recruitment process into the company and into the sustainability initiatives and choose differently.</p>
+      <p>To conclude, relationship design is ultimately about designing a culture of excellence that serves you, or risk defaulting into a culture that nobody really wants.</p>
+      <p>Give yourself the mental and emotional space, to allow intention to be your guide.</p>
+    </div>
+
+    <div class="article-body" style="margin-top: 40px;">
+      <p>This practice is from The 5 Spheres of Empathy Field Guide. I drafted it in 2018 and have used it since to gauge both the IQ and EQ of new hires, the strategic thinking of potential managers and leaders, and the ability of a new hire to hold space and be in the uncomfortable.</p>
+    </div>
+
+    <div class="cta-cards">
+
+      <div class="cta-card gate-section" id="gate-kpq" style="background: var(--paper); padding: 0; margin: 0;">
+        <img class="shot" src="/images/kpq-worksheet-preview.jpg" width="1120" height="700" loading="lazy"
+             alt="The first page of the printable KPQ worksheet">
+        <div class="inner">
+          <div class="label">For your workshop</div>
+          <h3>The printable worksheet</h3>
+          <p>Two pages, ruled to write on. The template, the guiding tips, and space for your three KPIs.</p>
+          <div class="spacer"></div>
+          <div class="gate-form">
+            <form class="kpq-gate-form" method="post" action="https://assets.mailerlite.com/jsonp/2409610/forms/191733181639034609/subscribe" target="_blank" rel="noopener">
+              <div class="field">
+                <input type="text" name="fields[name]" aria-label="First name" placeholder="First name" autocomplete="given-name" required>
+              </div>
+              <div class="field">
+                <input type="email" name="fields[email]" aria-label="Email" placeholder="Email" autocomplete="email" required>
+              </div>
+              <input type="hidden" name="ml-submit" value="1">
+              <input type="hidden" name="anticsrf" value="true">
+              <button class="btn" type="submit">Send me the PDF &#8594;</button>
+              <p class="fineprint">Free. You can unsubscribe any time, no hard feelings.</p>
+            </form>
+          </div>
+          <div class="gate-download" style="display:none">
+            <h4>It is on its way.</h4>
+            <p>The link below does not expire, so bookmark it if you are printing for a room.</p>
+            <a class="btn" href="/assets/the-kpq-worksheet.pdf" target="_blank" rel="noopener">Download the PDF &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-card">
+        <img class="shot cover" src="/images/field-guide-cover.jpg" width="1000" height="1600" loading="lazy"
+             alt="The 5 Spheres of Empathy field guide, front cover">
+        <div class="inner">
+          <div class="label">The field guide</div>
+          <h3>The first hundred get a group coaching session</h3>
+          <p>All five spheres in one book. It is in production now, and the list is how you will know when it lands.</p>
+          <div class="spacer"></div>
+          <a class="btn" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">Join the list &#8594;</a>
+        </div>
+      </div>
+
+      <div class="cta-card">
+        <img class="shot portrait" src="/Mr_G_headshots_ZuzannaGerulewiczPhotography_06.jpg" width="1000" height="1500" loading="lazy"
+             alt="Galeno Chua, seated portrait">
+        <div class="inner">
+          <div class="label">One to one</div>
+          <h3>Work on this with me</h3>
+          <p>Five places, for people building a programme or designing the roles in a team around this.</p>
+          <div class="spacer"></div>
+          <a class="btn ghost" href="/coaching/" style="margin-left: 0;">See coaching &#8594;</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="more">
+  <div class="wrap-narrow">
+    <div class="label">More resources</div>
+    <h2>Keep going</h2>
+    <div class="grid">
+      <div class="rcard">
+        <h3>The Pitch Checklist</h3>
+        <p>Twelve questions a pitch has to answer, and twelve delivery points that decide whether it lands.</p>
+        <a href="/resources/pitch-checklist/">Read the checklist &#8594;</a>
+      </div>
+      <div class="rcard">
+        <h3>The eighteen lesson course</h3>
+        <p>Business sustainability, free and self-paced. Relationship design is one of the lessons.</p>
+        <a href="/bsfp-accelerator/">Start the course &#8594;</a>
+      </div>
+      <div class="rcard">
+        <h3>The Prompt Chain</h3>
+        <p>From empathy map to a brief you can build from, in five steps.</p>
+        <a href="/resources/prompt-chain/">Read the guide &#8594;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
+    <div><a href="/">Home</a> &nbsp;&middot;&nbsp; <a href="/resources/">Resources</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@5spheresofempathy.com">Get in touch</a> &nbsp;&middot;&nbsp; <a href="/privacy/">Privacy</a></div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script src="/script.js"></script>
+<script>
+/* KPQ builder. The prompt block is already the template from the worksheet,
+   with the bracketed placeholders written into the markup, so if this never
+   runs the page still reads and the copy button still copies the template. */
+(function () {
+  var out = document.getElementById('kpq-out');
+  if (!out) return;
+  var who = document.getElementById('kpq-who');
+  var org = document.getElementById('kpq-org');
+  var goal = document.getElementById('kpq-goal');
+  var stems = document.querySelectorAll('input[name="kpq-stem"]');
+  if (!who || !org || !goal || !stems.length) return;
+
+  function stem() {
+    for (var i = 0; i < stems.length; i++) { if (stems[i].checked) return stems[i].value; }
+    return 'extent';
+  }
+
+  function val(el, fallback) {
+    var v = el.value.trim();
+    return v ? v : fallback;
+  }
+
+  function render() {
+    var lead = stem() === 'well' ? 'How well is' : 'To what extent is';
+    out.textContent = lead + ' ' + val(who, '[you/your role]')
+      + ' ensuring that ' + val(org, '[Project/Programme/Organization]')
+      + ' is ' + val(goal, '[strategic goal(s)]') + '?';
+  }
+
+  [who, org, goal].forEach(function (el) { el.addEventListener('input', render); });
+  for (var i = 0; i < stems.length; i++) { stems[i].addEventListener('change', render); }
+  render();
+})();
+
+/* Download gate. Same shape as the course gate on /bsfp-accelerator/: post to
+   MailerLite with no-cors, swap the form for the link, and remember it locally
+   so somebody printing for a workshop is not asked twice. If the fetch fails
+   the form submits normally rather than swallowing the signup. */
+(function () {
+  var form = document.querySelector('.kpq-gate-form');
+  if (!form) return;
+  var section = form.closest('.gate-section');
+  if (!section) return;
+
+  function reveal() {
+    var f = section.querySelector('.gate-form');
+    var d = section.querySelector('.gate-download');
+    if (f) f.style.display = 'none';
+    if (d) d.style.display = 'block';
+  }
+
+  var sending = false;
+  form.addEventListener('submit', function (e) {
+    if (sending) return;
+    if (!form.checkValidity()) { form.reportValidity(); e.preventDefault(); return; }
+    e.preventDefault();
+    var btn = form.querySelector('button[type="submit"]');
+    var label = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+    fetch(form.action, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(form)).toString()
+    }).then(function () {
+      reveal();
+      try { localStorage.setItem('kpq-worksheet', '1'); } catch (err) {}
+    }).catch(function () {
+      if (btn) { btn.disabled = false; btn.innerHTML = label; }
+      sending = true; form.submit();
+    });
+  });
+
+  try { if (localStorage.getItem('kpq-worksheet') === '1') reveal(); } catch (err) {}
+})();
+</script>
+</body>
+</html>

@@ -1,3 +1,8 @@
+# Short path for the KPQ worksheet. It is the QR target for a keynote, so it
+# has to survive being read off a slide and typed by hand.
+/kpq             /resources/kpq/  301
+/kpq/            /resources/kpq/  301
+
 /resources.html  /resources/  301
 /resources       /resources/  301
 /resources/what-a-real-disagreement-looks-like   /field-notes/what-a-real-disagreement-looks-like/  301
