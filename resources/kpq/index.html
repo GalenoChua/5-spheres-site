@@ -30,10 +30,10 @@
   .kpq-figure { margin: 26px 0 8px; }
   .kpq-figure img {
     width: 100%; border-radius: 14px; display: block;
-    /* height:auto is load-bearing. The HTML height attribute lands as a
-       presentational hint, which beats aspect-ratio and made this reserve
-       800px instead of 509 until the image finished loading. */
-    height: auto; aspect-ratio: 3/2; object-fit: cover;
+    /* No aspect-ratio and no cover: this is a diagram, so it keeps its own
+       proportions rather than being cropped. height:auto is still load-bearing,
+       because the HTML height attribute lands as a presentational hint. */
+    height: auto;
   }
   .kpq-figure figcaption {
     font-size: .86rem; color: var(--muted); margin-top: 9px; max-width: 62ch;
@@ -138,6 +138,12 @@
       <div class="primer-label">What are KPIs?</div>
       <p>KPIs are Key Performance Indicators which are derived to answer your KPQs. They provide clear and measurable answers to how well implementation is being executed. KPIs are written in a S.M.A.R.T (Specific, Measurable, Achievable, Relevant and Time-Oriented/Bound) format to be useful.</p>
     </div>
+
+    <figure class="kpq-figure">
+      <img src="/images/head-heart-band.png" width="1800" height="530" loading="lazy"
+           alt="Three ring diagrams, each showing a different path reaching the same target">
+      <figcaption>Head and Heart, from the Field Guide: moving from a feeling to a measurable standard.</figcaption>
+    </figure>
 
     <h2 style="margin-top: 44px;">If your KPIs cannot change</h2>
 
@@ -312,12 +318,6 @@
     <div class="tweak">
       <b>It's recommended to employ both Project Velocity and Systemic Impact KPIs for much smaller teams.</b> Typically Systemic Impact KPIs are more strategic and placed upon more senior team members who have already exhibited the level of performance, time management and other experience and soft skills needed to deliver projects quickly and effectively.
     </div>
-
-    <figure class="kpq-figure">
-      <img src="/images/asc-facilitation.jpg" width="1200" height="800" loading="lazy"
-           alt="Mr. G in a working session with a team around a table, mid-conversation">
-      <figcaption>Co-designing the relationship, rather than handing over a finished one.</figcaption>
-    </figure>
 
     <h2 style="margin-top: 44px;">Remember</h2>
 
