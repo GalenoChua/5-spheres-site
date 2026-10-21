@@ -25,20 +25,6 @@
   }
   .kpq-stems input { accent-color: var(--ember); width: 17px; height: 17px; }
 
-  /* An inline photograph. The article column is 62ch, narrower than the wrap,
-     so the figure sits full width of the wrap to break the text properly. */
-  .kpq-figure { margin: 26px 0 8px; }
-  .kpq-figure img {
-    width: 100%; border-radius: 14px; display: block;
-    /* No aspect-ratio and no cover: this is a diagram, so it keeps its own
-       proportions rather than being cropped. height:auto is still load-bearing,
-       because the HTML height attribute lands as a presentational hint. */
-    height: auto;
-  }
-  .kpq-figure figcaption {
-    font-size: .86rem; color: var(--muted); margin-top: 9px; max-width: 62ch;
-  }
-
   /* Three CTAs as cards. One row on desktop, stacked on a phone. */
   .cta-cards {
     display: grid; grid-template-columns: repeat(3, 1fr);
@@ -138,12 +124,6 @@
       <div class="primer-label">What are KPIs?</div>
       <p>KPIs are Key Performance Indicators which are derived to answer your KPQs. They provide clear and measurable answers to how well implementation is being executed. KPIs are written in a S.M.A.R.T (Specific, Measurable, Achievable, Relevant and Time-Oriented/Bound) format to be useful.</p>
     </div>
-
-    <figure class="kpq-figure">
-      <img src="/images/head-heart-band.png" width="1800" height="530" loading="lazy"
-           alt="Three ring diagrams, each showing a different path reaching the same target">
-      <figcaption>Head and Heart, from the Field Guide: moving from a feeling to a measurable standard.</figcaption>
-    </figure>
 
     <h2 style="margin-top: 44px;">If your KPIs cannot change</h2>
 
