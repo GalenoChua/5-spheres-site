@@ -180,7 +180,9 @@
     <div class="kpq-builder">
       <div class="field"><input type="text" id="kpq-who" placeholder="You, your role, or a name"></div>
       <div class="field"><input type="text" id="kpq-org" placeholder="Project, programme or organisation"></div>
-      <div class="field"><input type="text" id="kpq-goal" placeholder="The strategic goal"></div>
+      <!-- The placeholder does the teaching the sentence cannot. "The strategic
+           goal" invites a bare verb, and the stem supplies "is" in front of it. -->
+      <div class="field"><input type="text" id="kpq-goal" placeholder="collecting data and making recommendations"></div>
       <div class="kpq-stems">
         <label><input type="radio" name="kpq-stem" value="extent" checked> To what extent</label>
         <label><input type="radio" name="kpq-stem" value="well"> How well</label>
@@ -443,11 +445,28 @@
     return v ? v : fallback;
   }
 
+  /* The sentence puts "is" in front of whatever is typed in the goal field, so
+     a goal written as a bare verb comes out as "ASC is Collect data and makes
+     recommendations". Reported by Marika on 22 October 2026, who asked whether
+     it could conjugate.
+     It does not try to. Guessing at English verbs in a browser is wrong often
+     enough to be worse than the thing it fixes, and it would be wrong in front
+     of the person using it. What it does instead is drop a leading capital, so
+     a typed word does not read as a proper noun mid-sentence, and the field
+     itself now shows the form that fits. */
+  function lower(s) {
+    if (!s) return s;
+    /* Only a plain capital. An acronym stays as it is: "ISO 14001 audits
+       passing" must not become "iSO". */
+    if (s.length > 1 && s[1] === s[1].toUpperCase() && s[1] !== s[1].toLowerCase()) return s;
+    return s.charAt(0).toLowerCase() + s.slice(1);
+  }
+
   function render() {
     var lead = stem() === 'well' ? 'How well is' : 'To what extent is';
     out.textContent = lead + ' ' + val(who, '[you/your role]')
       + ' ensuring that ' + val(org, '[Project/Programme/Organization]')
-      + ' is ' + val(goal, '[strategic goal(s)]') + '?';
+      + ' is ' + lower(val(goal, '[strategic goal(s)]')) + '?';
   }
 
   [who, org, goal].forEach(function (el) { el.addEventListener('input', render); });
