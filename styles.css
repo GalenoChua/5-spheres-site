@@ -890,3 +890,19 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
     }
     .side-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
   }
+
+/* Sign-up forms: the honeypot and the failure line.
+   Global rather than per page, because four pages carry the same form and the
+   honeypot being visible on one of them would be invisible to us and obvious
+   to a visitor. Off-screen rather than display:none, which some bots skip. */
+.nothanks {
+  position: absolute; left: -9999px; width: 1px; height: 1px;
+  opacity: 0; pointer-events: none;
+}
+.gate-error {
+  margin-top: 10px; font-size: .95rem; font-weight: 600;
+  color: #b3261e;
+}
+/* No light-on-light override: .gate-section is --paper-warm, so the dark red
+   is the readable one there. A pale variant belongs only on a dark ground,
+   and nothing on these pages has one. */

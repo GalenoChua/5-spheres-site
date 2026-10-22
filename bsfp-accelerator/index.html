@@ -557,6 +557,8 @@
           </div>
           <input type="hidden" name="ml-submit" value="1">
           <input type="hidden" name="anticsrf" value="true">
+          <!-- A field no person sees and no person fills in. -->
+          <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
           <button type="submit">Open the course</button>
           <p class="fineprint">Free. You can unsubscribe any time, no hard feelings.</p>
         </form>
@@ -594,18 +596,39 @@
     var btn = form.querySelector('button[type="submit"]');
     var label = btn ? btn.textContent : '';
     if (btn) { btn.disabled = true; btn.textContent = 'Opening...'; }
-    fetch(form.action, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(new FormData(form)).toString()
-    }).then(function () {
+    var data = new FormData(form);
+    fetch('/.netlify/functions/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        list: 'resource-downloads',
+        name: data.get('fields[name]'),
+        email: data.get('fields[email]'),
+        website: data.get('website')
+      })
+    }).then(function (r) {
+      return r.json().catch(function () { return { ok: false }; });
+    }).then(function (j) {
+      if (!j || !j.ok) {
+        if (btn) { btn.disabled = false; btn.textContent = label; }
+        var p = form.querySelector('.gate-error');
+        if (!p) {
+          p = document.createElement('p');
+          p.className = 'gate-error';
+          p.setAttribute('role', 'alert');
+          form.appendChild(p);
+        }
+        p.textContent = (j && j.error) || 'We could not add you just then. Please try again.';
+        p.style.display = 'block';
+        return;
+      }
       var sec = form.closest('.gate-section');
       sec.querySelector('.gate-form').style.display = 'none';
       sec.querySelector('.gate-download').style.display = 'block';
       try { localStorage.setItem('bsfp-access', '1'); } catch (err) {}
     }).catch(function () {
       if (btn) { btn.disabled = false; btn.textContent = label; }
-      sending = true; form.submit();
+      alert('No connection just then. Please try again.');
     });
   });
   try {

@@ -392,6 +392,8 @@ footer a:hover { color: var(--orange-soft); }
       </div>
       <input type="hidden" name="ml-submit" value="1">
       <input type="hidden" name="anticsrf" value="true">
+      <!-- A field no person sees and no person fills in. Answered means a bot. -->
+      <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button type="submit">Take a place</button>
       <p class="fineprint">&euro;50, and I will reply with the payment link and the Google Meet
       details. Two places are left of a room of twelve, and the rest is a cohort
@@ -587,6 +589,8 @@ footer a:hover { color: var(--orange-soft); }
       </div>
       <input type="hidden" name="ml-submit" value="1">
       <input type="hidden" name="anticsrf" value="true">
+      <!-- A field no person sees and no person fills in. Answered means a bot. -->
+      <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button type="submit">Take a place</button>
       <p class="fineprint">&euro;50, and I will reply with the payment link and the Google Meet
       details. Two places are left of a room of twelve, and the rest is a cohort
@@ -616,11 +620,30 @@ footer a:hover { color: var(--orange-soft); }
 <script>
 /* Post the form ourselves and swap in the success state. The page carries the same form
    twice, so MailerLite's own script cannot be used: it finds a form by a single id. The
-   POST is a CORS simple request, so no preflight, and the response is opaque under no-cors,
-   which is fine because the subscriber is created either way. With JavaScript off the form
-   still submits natively through target="_blank". */
+   It goes through /.netlify/functions/subscribe, which makes the MailerLite call
+   server side where there is no CORS restriction, so the real answer can be read.
+   It used to post direct with mode:'no-cors', which cannot read a response and so
+   reported success whatever came back. On the Resource downloads form that hid a
+   reCAPTCHA refusal for months. Without JavaScript the form still submits natively
+   through target="_blank". */
 (function () {
-  var ACTION = "https://assets.mailerlite.com/jsonp/2409610/forms/200050059381835246/subscribe";
+  var LIST = 'public-speaking';
+
+  /* The failure line is created next to the button rather than written into
+     the markup twice, because this page carries the same form twice. */
+  function fail(form, msg) {
+    var p = form.querySelector('.gate-error');
+    if (!p) {
+      p = document.createElement('p');
+      p.className = 'gate-error';
+      p.setAttribute('role', 'alert');
+      var btn = form.querySelector('button[type="submit"]');
+      if (btn && btn.parentNode) { btn.parentNode.insertBefore(p, btn.nextSibling); }
+      else { form.appendChild(p); }
+    }
+    p.textContent = msg;
+    p.style.display = 'block';
+  }
 
   document.querySelectorAll('form.drill-form').forEach(function (form) {
     var sending = false;
@@ -633,21 +656,37 @@ footer a:hover { color: var(--orange-soft); }
       var label = btn ? btn.textContent : '';
       if (btn) { btn.disabled = true; btn.textContent = 'Holding your place...'; }
 
-      fetch(ACTION, {
+      var data = new FormData(form);
+      var extra = {};
+      data.forEach(function (v, k) {
+        var m = /^fields\[([a-z][a-z0-9_]*)\]$/.exec(k);
+        if (m && m[1] !== 'name' && m[1] !== 'email') { extra[m[1]] = v; }
+      });
+      fetch('/.netlify/functions/subscribe', {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(new FormData(form)).toString()
-      }).then(function () {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          list: LIST,
+          name: data.get('fields[name]'),
+          email: data.get('fields[email]'),
+          website: data.get('website'),
+          fields: extra
+        })
+      }).then(function (r) {
+        return r.json().catch(function () { return { ok: false }; });
+      }).then(function (j) {
+        if (!j || !j.ok) {
+          if (btn) { btn.disabled = false; btn.textContent = label; }
+          fail(form, (j && j.error) || 'We could not hold your place just then. Please try again.');
+          return;
+        }
         document.querySelectorAll('.row-form').forEach(function (el) { el.style.display = 'none'; });
         document.querySelectorAll('.row-success').forEach(function (el) { el.style.display = 'block'; });
         var wrap = form.closest('.signup');
         if (wrap) { wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
       }).catch(function () {
-        /* Network failure: submit natively so a sign-up is never silently lost. */
         if (btn) { btn.disabled = false; btn.textContent = label; }
-        sending = true;
-        form.submit();
+        fail(form, 'No connection just then. Please try again.');
       });
     });
   });

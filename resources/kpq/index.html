@@ -343,7 +343,10 @@
               </div>
               <input type="hidden" name="ml-submit" value="1">
               <input type="hidden" name="anticsrf" value="true">
+              <!-- A field no person sees and no person fills in. Answered means a bot. -->
+              <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
               <button class="btn" type="submit">Send me the PDF &#8594;</button>
+              <p class="gate-error" role="alert" style="display:none"></p>
               <p class="fineprint">Free. You can unsubscribe any time, no hard feelings.</p>
             </form>
           </div>
@@ -452,15 +455,25 @@
   render();
 })();
 
-/* Download gate. Same shape as the course gate on /bsfp-accelerator/: post to
-   MailerLite with no-cors, swap the form for the link, and remember it locally
-   so somebody printing for a workshop is not asked twice. If the fetch fails
-   the form submits normally rather than swallowing the signup. */
+/* Download gate.
+ *
+ * This used to post straight to MailerLite with `mode: 'no-cors'`, which makes
+ * the response unreadable by design, and then revealed the download whatever
+ * came back. MailerLite was answering {"success":false,"message":"reCAPTCHA
+ * failed. Try again."} to every submission on this form, so the page said "It
+ * is on its way" and nobody was ever added to the list. Confirmed 22 October
+ * 2026.
+ *
+ * It now goes through /.netlify/functions/subscribe, which makes the same call
+ * server side where there is no CORS restriction, reads the real answer, and
+ * validates the fields somewhere a browser cannot skip. The link is revealed
+ * only on a genuine success, and a failure says so instead of pretending. */
 (function () {
   var form = document.querySelector('.kpq-gate-form');
   if (!form) return;
   var section = form.closest('.gate-section');
   if (!section) return;
+  var err = form.querySelector('.gate-error');
 
   function reveal() {
     var f = section.querySelector('.gate-form');
@@ -468,29 +481,46 @@
     if (f) f.style.display = 'none';
     if (d) d.style.display = 'block';
   }
+  function fail(msg) {
+    if (!err) { alert(msg); return; }
+    err.textContent = msg;
+    err.style.display = 'block';
+  }
 
-  var sending = false;
   form.addEventListener('submit', function (e) {
-    if (sending) return;
-    if (!form.checkValidity()) { form.reportValidity(); e.preventDefault(); return; }
     e.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    if (err) { err.style.display = 'none'; }
     var btn = form.querySelector('button[type="submit"]');
     var label = btn ? btn.innerHTML : '';
     if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
-    fetch(form.action, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(new FormData(form)).toString()
-    }).then(function () {
-      reveal();
-      try { localStorage.setItem('kpq-worksheet', '1'); } catch (err) {}
+    var data = new FormData(form);
+    fetch('/.netlify/functions/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        list: 'resource-downloads',
+        name: data.get('fields[name]'),
+        email: data.get('fields[email]'),
+        website: data.get('website')
+      })
+    }).then(function (r) {
+      return r.json().catch(function () { return { ok: false }; });
+    }).then(function (j) {
+      if (j && j.ok) {
+        reveal();
+        try { localStorage.setItem('kpq-worksheet', '1'); } catch (err2) {}
+        return;
+      }
+      if (btn) { btn.disabled = false; btn.innerHTML = label; }
+      fail((j && j.error) || 'We could not add you just then. Please try again.');
     }).catch(function () {
       if (btn) { btn.disabled = false; btn.innerHTML = label; }
-      sending = true; form.submit();
+      fail('No connection just then. Please try again.');
     });
   });
 
-  try { if (localStorage.getItem('kpq-worksheet') === '1') reveal(); } catch (err) {}
+  try { if (localStorage.getItem('kpq-worksheet') === '1') reveal(); } catch (err3) {}
 })();
 </script>
 </body>
