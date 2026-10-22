@@ -79,6 +79,18 @@
     font-size: 10.5pt; margin-bottom: 1pt;
   }
   .kpibox .hint { font-size: 8pt; color: #6b6f7c; margin-bottom: 3pt; }
+  /* The area is the heading; the ask is what goes on the lines. Printing only
+     the area is what had people writing the impact instead of the measure. */
+  /* One line per box. The area leads, the ask follows on the same line:
+     splitting them cost four lines and pushed the sheet to three pages. */
+  .kpibox .ask {
+    font-family: 'Fraunces', serif; font-weight: 700; color: #1d2a52;
+    font-size: 9.8pt; margin-bottom: 1pt;
+  }
+  .kpibox .ask .area {
+    font-family: inherit; font-weight: 700; color: #e8862e;
+  }
+  .kpibox .smart { font-size: 7.6pt; color: #8a8a8a; margin-top: 2pt; }
 
   .note {
     background: #f3ecdf; border-left: 2.5pt solid #e8862e;
@@ -150,33 +162,34 @@
   <div class="pagebreak"></div>
 
   <div class="kicker">Worksheet &middot; page two</div>
-  <h1>Your three KPIs</h1>
-  <p class="standfirst">Each KPI answers part of the question above. Develop no more than three.</p>
+  <h1>Your KPIs</h1>
+  <p class="standfirst">Each KPI answers part of the question above. Write the indicator, not the area it sits in.</p>
+  <p class="meta">Every indicator below is Specific, Measurable, Achievable, Relevant and Time-bound.</p>
   <p class="meta">The Trampoline Park example runs risk, growth and profit. Use whichever three carry your own role.</p>
 
   <div class="kpibox">
-    <div class="n">1 &nbsp; Biggest business risk impact</div>
+    <div class="ask"><span class="area">Area 1 &middot; Biggest business risk.</span> The indicator that shows it is controlled</div>
     <div class="hint">What would end this, and what keeps it under control? Example: keeping accident and incident rates at less than 1 per month.</div>
     <div class="rule tight"></div>
     <div class="rule tight"></div>
   </div>
 
   <div class="kpibox">
-    <div class="n">2 &nbsp; Growth impact</div>
+    <div class="ask"><span class="area">Area 2 &middot; Growth.</span> The indicator that shows it is growing</div>
     <div class="hint">One measure, not eight. Example: ensuring Mystery Shopping and Customer Feedback scores are over 90% satisfaction with positive NPS Scores.</div>
     <div class="rule tight"></div>
     <div class="rule tight"></div>
   </div>
 
   <div class="kpibox">
-    <div class="n">3 &nbsp; Profit impact</div>
+    <div class="ask"><span class="area">Area 3 &middot; Profit.</span> The indicator that shows the money works</div>
     <div class="hint">Example: ensuring that assigned monthly budgets of $XXX are met. Exceeding the budget can be accepted if approved with a clear case. Underspending needs justifying too.</div>
     <div class="rule tight"></div>
     <div class="rule tight"></div>
   </div>
 
   <div class="kpibox">
-    <div class="n">4 &nbsp; Sustainability impact, if the role carries one</div>
+    <div class="ask"><span class="area">Area 4 &middot; Sustainability, only if the role carries one.</span> The indicator you measure against</div>
     <div class="hint">With a baseline and a plan, measure against it. Without one, measure improvement from where you stand.</div>
     <div class="rule tight"></div>
     <div class="rule tight"></div>
