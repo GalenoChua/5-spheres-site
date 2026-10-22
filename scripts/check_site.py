@@ -164,6 +164,22 @@ def check_live():
                                     "name": "QA automated check",
                                     "email": "qa-automated-check@example.com"}, True),
     ]
+    # A body of the four characters `null` parses fine and then threw, and
+    # Netlify answers a throw with 502 and the stack trace. Raw, not via the
+    # case list, because the point is that it is not an object.
+    req = urllib.request.Request(url, data=b"null",
+                                 headers={"content-type": "application/json"},
+                                 method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            raw = r.read().decode()
+            code = r.status
+    except urllib.error.HTTPError as e:
+        raw, code = e.read().decode(), e.code
+    check(code == 400 and "trace" not in raw and "errorType" not in raw,
+          "live: a null body must not leak a stack trace",
+          "got %s %s" % (code, raw[:100]))
+
     for label, body, want_ok in cases:
         req = urllib.request.Request(
             url, data=_json.dumps(body).encode(),

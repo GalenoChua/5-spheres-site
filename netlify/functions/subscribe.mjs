@@ -72,11 +72,18 @@ function badEmail(e) {
   return m ? null : 'shape';
 }
 
-export default async (request) => {
+const handle = async (request) => {
   if (request.method !== 'POST') return json(405, { ok: false, error: 'POST only' });
 
   let body;
   try { body = await request.json(); } catch { return json(400, { ok: false, error: 'not json' }); }
+  /* JSON.parse('null') and JSON.parse('7') both succeed, and the first thing
+     read off the body then threw. Netlify's default handler answers a throw
+     with 502 and the stack trace, so a body of the four characters `null`
+     returned errorType, errorMessage and a trace to whoever asked. */
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return json(400, { ok: false, error: 'not an object' });
+  }
 
   /* A field no human fills in. Answered means a bot, and a bot is told it worked so it
      does not come back and try a different shape. */
@@ -104,7 +111,9 @@ export default async (request) => {
      noticing. Key shape is constrained so this cannot be used to set arbitrary
      MailerLite internals. */
   const extra = body.fields && typeof body.fields === 'object' ? body.fields : {};
-  for (const key of Object.keys(extra)) {
+  /* Capped. Nothing on the site sends more than one, and without a limit a
+     caller could hand over a thousand keys and have us build the request. */
+  for (const key of Object.keys(extra).slice(0, 8)) {
     if (key === 'name' || key === 'email') continue;
     if (!/^[a-z][a-z0-9_]{0,39}$/.test(key)) continue;
     const value = clean(extra[key], 1000);
@@ -144,4 +153,17 @@ export default async (request) => {
   }
 
   return json(200, { ok: true });
+};
+
+
+/* Netlify answers an uncaught throw with 502 and the stack trace. A body of
+   the four characters `null` was enough to produce one. The crash itself is
+   fixed above; this is so the NEXT one is a sentence rather than a trace. */
+export default async (request) => {
+  try {
+    return await handle(request);
+  } catch (err) {
+    console.error('subscribe threw', err);
+    return json(500, { ok: false, error: 'Something went wrong at our end.' });
+  }
 };
