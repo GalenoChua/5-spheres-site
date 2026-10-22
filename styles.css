@@ -906,3 +906,44 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
 /* No light-on-light override: .gate-section is --paper-warm, so the dark red
    is the readable one there. A pale variant belongs only on a dark ground,
    and nothing on these pages has one. */
+
+/* ── Touch: targets and the mobile nav ───────────────────────────────
+   From Leo Huynh's QA, 22 October 2026. At 375px the nav took 181px of an
+   812px screen, 22% of the first thing anyone sees, and twenty controls were
+   under the ~44px a finger needs: the stem radios were 17px.
+
+   Everything here is a pointer:coarse question, not a width question. A narrow
+   desktop window has a mouse and does not need 44px rows; a 1024px tablet does.
+   Sizing by width gets both wrong. */
+@media (pointer: coarse) {
+  /* The nav is the worst offender because it wraps to two rows and pads both.
+     Tightening the rows, not the targets: each link still grows to 44. */
+  nav .wrap { padding-top: 8px; padding-bottom: 8px; gap: 10px; }
+  .nav-links { gap: 14px 18px; }
+
+  nav a.cta,
+  footer a,
+  .lesson-nav a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* A radio of 17px cannot be hit. The control grows, and the label around it
+     becomes the target, which is the part people actually aim at. */
+  .kpq-stems label { min-height: 44px; padding: 4px 2px; }
+  .kpq-stems input { width: 22px; height: 22px; }
+
+  .copybtn { min-height: 44px; padding: 10px 14px; }
+
+  /* The card links under "Keep going" and the like. 21px rows, and the ones
+     most likely to be tapped on a phone, because they are the way onward. */
+  .rcard a, .grid .rcard a, .cta-card .btn, a.btn, .btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* The wordmark is a link home and was 27px. */
+  nav a.mark { min-height: 44px; display: inline-flex; align-items: center; }
+}

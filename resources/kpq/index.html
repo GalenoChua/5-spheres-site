@@ -23,7 +23,13 @@
     display: inline-flex; align-items: center; gap: 8px;
     font-size: .95rem; font-weight: 600; color: var(--ink); cursor: pointer;
   }
+  /* 17px is under half a fingertip. The page's own block loads after
+     styles.css, so the global touch rule could not reach this. */
   .kpq-stems input { accent-color: var(--ember); width: 17px; height: 17px; }
+  @media (pointer: coarse) {
+    .kpq-stems input { width: 22px; height: 22px; }
+    .kpq-stems label { min-height: 44px; }
+  }
 
   /* Three CTAs as cards. One row on desktop, stacked on a phone. */
   .cta-cards {
