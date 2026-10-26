@@ -109,8 +109,14 @@ const MAX_AGE_MS = 3 * 60 * 60 * 1000;   /* a page left open over a long lunch *
 
 let keyPromise = null;
 
+/* STRONG CONSISTENCY IS LOAD BEARING. Netlify Blobs reads are eventually consistent by
+   default, served from a regional cache, and single use is a read of something written
+   moments earlier, probably by a different instance. Against the default store a token
+   spent twice in quick succession was accepted BOTH times in production, while the unit
+   tests against an in-memory store passed. Caught by check_site.py --live on 26 October,
+   about ninety seconds after the deploy. */
 function store() {
-  return getStore(TOKENS);
+  return getStore({ name: TOKENS, consistency: 'strong' });
 }
 
 /* Cached in module scope: a warm function instance signs without touching the store. */
