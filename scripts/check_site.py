@@ -235,6 +235,46 @@ def check_analytics():
           "the beacon loads and every measurement it sends is blocked")
 
 
+# ------------------------------------------------------------------ blog ---
+def check_blog():
+    """The rendered site has to match the markdown and the pages on disk.
+
+    Until 26 October the sitemap was hand-maintained. It listed 48 of 49 public
+    pages, and 21 entries claimed a lastmod of 31 August for pages that had
+    changed since. A post nobody remembered to add was simply invisible.
+
+    So the sitemap and the field-notes index are generated, and this fails if
+    either is out of date, which is the only thing that makes "generated" true
+    rather than "generated once".
+    """
+    sys.path.insert(0, os.path.join(ROOT, "scripts"))
+    try:
+        import build_blog
+    except SystemExit as err:            # missing markdown/pyyaml
+        check(False, "the blog builder will not import", str(err))
+        return
+
+    import io as _io
+    posts = build_blog.scan_posts()
+    want = build_blog.build_sitemap(posts)
+    got = _io.open(os.path.join(ROOT, "sitemap.xml"), encoding="utf-8").read()
+    check(want == got, "sitemap.xml is out of date",
+          "run: python scripts/build_blog.py")
+
+    for lang in build_blog.SECTIONS:
+        old, new = build_blog.build_index(posts, lang)
+        if old is None:
+            continue
+        check(old == new, "the %s field-notes index is out of date" % lang,
+              "run: python scripts/build_blog.py")
+
+    # Every post the sitemap offers has to be a page a search engine can use.
+    for post in posts:
+        for field in ("description", "title"):
+            check(bool(post[field]),
+                  "%s has no %s" % (post["url"], field))
+
+
 # ---------------------------------------------------------------- links ---
 def check_links():
     """Every internal href has to resolve to something on disk."""
@@ -420,6 +460,7 @@ def main():
     check_forms()
     check_lists()
     check_analytics()
+    check_blog()
     check_links()
     check_calendar()
     if "--render" in sys.argv:
