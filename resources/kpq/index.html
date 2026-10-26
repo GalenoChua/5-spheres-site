@@ -69,6 +69,33 @@
     .cta-cards { grid-template-columns: 1fr; }
     .cta-card .shot { aspect-ratio: 2/1; }
   }
+
+  /* The first screen block. Side by side where there is room, stacked on a
+     phone, and deliberately short: every pixel here pushes the form down. */
+  .getit { padding: 26px 0 6px; }
+  .getit .gate-section { background: var(--paper-warm); border-radius: 14px; padding: 20px 22px; }
+  .getit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: center; }
+  .getit-say h2 { font-size: 1.32rem; margin: 2px 0 6px; }
+  .getit-say p { font-size: .94rem; color: var(--muted); margin: 0; }
+  .getit .field { margin-bottom: 8px; }
+  .getit .fineprint { font-size: .76rem; margin-top: 8px; }
+  .getit .btn { width: 100%; text-align: center; }
+  .getit .gate-download h4 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink); font-size: 1.02rem; margin-bottom: 6px; }
+  @media (max-width: 760px) {
+    .getit-row { grid-template-columns: 1fr; gap: 12px; }
+    .getit { padding: 14px 0 4px; }
+    /* The nav takes 173px and the hero took another 560, which left the submit
+       button sitting exactly on the fold: visible if you looked for it, which
+       is not the same as being offered. This is the page a QR lands on, so the
+       hero gives up the space. */
+    .resource-page .hero-dark { padding: 26px 0 24px; }
+    .resource-page .hero-dark h1 { font-size: 2rem; line-height: 1.12; }
+    .resource-page .hero-dark p { font-size: .95rem; }
+    .resource-page .hero-dark .deco { display: none; }
+  }
+
+  /* Two cards now the worksheet one has moved to the top. */
+  .cta-cards { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 </style>
 </head>
 <body class="resource-page">
@@ -113,6 +140,48 @@
     <p>This exercise helps you and your supervisor or team member to articulate the strategic purpose of their role, in their words.</p>
   </div>
 </header>
+
+<!-- FIRST SCREEN. A QR at a talk buys about twenty seconds, standing up, on a
+     phone. This block exists so the thing being offered is reachable in one
+     tap; the article that explains it runs underneath for whoever wants it.
+     See scripts/check_site.py --render, which fails if it sinks again. -->
+<section class="getit">
+  <div class="wrap-narrow">
+    <div class="gate-section" id="gate-kpq">
+      <div class="getit-row">
+        <div class="getit-say">
+          <div class="label">For your workshop</div>
+          <h2>Get the printable worksheet</h2>
+          <p>Two pages, ruled to write on. The template, the guiding tips, and space for your three KPIs.</p>
+        </div>
+        <div class="getit-do">
+<div class="gate-form">
+            <form class="kpq-gate-form" method="post" action="https://assets.mailerlite.com/jsonp/2409610/forms/191733181639034609/subscribe" target="_blank" rel="noopener">
+              <div class="field">
+                <input type="text" name="fields[name]" aria-label="First name" placeholder="First name" autocomplete="given-name" required>
+              </div>
+              <div class="field">
+                <input type="email" name="fields[email]" aria-label="Email" placeholder="Email" autocomplete="email" required>
+              </div>
+              <input type="hidden" name="ml-submit" value="1">
+              <input type="hidden" name="anticsrf" value="true">
+              <!-- A field no person sees and no person fills in. Answered means a bot. -->
+              <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+              <button class="btn" type="submit">Send me the PDF &#8594;</button>
+              <p class="gate-error" role="alert" style="display:none"></p>
+              <p class="fineprint">Free. You can unsubscribe any time, no hard feelings.</p>
+            </form>
+          </div>
+<div class="gate-download" style="display:none">
+            <h4>Here is your worksheet.</h4>
+            <p>The link below does not expire, so bookmark it if you are printing for a room.</p>
+            <a class="btn" href="/assets/the-kpq-worksheet.pdf" target="_blank" rel="noopener">Download the PDF &#8594;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section>
   <div class="wrap-narrow">
@@ -337,39 +406,6 @@
     </div>
 
     <div class="cta-cards">
-
-      <div class="cta-card gate-section" id="gate-kpq" style="background: var(--paper); padding: 0; margin: 0;">
-        <img class="shot" src="/images/kpq-worksheet-preview.jpg" width="1120" height="700" loading="lazy"
-             alt="The first page of the printable KPQ worksheet">
-        <div class="inner">
-          <div class="label">For your workshop</div>
-          <h3>The printable worksheet</h3>
-          <p>Two pages, ruled to write on. The template, the guiding tips, and space for your three KPIs.</p>
-          <div class="spacer"></div>
-          <div class="gate-form">
-            <form class="kpq-gate-form" method="post" action="https://assets.mailerlite.com/jsonp/2409610/forms/191733181639034609/subscribe" target="_blank" rel="noopener">
-              <div class="field">
-                <input type="text" name="fields[name]" aria-label="First name" placeholder="First name" autocomplete="given-name" required>
-              </div>
-              <div class="field">
-                <input type="email" name="fields[email]" aria-label="Email" placeholder="Email" autocomplete="email" required>
-              </div>
-              <input type="hidden" name="ml-submit" value="1">
-              <input type="hidden" name="anticsrf" value="true">
-              <!-- A field no person sees and no person fills in. Answered means a bot. -->
-              <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
-              <button class="btn" type="submit">Send me the PDF &#8594;</button>
-              <p class="gate-error" role="alert" style="display:none"></p>
-              <p class="fineprint">Free. You can unsubscribe any time, no hard feelings.</p>
-            </form>
-          </div>
-          <div class="gate-download" style="display:none">
-            <h4>Here is your worksheet.</h4>
-            <p>The link below does not expire, so bookmark it if you are printing for a room.</p>
-            <a class="btn" href="/assets/the-kpq-worksheet.pdf" target="_blank" rel="noopener">Download the PDF &#8594;</a>
-          </div>
-        </div>
-      </div>
 
       <div class="cta-card">
         <img class="shot cover" src="/images/field-guide-cover.jpg" width="1000" height="1600" loading="lazy"

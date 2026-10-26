@@ -1,6 +1,7 @@
 """The checks that would have caught what the 22 October QA found.
 
     python scripts/check_site.py            static checks, no network
+    python scripts/check_site.py --render   also opens a browser and measures
     python scripts/check_site.py --live     also posts a real sign-up
 
 WHY THIS EXISTS. Leo Huynh's QA report found seven issues and Marika Vallier
@@ -27,6 +28,10 @@ import re
 import sys
 import urllib.error
 import urllib.request
+
+# A button label containing an arrow crashed the failure report on a cp1252
+# console, so the one run that had something to say could not say it.
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://5spheresofempathy.com"
@@ -146,6 +151,59 @@ def check_calendar():
           ", ".join(drift))
 
 
+
+# ---------------------------------------------------------------- render ---
+"""Landing pages: the ask has to be on the first screen."""
+LANDING = ["/resources/kpq/"]
+
+
+def check_render():
+    """The one check that needs a browser, and the one that caught the keynote.
+
+    G, 26 October: "the form and CTAs should have been at the top of list, this
+    must be a hard design thing for next time."
+
+    On 23 October the QR on a keynote slide pointed at /kpq. Redirect, page and
+    form all worked. The gate sat 11,481px down a 13,524px page, 13.6 phone
+    screens, with no button of any kind on the first screen. People walked up
+    and asked for the worksheet in person. Sign-ups: zero.
+
+    Markup cannot answer this. It is a rendered-height question, so it needs a
+    browser, which is why it is opt in rather than in the default run.
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        check(False, "render checks need playwright", "pip install playwright")
+        return
+
+    with sync_playwright() as pw:
+        b = pw.chromium.launch()
+        ctx = b.new_context(viewport={"width": 390, "height": 844},
+                            is_mobile=True, has_touch=True)
+        page = ctx.new_page()
+        for path in LANDING:
+            page.goto(SITE + path, wait_until="networkidle")
+            d = page.evaluate("""() => {
+              const H = innerHeight;
+              const cta = document.querySelector(
+                '.kpq-gate-form button[type=submit], form button[type=submit], a.btn');
+              if (!cta) return { none: true, H };
+              const r = cta.getBoundingClientRect();
+              return { H, top: Math.round(r.top), bottom: Math.round(r.bottom),
+                       label: cta.textContent.trim().slice(0, 30),
+                       doc: document.documentElement.scrollHeight };
+            }""")
+            if d.get("none"):
+                check(False, "%s has no call to action at all" % path)
+                continue
+            check(d["bottom"] <= d["H"],
+                  "%s: the primary action is below the fold at 390px" % path,
+                  "%r ends at %dpx of a %dpx screen, %0.1f screens down"
+                  % (d["label"], d["bottom"], d["H"], d["top"] / d["H"]))
+        ctx.close()
+        b.close()
+
 # ------------------------------------------------------------------ live ---
 def check_live():
     """Post a real sign-up through the deployed function and read the answer.
@@ -200,6 +258,8 @@ def main():
     check_forms()
     check_links()
     check_calendar()
+    if "--render" in sys.argv:
+        check_render()
     if "--live" in sys.argv:
         check_live()
 
