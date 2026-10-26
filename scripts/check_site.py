@@ -36,6 +36,7 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://5spheresofempathy.com"
 SKIP_DIRS = {".git", "node_modules", ".netlify", "ops-log", "scripts",
+             "5 Spheres Admin",
              "5 Spheres of Empathy", "5 Spheres of Empathy Books",
              "Global Sustainability Tours", "course-export", "renders"}
 
@@ -178,6 +179,60 @@ def check_lists():
             check(name in known,
                   "%s names list %r, which the function does not know"
                   % (rel(path), name), "it would be refused with error 'list'")
+
+
+# ------------------------------------------------------------- analytics ---
+BEACON_HOST = "static.cloudflareinsights.com"
+REPORT_HOST = "cloudflareinsights.com"
+
+
+def check_analytics():
+    """Every page carries the beacon, and the CSP lets it through.
+
+    Until 26 October this site had no analytics of ANY kind. The Friday keynote
+    that converted zero therefore produced no measurement to look at, and the
+    only reason anyone knew it had failed was that G was standing in the room.
+
+    Two ways this breaks silently, both already seen on this estate:
+
+    * A NEW PAGE gets added without the tag. It looks fine and is invisible.
+    * The CSP blocks the beacon. The site sends a strict Content-Security-Policy
+      from /_headers, and a host missing from it is refused by the browser with
+      nothing on the page to show for it. That is what the MailerLite jQuery
+      host did to the HowLegit forms.
+
+    The report host is checked separately from the script host because they are
+    DIFFERENT origins: the script comes from static.cloudflareinsights.com and
+    the measurement is POSTed to cloudflareinsights.com/cdn-cgi/rum. Allowing
+    only the first loads the beacon and then blocks everything it sends.
+    """
+    missing = []
+    for path in pages():
+        if BEACON_HOST not in io.open(path, encoding="utf-8").read():
+            missing.append(rel(path))
+    check(not missing, "%d page(s) carry no analytics beacon" % len(missing),
+          ", ".join(sorted(missing)[:5]))
+
+    headers = io.open(os.path.join(ROOT, "_headers"), encoding="utf-8").read()
+    csp = ""
+    for line in headers.splitlines():
+        if "Content-Security-Policy:" in line:
+            csp = line.split("Content-Security-Policy:", 1)[1]
+    check(bool(csp), "no Content-Security-Policy found in _headers")
+
+    def directive(name):
+        for part in csp.split(";"):
+            part = part.strip()
+            if part.startswith(name + " "):
+                return part
+        return ""
+
+    check(BEACON_HOST in directive("script-src"),
+          "the CSP script-src does not allow %s" % BEACON_HOST,
+          "the beacon is blocked and analytics read zero")
+    check(REPORT_HOST in directive("connect-src"),
+          "the CSP connect-src does not allow %s" % REPORT_HOST,
+          "the beacon loads and every measurement it sends is blocked")
 
 
 # ---------------------------------------------------------------- links ---
@@ -364,6 +419,7 @@ def check_live():
 def main():
     check_forms()
     check_lists()
+    check_analytics()
     check_links()
     check_calendar()
     if "--render" in sys.argv:
