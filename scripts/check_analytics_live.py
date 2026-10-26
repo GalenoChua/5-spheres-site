@@ -20,8 +20,10 @@ nothing on any page looked wrong, which is the whole argument for measuring the
 request rather than the markup.
 
 What it asserts: the beacon script loads with HTTP 200, the browser reports no
-CSP violation for either Cloudflare host, and the page POSTs a measurement to
-the reporting endpoint.
+CSP violation for either Cloudflare host, the page POSTs a measurement, and the
+reporting endpoint ACCEPTS it. That last one matters because a beacon carrying a
+wrong token still fires; the send looks identical and only the answer differs.
+A healthy report comes back 204.
 """
 import sys
 
@@ -54,10 +56,16 @@ def main():
             loaded = []      # the beacon script itself
             reports = []     # the measurement it sends
             blocked = []     # CSP refusals naming either host
+            accepted = []    # what the reporting endpoint answered
 
             def on_response(r):
                 if SCRIPT_HOST in r.url:
                     loaded.append(r.status)
+                # A beacon carrying a WRONG token still fires; the request is
+                # made either way. What separates "sent" from "accepted" is the
+                # answer, so record it rather than trusting the send.
+                if REPORT_HOST in r.url and "/cdn-cgi/rum" in r.url:
+                    accepted.append(r.status)
 
             def on_request(r):
                 # The report goes to cloudflareinsights.com/cdn-cgi/rum, a
@@ -102,11 +110,17 @@ def main():
                 fails.append("%s: CSP blocked the beacon: %s" % (path, blocked[0]))
             if not reports:
                 fails.append("%s: the beacon sent no measurement" % path)
+            elif accepted and not any(c < 400 for c in accepted):
+                fails.append(
+                    "%s: the reporting endpoint refused the measurement, "
+                    "answering %s, which is what a wrong token looks like"
+                    % (path, accepted))
 
-            print("  %-30s tag=%-3s script=%-5s report=%-3s"
+            print("  %-30s tag=%-3s script=%-5s report=%-4s answered=%s"
                   % (path, "yes" if tag else "NO",
                      (loaded[0] if loaded else "none"),
-                     "sent" if reports else "NO"))
+                     "sent" if reports else "NO",
+                     (accepted[0] if accepted else "no reply")))
             ctx.close()
         browser.close()
 
