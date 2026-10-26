@@ -574,16 +574,24 @@
     var label = btn ? btn.innerHTML : '';
     if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
     var data = new FormData(form);
-    fetch('/.netlify/functions/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        list: 'resource-downloads',
-        name: data.get('fields[name]'),
-        email: data.get('fields[email]'),
-        website: data.get('website')
-      })
-    }).then(function (r) {
+    /* The sign-up token, fetched as the page loaded. The function
+       refuses a POST without one, which is what turns away a bot
+       posting straight at the endpoint. */
+    (window.signupToken ? window.signupToken() : Promise.resolve(null))
+      .then(function (token) {
+        if (window.signupTokenSpent) { window.signupTokenSpent(); }
+        return fetch('/.netlify/functions/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          list: 'resource-downloads',
+          name: data.get('fields[name]'),
+          email: data.get('fields[email]'),
+          website: data.get('website'),
+          token: token
+        })
+        });
+      }).then(function (r) {
       return r.json().catch(function () { return { ok: false }; });
     }).then(function (j) {
       if (j && j.ok) {
@@ -602,5 +610,6 @@
   try { if (localStorage.getItem('kpq-worksheet') === '1') reveal(); } catch (err3) {}
 })();
 </script>
+  <script src="/subscribe.js" defer></script>
 </body>
 </html>

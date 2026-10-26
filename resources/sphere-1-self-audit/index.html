@@ -89,7 +89,8 @@
       <h3>Start the self-audit</h3>
       <p class="small">A free guided session with Optomize, the empathy coach.</p>
       <div class="gate-form">
-        <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/189443333940053728/subscribe" method="post" target="_blank" rel="noopener">
+        <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/189443333940053728/subscribe" method="post" target="_blank" rel="noopener" data-list="empathy-coach">
+              <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <div class="field">
             <input type="text" name="fields[name]" placeholder="First name" autocomplete="given-name">
           </div>
@@ -142,18 +143,9 @@
 </footer>
 
 <script>
-  function ml_webform_success_42245649() {
-    var el = document.getElementById('gate-self-audit');
-    if (el) {
-      el.querySelector('.gate-form').style.display = 'none';
-      el.querySelector('.row-success').style.display = 'block';
-    }
-  }
-</script>
-<script src="https://groot.mailerlite.com/js/w/webforms.min.js?vb397d78ebaa8a0f631d35384c46d781b" type="text/javascript"></script>
-<script>
   fetch("https://assets.mailerlite.com/jsonp/2409610/forms/189443333940053728/takel")
 </script>
 <script src="/script.js"></script>
+  <script src="/subscribe.js" defer></script>
 </body>
 </html>

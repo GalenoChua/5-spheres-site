@@ -34,6 +34,8 @@
  * The pages relied on the browser's own checks, which accept `a@b` and a name of three
  * spaces. Checks in the page are a courtesy to the visitor; these are the ones that hold.
  */
+import { getStore } from '@netlify/blobs';
+
 const json = (status, body) =>
   new Response(JSON.stringify(body), {
     status,
@@ -50,6 +52,14 @@ const FORMS = {
   'resource-downloads': '191733181639034609',
   'sensing-drill': '196872740626498737',
   'public-speaking': '200050059381835246',
+  /* Added 26 October. These four forms posted straight to MailerLite with no
+     honeypot and no validation of any kind, on the homepage, the application
+     page and the sphere one audit. They were never in the no-cors trap because
+     they submitted natively, so the visitor saw the result; they were simply
+     open. */
+  'empathy-coach': '189443333940053728',
+  'inbox': '189738547467519573',
+  'apply': '189808223124980825',
 };
 const ACCOUNT = '2409610';
 
@@ -72,7 +82,120 @@ function badEmail(e) {
   return m ? null : 'shape';
 }
 
+/* ── THE SIGN-UP TOKEN ────────────────────────────────────────────────────────────────
+ *
+ * G, 26 October: "I'm getting junk contacts already, there are so many."
+ *
+ * The honeypot that replaced the reCAPTCHA stops a crawler that fills every field it
+ * finds. It stops nothing that was written against this form, and the HowLegit list ran
+ * 146 spam out of 152, so the bar has to be higher than that.
+ *
+ * So: GET this function and it issues a token. POST without one is refused. A bot that
+ * posts straight at the endpoint never loaded a page, has no token, and gets nothing.
+ * There is no third party, no puzzle, and nothing for the visitor to do.
+ *
+ * WHY SIGNED RATHER THAN STORED. Issuing a token on every page view and storing it would
+ * write a blob per view and never delete one, because Netlify Blobs has no expiry. The
+ * token carries its own timestamp and a signature instead, so issuing writes nothing.
+ * Only a token that is actually SPENT is recorded, and that is a few dozen rows, which is
+ * what makes single use affordable.
+ *
+ * WHERE THE KEY COMES FROM. It is generated once and kept in the blob store, so there is
+ * no environment variable to set and nothing to paste into a console. Losing it would
+ * invalidate tokens already in flight, which costs a visitor one retry.
+ */
+const TOKENS = 'signup-tokens';
+const MAX_AGE_MS = 3 * 60 * 60 * 1000;   /* a page left open over a long lunch */
+
+let keyPromise = null;
+
+function store() {
+  return getStore(TOKENS);
+}
+
+/* Cached in module scope: a warm function instance signs without touching the store. */
+function signingKey() {
+  if (!keyPromise) {
+    keyPromise = (async () => {
+      const kv = store();
+      let raw = await kv.get('key');
+      if (!raw) {
+        raw = [...crypto.getRandomValues(new Uint8Array(32))]
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
+        /* Two cold instances can land here together. Whoever wrote last wins and
+           the other's tokens stop verifying, so re-read rather than trust ours. */
+        await kv.set('key', raw);
+        raw = (await kv.get('key')) || raw;
+      }
+      return crypto.subtle.importKey(
+        'raw',
+        new TextEncoder().encode(raw),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign'],
+      );
+    })().catch((err) => {
+      keyPromise = null;      /* so a transient store failure is not permanent */
+      throw err;
+    });
+  }
+  return keyPromise;
+}
+
+async function sign(message) {
+  const mac = await crypto.subtle.sign('HMAC', await signingKey(),
+    new TextEncoder().encode(message));
+  return [...new Uint8Array(mac)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function issue() {
+  const ts = Date.now();
+  const nonce = crypto.randomUUID().replace(/-/g, '');
+  const body = `${ts}.${nonce}`;
+  return `${body}.${await sign(body)}`;
+}
+
+/* Returns null when the token is good, or a short reason for the log. The visitor is
+   never shown the reason: it tells a bot which half to fix. */
+async function spend(token) {
+  if (typeof token !== 'string' || token.length < 40 || token.length > 200) return 'shape';
+  const parts = token.split('.');
+  if (parts.length !== 3) return 'shape';
+  const [ts, nonce, mac] = parts;
+  if (!/^\d{13}$/.test(ts) || !/^[0-9a-f]{32}$/.test(nonce) || !/^[0-9a-f]{64}$/.test(mac)) {
+    return 'shape';
+  }
+
+  const expected = await sign(`${ts}.${nonce}`);
+  /* Constant time. The comparison is over hex of a fixed length, so a plain !== leaks
+     how many leading characters matched, which is enough to forge one given patience. */
+  if (expected.length !== mac.length) return 'signature';
+  let diff = 0;
+  for (let i = 0; i < expected.length; i += 1) {
+    diff |= expected.charCodeAt(i) ^ mac.charCodeAt(i);
+  }
+  if (diff !== 0) return 'signature';
+
+  const age = Date.now() - Number(ts);
+  if (age < -60000) return 'future';
+  if (age > MAX_AGE_MS) return 'expired';
+
+  /* Single use. Checked last, so a forged token never costs a store round trip. */
+  const kv = store();
+  const key = `used/${nonce}`;
+  if (await kv.get(key)) return 'replay';
+  await kv.set(key, String(ts));
+  return null;
+}
+
+
 const handle = async (request) => {
+  /* A page asks for a token as it loads. Cached nowhere: a cached token is a
+     shared token, and single use would then refuse the second visitor. */
+  if (request.method === 'GET') {
+    return json(200, { token: await issue() });
+  }
   if (request.method !== 'POST') return json(405, { ok: false, error: 'POST only' });
 
   let body;
@@ -88,6 +211,18 @@ const handle = async (request) => {
   /* A field no human fills in. Answered means a bot, and a bot is told it worked so it
      does not come back and try a different shape. */
   if (clean(body.website, 80)) return json(200, { ok: true, skipped: 'bot' });
+
+  /* Before the list lookup, so a direct POST is turned away without us having
+     learned anything about it or reaching MailerLite. */
+  const bad = await spend(body.token);
+  if (bad) {
+    console.error('token refused', { reason: bad, list: body.list });
+    return json(403, {
+      ok: false,
+      error: 'This form has been open a while. Refresh the page and try again.',
+      stale: true,
+    });
+  }
 
   const formId = FORMS[clean(body.list, 40)];
   if (!formId) return json(400, { ok: false, error: 'list', field: 'list' });

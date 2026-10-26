@@ -81,12 +81,15 @@ def strip_comments(html):
 
 
 def check_forms():
-    """A sign-up page has to be able to tell success from failure.
+    """Every sign-up form goes through the function, carries a honeypot, and
+    asks for a token.
 
-    A page that submits NATIVELY is not in that trap: the browser navigates and
-    MailerLite's own page reports the result, so the visitor is told. The trap
-    is intercepting with JavaScript and then not reading the answer. Only pages
-    that intercept are held to the function.
+    The exemption that used to be here said a page submitting NATIVELY was not
+    in the no-cors trap, which was true, and it meant four forms were exempt
+    from every other rule as well. They were MailerLite's stock embeds: no
+    honeypot, no validation, nothing in front of them, on the homepage, the
+    application page and the sphere one audit. On 26 October they were wired to
+    the shared handler, so nothing is exempt now.
     """
     signup = [p for p in pages()
               if 'name="fields[email]"' in io.open(p, encoding="utf-8").read()]
@@ -96,23 +99,41 @@ def check_forms():
         raw = io.open(path, encoding="utf-8").read()
         html = strip_comments(raw)
         name = rel(path)
-        intercepts = "addEventListener('submit'" in html or 'addEventListener("submit"' in html
-        if not intercepts:
-            continue
+        forms = html.count("<form")
 
-        # 1. the bug itself
+        # 1. the original bug
         check("mode: 'no-cors'" not in html and 'mode: "no-cors"' not in html,
-              "%s: intercepts the submit and posts with no-cors" % name,
+              "%s: posts with no-cors" % name,
               "the response is unreadable, so the page cannot know if it worked")
 
-        # 2. and that it goes somewhere that answers
-        check("/.netlify/functions/subscribe" in html,
-              "%s: intercepts the submit but does not use the subscribe function" % name)
+        # 2. it has to reach something that answers. Either the page has its own
+        #    handler, or it opts its forms in to the shared one.
+        own = "/.netlify/functions/subscribe" in html
+        shared = "/subscribe.js" in html and html.count('data-list=') >= forms
+        check(own or shared,
+              "%s: does not go through the subscribe function" % name,
+              "no own handler, and %d of %d form(s) carry data-list"
+              % (html.count('data-list='), forms))
 
-        # 3. a honeypot per form, hidden ON THE ELEMENT. A class is not enough:
+        # 3. the token. A page with its own handler has to ask for one; a page on
+        #    the shared handler gets it from /subscribe.js.
+        check("/subscribe.js" in html,
+              "%s: does not load /subscribe.js, so it sends no sign-up token" % name,
+              "the function refuses a POST without one")
+        if own:
+            check("signupToken" in html,
+                  "%s: has its own handler but never calls signupToken()" % name)
+
+        # 4. MailerLite's own script must be gone. Left in place beside our
+        #    handler it submits the form a second time, and it is what pulled
+        #    jQuery from assets.mlcdn.com at runtime.
+        check("groot.mailerlite.com" not in html,
+              "%s: still loads MailerLite's webforms script" % name,
+              "it would submit the form a second time")
+
+        # 5. a honeypot per form, hidden ON THE ELEMENT. A class is not enough:
         #    two of these pages do not load styles.css and the field rendered
         #    full size on both.
-        forms = html.count("<form")
         pots = re.findall(r'<input[^>]*name="website"[^>]*>', html)
         check(len(pots) == forms,
               "%s: %d form(s) but %d honeypot(s)" % (name, forms, len(pots)))
@@ -120,6 +141,43 @@ def check_forms():
             check("left:-9999px" in tag.replace(" ", ""),
                   "%s: honeypot is not pinned off screen on the element" % name,
                   "a stylesheet rule does not reach every page")
+
+
+# ----------------------------------------------------------------- lists ---
+def check_lists():
+    """Every list a page names has to exist in the function's allowlist.
+
+    The allowlist is keyed by MailerLite FORM, not by page, because two pages
+    share one form. A first draft keyed it by page, and would have pointed the
+    accelerator at the sensing drill's list. Nothing in the page or the function
+    would have complained; the subscribers would simply have landed in the wrong
+    place, which is the kind of thing only an audit of the groups ever finds.
+
+    This is static on purpose. The live version of it posted a subscriber to
+    every list on every run.
+    """
+    fn = io.open(os.path.join(ROOT, "netlify", "functions", "subscribe.mjs"),
+                 encoding="utf-8").read()
+    block = fn[fn.index("const FORMS"):fn.index("const ACCOUNT")]
+    known = dict(re.findall(r"'([a-z-]+)':\s*'(\d+)'", block))
+    check(len(known) >= 6, "the allowlist has %d list(s), expected at least 6"
+          % len(known))
+    for name, form_id in known.items():
+        check(len(form_id) == 18 and form_id.isdigit(),
+              "list %r has an implausible form id %r" % (name, form_id))
+    check(len(set(known.values())) >= len(known) - 1,
+          "two list names point at the same MailerLite form",
+          repr(known))
+
+    for path in pages():
+        html = strip_comments(io.open(path, encoding="utf-8").read())
+        used = set(re.findall(r'data-list="([^"]+)"', html))
+        used |= set(re.findall(r"var LIST = '([^']+)'", html))
+        used |= set(re.findall(r"list: '([a-z-]+)'", html))
+        for name in used:
+            check(name in known,
+                  "%s names list %r, which the function does not know"
+                  % (rel(path), name), "it would be refused with error 'list'")
 
 
 # ---------------------------------------------------------------- links ---
@@ -206,56 +264,106 @@ def check_render():
 
 # ------------------------------------------------------------------ live ---
 def check_live():
-    """Post a real sign-up through the deployed function and read the answer.
+    """Post real sign-ups through the deployed function and read the answers.
 
-    This is the only check that proves the thing end to end, and it is opt in
-    because it writes a subscriber. The address is obviously disposable.
+    Opt in, because the accepting case writes a subscriber. The address is
+    obviously disposable.
+
+    This is the only check that proves the token end to end. The token logic has
+    unit tests against a fake store, which is where the expiry and replay
+    branches are exercised; what cannot be faked is that the deployed function
+    and the deployed page agree about it.
     """
     import json as _json
     url = SITE + "/.netlify/functions/subscribe"
-    cases = [
-        ("rejects a fake email", {"list": "resource-downloads", "name": "QA",
-                                  "email": "test@test"}, False),
-        ("rejects a blank name", {"list": "resource-downloads", "name": "  ",
-                                  "email": "qa@example.com"}, False),
-        ("accepts a real sign-up", {"list": "resource-downloads",
-                                    "name": "QA automated check",
-                                    "email": "qa-automated-check@example.com"}, True),
-    ]
-    # A body of the four characters `null` parses fine and then threw, and
-    # Netlify answers a throw with 502 and the stack trace. Raw, not via the
-    # case list, because the point is that it is not an object.
-    req = urllib.request.Request(url, data=b"null",
-                                 headers={"content-type": "application/json"},
-                                 method="POST")
-    try:
+
+    def post(body, raw=None):
+        data = raw if raw is not None else _json.dumps(body).encode()
+        req = urllib.request.Request(
+            url, data=data, headers={"content-type": "application/json"},
+            method="POST")
+        try:
+            with urllib.request.urlopen(req, timeout=20) as r:
+                return r.status, r.read().decode()
+        except urllib.error.HTTPError as e:
+            return e.code, e.read().decode()
+
+    def token():
+        req = urllib.request.Request(url, method="GET",
+                                     headers={"accept": "application/json"})
         with urllib.request.urlopen(req, timeout=20) as r:
-            raw = r.read().decode()
-            code = r.status
-    except urllib.error.HTTPError as e:
-        raw, code = e.read().decode(), e.code
+            return _json.loads(r.read()).get("token")
+
+    # ---- the token itself ------------------------------------------------
+    try:
+        t = token()
+    except Exception as err:
+        check(False, "live: the function will not issue a token", repr(err))
+        return
+    check(isinstance(t, str) and len(t.split(".")) == 3,
+          "live: the issued token is not the expected shape", repr(t)[:80])
+    check(token() != t, "live: two requests were issued the same token",
+          "a shared token means single use refuses the second visitor")
+
+    # ---- a POST with no token is the whole point -------------------------
+    code, raw = post({"list": "resource-downloads", "name": "QA",
+                      "email": "qa-no-token@example.com"})
+    check(code == 403, "live: a POST with no token must be refused",
+          "got %s %s" % (code, raw[:120]))
+
+    code, raw = post({"list": "resource-downloads", "name": "QA",
+                      "email": "qa-forged@example.com",
+                      "token": t.rsplit(".", 1)[0] + "." + "0" * 64})
+    check(code == 403, "live: a forged signature must be refused",
+          "got %s %s" % (code, raw[:120]))
+
+    # ---- and a stack trace is never the answer ---------------------------
+    # A body of the four characters `null` parses fine and then threw, and
+    # Netlify answers a throw with 502 and the stack trace.
+    code, raw = post(None, raw=b"null")
     check(code == 400 and "trace" not in raw and "errorType" not in raw,
           "live: a null body must not leak a stack trace",
           "got %s %s" % (code, raw[:100]))
 
-    for label, body, want_ok in cases:
-        req = urllib.request.Request(
-            url, data=_json.dumps(body).encode(),
-            headers={"content-type": "application/json"}, method="POST")
+    # ---- the honeypot answers before the token, so a bot learns nothing ---
+    code, raw = post({"list": "resource-downloads", "name": "QA",
+                      "email": "qa-pot@example.com", "website": "http://x"})
+    check(code == 200 and '"skipped"' in raw,
+          "live: the honeypot must answer before the token check",
+          "got %s %s" % (code, raw[:120]))
+
+    # ---- validation, each with a fresh token -----------------------------
+    for label, body, want_ok in [
+        ("rejects a fake email", {"name": "QA", "email": "test@test"}, False),
+        ("rejects a blank name", {"name": "  ", "email": "qa@example.com"}, False),
+        ("accepts a real sign-up", {"name": "QA automated check",
+                                    "email": "qa-automated-check@example.com"}, True),
+    ]:
+        body = dict(body, list="resource-downloads", token=token())
+        code, raw = post(body)
         try:
-            with urllib.request.urlopen(req, timeout=20) as r:
-                got = _json.loads(r.read())
-        except urllib.error.HTTPError as err:
-            got = _json.loads(err.read())
-        except Exception as err:          # network, DNS, timeout
-            check(False, "live: %s" % label, repr(err))
+            got = _json.loads(raw)
+        except ValueError:
+            check(False, "live: %s" % label, "unparseable: %s" % raw[:120])
             continue
         check(bool(got.get("ok")) == want_ok, "live: %s" % label,
-              "got %s" % _json.dumps(got)[:120])
+              "got %s %s" % (code, _json.dumps(got)[:120]))
+
+    # ---- single use ------------------------------------------------------
+    spent = token()
+    first = post({"list": "resource-downloads", "name": "QA replay",
+                  "email": "qa-replay@example.com", "token": spent})
+    check(first[0] == 200, "live: the first spend of a token must be accepted",
+          "got %s %s" % (first[0], first[1][:120]))
+    code, raw = post({"list": "resource-downloads", "name": "QA replay",
+                      "email": "qa-replay@example.com", "token": spent})
+    check(code == 403, "live: a token must not be spendable twice",
+          "got %s %s" % (code, raw[:120]))
 
 
 def main():
     check_forms()
+    check_lists()
     check_links()
     check_calendar()
     if "--render" in sys.argv:

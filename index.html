@@ -184,7 +184,8 @@
       <div id="mlb2-42245649" class="ml-form-embedContainer ml-subscribe-form ml-subscribe-form-42245649">
         <div class="ml-form-embedWrapper embedForm">
           <div class="ml-form-embedBody row-form">
-            <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/189443333940053728/subscribe" method="post" target="_blank" rel="noopener">
+            <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/189443333940053728/subscribe" method="post" target="_blank" rel="noopener" data-list="empathy-coach">
+              <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
               <div class="field">
                 <div class="ml-field-group ml-field-name">
                   <input aria-label="name" type="text" class="form-control" name="fields[name]" placeholder="First name" autocomplete="given-name">
@@ -355,7 +356,8 @@
       <span class="label">Stay close to the work</span>
       <h2>Empathy as a practical skill, in your inbox.</h2>
       <p class="sub">Occasional letters on the method, the trust economy, and building something that outlives you. Nothing automated pretending to be friendship. No spam.</p>
-      <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/189738547467519573/subscribe" method="post" target="_blank" rel="noopener">
+      <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/189738547467519573/subscribe" method="post" target="_blank" rel="noopener" data-list="inbox">
+              <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <div class="nl-row">
           <div class="field"><input type="text" name="fields[name]" placeholder="First name" autocomplete="given-name"></div>
           <div class="field"><input type="email" name="fields[email]" placeholder="Email" autocomplete="email" required></div>
@@ -392,23 +394,7 @@
 <script src="script.js"></script>
 
 <script>
-  function ml_webform_success_42245649() {
-    var $ = ml_jQuery || jQuery;
-    $('.ml-subscribe-form-42245649 .row-success').show();
-    $('.ml-subscribe-form-42245649 .row-form').hide();
-  }
-</script>
-<script src="https://groot.mailerlite.com/js/w/webforms.min.js?vb397d78ebaa8a0f631d35384c46d781b" type="text/javascript"></script>
-<script>
   fetch("https://assets.mailerlite.com/jsonp/2409610/forms/189443333940053728/takel")
-</script>
-
-<script>
-  function ml_webform_success_42360246(){
-    var $ = ml_jQuery || jQuery;
-    $('.ml-subscribe-form-42360246 .row-success').show();
-    $('.ml-subscribe-form-42360246 .row-form').hide();
-  }
 </script>
 
 <script>
@@ -436,5 +422,6 @@
     else { band.style.display = 'none'; }
   })();
 </script>
+  <script src="/subscribe.js" defer></script>
 </body>
 </html>
