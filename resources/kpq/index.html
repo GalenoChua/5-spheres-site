@@ -81,8 +81,16 @@
   .getit .fineprint { font-size: .76rem; margin-top: 8px; }
   .getit .btn { width: 100%; text-align: center; }
   .getit .gate-download h4 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink); font-size: 1.02rem; margin-bottom: 6px; }
+  .getit-book {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: center;
+    margin-top: 16px; padding-top: 16px; border-top: 1.5px solid var(--line);
+  }
+  .getit-book h2 { font-size: 1.12rem; margin: 2px 0 6px; }
+  .getit-book p { font-size: .9rem; color: var(--muted); margin: 0; }
+
   @media (max-width: 760px) {
     .getit-row { grid-template-columns: 1fr; gap: 12px; }
+    .getit-book { grid-template-columns: 1fr; gap: 10px; margin-top: 14px; padding-top: 14px; }
     .getit { padding: 14px 0 4px; }
     /* The nav takes 173px and the hero took another 560, which left the submit
        button sitting exactly on the fold: visible if you looked for it, which
@@ -177,6 +185,20 @@
             <p>The link below does not expire, so bookmark it if you are printing for a room.</p>
             <a class="btn" href="/assets/the-kpq-worksheet.pdf" target="_blank" rel="noopener">Download the PDF &#8594;</a>
           </div>
+        </div>
+      </div>
+
+      <!-- The book, on the first screen too. Second on a phone, because the
+           worksheet is what the QR promised and its button has 33px of slack
+           above the fold; putting this first spends that and more. -->
+      <div class="getit-book">
+        <div class="getit-say">
+          <div class="label">The field guide</div>
+          <h2>The first hundred get a group coaching session</h2>
+          <p>All five spheres in one book. It is in production now, and the list is how you will know when it lands.</p>
+        </div>
+        <div class="getit-do">
+          <a class="btn" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">Join the list &#8594;</a>
         </div>
       </div>
     </div>
@@ -406,18 +428,6 @@
     </div>
 
     <div class="cta-cards">
-
-      <div class="cta-card">
-        <img class="shot cover" src="/images/field-guide-cover.jpg" width="1000" height="1600" loading="lazy"
-             alt="The 5 Spheres of Empathy field guide, front cover">
-        <div class="inner">
-          <div class="label">The field guide</div>
-          <h3>The first hundred get a group coaching session</h3>
-          <p>All five spheres in one book. It is in production now, and the list is how you will know when it lands.</p>
-          <div class="spacer"></div>
-          <a class="btn" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">Join the list &#8594;</a>
-        </div>
-      </div>
 
       <div class="cta-card">
         <img class="shot portrait" src="/Mr_G_headshots_ZuzannaGerulewiczPhotography_06.jpg" width="1000" height="1500" loading="lazy"
