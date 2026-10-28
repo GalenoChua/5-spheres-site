@@ -1,0 +1,113 @@
+/* THE FACILITATOR CONSOLE, for the drill tools on this site.
+ *
+ * G, 28 October: "swap out the UI because it looks terrible ... let's reinvent
+ * it so it feels professional and it's not on this beige background", then
+ * "carry that console look across".
+ *
+ * The twin of the .console block in five-spheres-platform/app/globals.css. A
+ * facilitator now clicks "Facilitator panel" on a dark dashboard and lands
+ * here, and landing on cream would be worse than either look on its own.
+ *
+ * WHO THIS IS AND IS NOT FOR. Three pages load it: the facilitator panel, the
+ * results reader and the set-up form. The scoring card and the room card do
+ * NOT. Those are what a room full of people looks at, often projected, and
+ * restyling what participants see is a separate decision from restyling the
+ * operator's tools. One of them is a console; the others are the session.
+ *
+ * WHY A FILE RATHER THAN FIVE EDITS. The palette was declared five times, once
+ * per page, identically. Five copies is why a re-skin is five edits and why
+ * they drift apart afterwards. This is linked AFTER each page's own <style>,
+ * so it wins on source order without needing a specificity fight, and each
+ * page keeps its own layout rules.
+ *
+ * THE GROUND IS THE BRAND'S. assets/5Spheres_Brand_Guidelines_v1-0.md lists
+ * #002c45 as Primary, usage "Headings, dark ground", #e20000 as the accent and
+ * #f5e8d6 as the off-white. The accent measures 3.1:1 on that ground, which
+ * fails for text, so anything small that needs to read uses a lighter tint.
+ */
+
+:root {
+  --ink: #f5e8d6;          /* was the dark type; now the light type on a dark ground */
+  --paper: #002c45;        /* the ground */
+  --paper-warm: #06374f;   /* a card, one step off the ground */
+  --line: #14506c;
+  --muted: #9fb6c4;
+  --ember: #e20000;        /* the brand accent, used for attention only */
+  --good: #5fbf8a;         /* the print greens go black on this ground */
+  --warn: #ff9d5c;
+  --on-ink: #002c45;       /* type that sits ON a filled --ink control */
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Helvetica, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  letter-spacing: -0.01em;   /* the brand sets body at -10 kern */
+}
+
+/* The pages set a display serif on headings and on the name of whoever is on
+   the floor. One serif word in an otherwise Helvetica console reads as a page
+   that half changed, so the console takes the brand's body face throughout.
+   .now .v is the speaker's name and is the loudest thing on the panel, which
+   is exactly why it could not be left behind. */
+h1, h2, h3, .now .v { font-family: inherit; font-weight: 700; letter-spacing: -0.02em; }
+
+/* Every opaque light background in the three pages, which a token swap cannot
+   reach because they are literal #fff rather than a variable. Found by walking
+   the RENDERED tree for pale grounds, not by reading the CSS: .gate on the
+   results page was declared separately from .card and would have shipped as a
+   white slab on a dark page. */
+.card, .gate { background: var(--paper-warm); border-color: var(--line); }
+
+/* A filled button was --ink on #fff. With --ink now light, #fff on it is
+   invisible, so the label takes the ground colour. */
+button { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+button.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+button.ghost:hover { border-color: var(--muted); }
+button[disabled] { opacity: .42; }
+
+input[type=text], input[type=password], input[type=email], input[type=number],
+select, textarea {
+  background: rgba(255, 255, 255, .05);
+  border-color: var(--line);
+  color: var(--ink);
+}
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--muted); outline-offset: 1px;
+}
+
+/* The message boxes were pale tints of red, green and amber, which on this
+   ground read as three bright stickers. Tinted against the ground instead,
+   with the text doing the colouring. */
+.msg.err {
+  background: rgba(226, 0, 0, .14); border: 1px solid rgba(226, 0, 0, .5);
+  color: #ff8f8f;
+}
+.msg.note {
+  background: rgba(255, 255, 255, .06); border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+code { background: rgba(255, 255, 255, .08); color: var(--ink); }
+
+th, td { border-bottom-color: var(--line); }
+th { color: var(--muted); }
+tr.live td { background: rgba(255, 255, 255, .06); }
+tr.spoken td:first-child { color: var(--muted); }
+
+.pill { background: rgba(255, 255, 255, .05); border-color: var(--line); color: var(--ink); }
+.pill.done { background: rgba(95, 191, 138, .14); border-color: rgba(95, 191, 138, .5); color: var(--good); }
+.pill.waiting { background: rgba(255, 157, 92, .14); border-color: rgba(255, 157, 92, .5); color: var(--warn); }
+
+.now { background: rgba(255, 255, 255, .05); border-left-color: var(--ember); }
+.sub, .foot, .hint, .stamp, .now .k, .now .n { color: var(--muted); }
+.stamp.stale { color: var(--warn); }
+
+/* The link rows added on 28 October: an anchor styled as a button has to take
+   the same treatment as the buttons beside it or the row reads as two kinds of
+   thing. */
+a { color: var(--ink); }
+a.small { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+.tool-url code { color: var(--ink); }
+.made-token { background: rgba(255, 255, 255, .06); border-color: var(--line); color: var(--ink); }
