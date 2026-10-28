@@ -50,6 +50,32 @@
   .hidden{display:none}
   .foot{color:var(--muted);font-size:.8rem;margin-top:16px;max-width:76ch}
   code{background:var(--paper-warm);padding:1px 5px;border-radius:4px;font-size:.88em}
+  h2{font-family:var(--serif);font-weight:600;font-size:1.08rem;margin:0 0 10px}
+  .hint{color:var(--muted);font-size:.84rem;margin:0 0 14px;max-width:70ch}
+  .field{margin-bottom:10px}
+  .field label{display:block;font-size:.86rem;margin-bottom:4px}
+  input[type=email]{width:100%;font:inherit;padding:10px;border:1px solid var(--line);
+    border-radius:7px;background:var(--paper);color:var(--ink)}
+  /* One row per link. The url wraps rather than scrolls: a facilitator reading
+     it off a phone to somebody across a room needs to see all of it. */
+  .tool{display:grid;grid-template-columns:1fr auto;gap:4px 12px;
+        align-items:start;padding:12px 0;border-bottom:1px solid var(--line)}
+  .tool:last-child{border-bottom:0;padding-bottom:0}
+  .tool-name{font-weight:600}
+  .tool-why{grid-column:1;color:var(--muted);font-size:.84rem}
+  .tool-url{grid-column:1}
+  .tool-url code{word-break:break-all;font-size:.8rem}
+  .tool-acts{grid-row:1 / span 3;grid-column:2;display:flex;gap:8px;align-items:center}
+  a.small{font:inherit;font-size:.88rem;padding:8px 13px;border-radius:7px;
+          border:1px solid var(--ink);background:var(--ink);color:#fff;
+          text-decoration:none;font-weight:600;white-space:nowrap}
+  .made-token{background:var(--paper-warm);border:1px solid var(--line);
+              border-radius:7px;padding:12px;margin:10px 0;word-break:break-all;
+              font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  @media (max-width:520px){
+    .tool{grid-template-columns:1fr}
+    .tool-acts{grid-row:auto;grid-column:1;margin-top:8px}
+  }
   @media (max-width:520px){
     th,td{padding:8px 5px}
     .wrap{padding-left:12px;padding-right:12px}
@@ -104,13 +130,46 @@
       <div id="panel-msg"></div>
     </div>
 
+    <!-- THE TOOLS.
+         These links existed before, as bare <code> inside a paragraph of
+         prose. Two of them were relative paths with no origin, so they could
+         not be pasted into a phone or a chat, and the results one carried no
+         session at all. Running a room with one hand, that is the difference
+         between a tool and a sentence about a tool. -->
+    <div class="card" id="tools">
+      <h2>Your links</h2>
+      <div id="toolrows"></div>
+    </div>
+
+    <div class="card" id="maker">
+      <h2>Start another session</h2>
+      <p class="hint">
+        Issues a new session and its facilitator token. The token is shown
+        once and stored only as a hash, so save it when it appears. Needs the
+        coach token, which is not the one you used to open this room.
+      </p>
+      <div class="field">
+        <label for="coach">Coach token</label>
+        <input type="password" id="coach" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="owner">Your email</label>
+        <input type="email" id="owner" autocomplete="off" placeholder="you@example.org">
+      </div>
+      <div class="field">
+        <label for="label">What to call it</label>
+        <input type="text" id="label" autocomplete="off" placeholder="Phnom Penh cohort, 14 November">
+      </div>
+      <button id="make">Create the session</button>
+      <button id="make-test" class="ghost">Create a rehearsal</button>
+      <div id="make-msg"></div>
+      <div id="made" class="hidden"></div>
+    </div>
+
     <p class="foot">
-      To put the room numbers on a screen, open <code id="groupurl"></code> and share it.
-      The sheets are read afterwards at <code id="resultsurl"></code>.<br>
-      Everyone joins at <code id="joinurl"></code> and the card they see follows whoever is
-      on the floor, so nobody picks a name. Cards in counts the room as it was when that
-      person went up. Close the floor between speakers so the room stops being asked for
-      cards.
+      The card everyone sees follows whoever is on the floor, so nobody picks a
+      name. Cards in counts the room as it was when that person went up. Close
+      the floor between speakers so the room stops being asked for cards.
     </p>
   </div>
 </div>
@@ -132,12 +191,89 @@
   var armed = false;
 
   document.getElementById('sub').textContent = 'Session ' + SESSION;
-  document.getElementById('joinurl').textContent =
-    location.origin + '/skilldrills/public-speaking/?session=' + SESSION;
-  document.getElementById('groupurl').textContent =
-    '/skilldrills/public-speaking/room/?session=' + SESSION;
-  document.getElementById('resultsurl').textContent =
-    '/skilldrills/public-speaking/results/';
+
+  /* Every link absolute and carrying its session. The earlier version built
+     two of these as bare paths and left the session off the results one
+     entirely. */
+  function toolsFor(session) {
+    var o = location.origin + '/skilldrills/public-speaking/';
+    return [
+      ['The scoring card', 'What everyone in the room opens. The card follows whoever is on the floor.',
+       o + '?session=' + session],
+      ['The room card', 'The numbers with no names on them. Safe to put on a screen.',
+       o + 'room/?session=' + session],
+      ['The sheets', 'Read afterwards. Each one belongs to the person it is about.',
+       o + 'results/?session=' + session],
+      ['This panel', 'Where you are now. Keep it, it is how you get back in.',
+       o + 'facilitator/?session=' + session],
+      ['Set up a drill', 'The full form, if you would rather not use the box below.',
+       o + 'new/']
+    ];
+  }
+
+  function copy(text, btn) {
+    var done = function () {
+      var was = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(function () { btn.textContent = was; }, 1400);
+    };
+    /* The async clipboard needs a secure context and a permission that can be
+       refused. The textarea fallback works everywhere and is what actually
+       runs on a laptop that has been handed around a room. */
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done)['catch'](function () {
+        fallback(text); done();
+      });
+    } else { fallback(text); done(); }
+  }
+
+  function fallback(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* nothing else to try */ }
+    document.body.removeChild(ta);
+  }
+
+  function drawTools(session, into) {
+    var host = document.getElementById(into || 'toolrows');
+    host.innerHTML = '';
+    toolsFor(session).forEach(function (t) {
+      var row = document.createElement('div');
+      row.className = 'tool';
+      row.innerHTML =
+        '<div class="tool-name">' + esc(t[0]) + '</div>' +
+        '<div class="tool-why">' + esc(t[1]) + '</div>' +
+        '<div class="tool-url"><code></code></div>';
+      row.querySelector('code').textContent = t[2];
+      var acts = document.createElement('div');
+      acts.className = 'tool-acts';
+      var open = document.createElement('a');
+      open.className = 'small';
+      open.href = t[2];
+      open.target = '_blank';
+      open.rel = 'noopener';
+      open.textContent = 'Open';
+      var cp = document.createElement('button');
+      cp.className = 'small ghost';
+      cp.type = 'button';
+      cp.textContent = 'Copy';
+      cp.onclick = function () { copy(t[2], cp); };
+      acts.appendChild(open);
+      acts.appendChild(cp);
+      row.appendChild(acts);
+      host.appendChild(row);
+    });
+  }
+
+  /* Drawn at load, not on unlock. The card lives inside #panel, which stays
+     hidden until the token is accepted, so nothing is revealed early and the
+     links do not depend on a code path that needs the network to run. */
+  function initTools() { drawTools(SESSION); }
 
   function esc(s) {
     return String(s === null || s === undefined ? '' : s)
@@ -277,6 +413,7 @@
       try { sessionStorage.setItem('drill-token', token); } catch (e) {}
       document.getElementById('gate').classList.add('hidden');
       document.getElementById('panel').classList.remove('hidden');
+
       var s = document.getElementById('sub');
       if (isTest && s) { s.textContent = s.textContent + ' — REHEARSAL, this room is not counted'; }
       poll();
@@ -287,6 +424,78 @@
       say('gate-msg', 'err', e.message === 'no' ? 'That token is not right.' : e.message);
     });
   }
+
+  /* ---- creating another session -----------------------------------------
+     The coach token is a different credential from the facilitator one, and
+     deliberately so: a facilitator who runs one room should not be able to
+     mint rooms. It is never stored here and never put in the URL, where it
+     would land in history and in any screen share.
+
+     The facilitator token comes back ONCE. drill-create keeps only its hash,
+     so a lost one can be rotated but never read, which is why this shows it
+     large and says so. */
+  function makeSession(btn, isTest) {
+    var coach = document.getElementById('coach').value.trim();
+    var owner = document.getElementById('owner').value.trim();
+    var label = document.getElementById('label').value.trim();
+    if (!coach) { say('make-msg', 'err', 'The coach token first.'); return; }
+    if (!/^\S+@\S+\.\S+$/.test(owner)) {
+      say('make-msg', 'err', 'An email, so the room has an owner.'); return;
+    }
+    var was = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Creating...';
+    say('make-msg', 'note', '');
+    fetch(API + 'drill-create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: coach, owner: owner, label: label,
+                             test: isTest === true })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; })
+        .then(function (j) { return { status: r.status, j: j }; });
+    }).then(function (res) {
+      btn.disabled = false;
+      btn.textContent = was;
+      if (res.status === 403) {
+        say('make-msg', 'err', res.j && res.j.configured === false
+          ? 'No coach token is set on the site yet.'
+          : 'That coach token is not right.');
+        return;
+      }
+      if (!res.j || !res.j.ok || !res.j.session) {
+        say('make-msg', 'err', (res.j && res.j.error) || 'It did not take.');
+        return;
+      }
+      document.getElementById('coach').value = '';
+      say('make-msg', '', '');
+      var made = document.getElementById('made');
+      made.classList.remove('hidden');
+      made.innerHTML =
+        '<div class="msg note"><strong>' + esc(res.j.session) + '</strong>' +
+        (isTest ? ' &middot; rehearsal' : ' &middot; counts') +
+        '. Save the token now: it is stored only as a hash and cannot be ' +
+        'shown again.</div>' +
+        '<div class="made-token"></div>' +
+        '<div class="bar"><button class="small ghost" type="button" ' +
+        'id="copytok">Copy the token</button></div>' +
+        '<h2 style="margin-top:18px">Links for this session</h2>' +
+        '<div id="madetools"></div>';
+      made.querySelector('.made-token').textContent = res.j.token;
+      var ct = document.getElementById('copytok');
+      ct.onclick = function () { copy(res.j.token, ct); };
+      drawTools(res.j.session, 'madetools');
+    })['catch'](function () {
+      btn.disabled = false;
+      btn.textContent = was;
+      say('make-msg', 'err', 'No connection just then.');
+    });
+  }
+
+  document.getElementById('make').onclick = function () { makeSession(this, false); };
+  document.getElementById('make-test').onclick = function () { makeSession(this, true); };
+
+  initTools();
 
   document.getElementById('unlock').onclick = function () { openSession(this, false); };
   document.getElementById('unlock-test').onclick = function () { openSession(this, true); };
