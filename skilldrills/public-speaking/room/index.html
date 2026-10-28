@@ -108,16 +108,22 @@
     h += '<div class="strip">' +
       '<div class="stat lead"><div class="v">' + n(g.appeared) + '</div>' +
         '<div class="k">Appeared</div><div class="n">out of 100, across every speaker</div></div>' +
-      '<div class="stat"><div class="v">' + n(g.relay) + '</div>' +
-        '<div class="k">Relay</div><div class="n">per cent of the point that survived</div></div>' +
+      '<div class="stat"><div class="v">' + n(g.spread) + '</div>' +
+        '<div class="k">Spread</div><div class="n">points between scorers on one speaker</div></div>' +
       '<div class="stat"><div class="v">' + n(g.corrected) + '</div>' +
         '<div class="k">Corrected</div><div class="n">moved toward the room after speaking</div></div>' +
     '</div>';
 
-    if (g.relay !== null) {
-      h += '<div class="sec"><h2>What survived</h2><p>On average ' + g.relay +
-        ' per cent of what a speaker meant came back in what the room wrote down. ' +
-        'It is usually lower than people expect.</p></div>';
+    /* "What survived" is gone. It read the relay word-overlap out to the room as a
+       percentage, and the number was an artefact of the measure rather than a reading
+       of anybody: different words for the same idea scored zero. The long note in
+       ../results/index.html has the 22 October cases. This screen is shown to the room
+       on a shared display, so a false number here is the most public version of it. */
+    if (g.spread !== null) {
+      h += '<div class="sec"><h2>How far apart the scorers were</h2><p>On one speaker, two ' +
+        'people in this room typically landed ' + g.spread + ' points apart out of 100. ' +
+        'That is the width of the instrument, and it is wider than the gap between most ' +
+        'speakers, so read Appeared as the room’s answer rather than as a ranking.</p></div>';
     }
 
     h += '<div class="sec"><h2>What people thought of themselves</h2>' +

@@ -138,6 +138,21 @@
         </label>
       </div>
     </div>
+    <!-- THE SPEAKER SAYS WHEN THEY HAVE FINISHED, RATHER THAN WAITING FOR THE FLOOR.
+         Jia Hong, 22 October: "now the window of time is after I submit mine and before
+         you start the next person, that's all the time I get to score myself". Until this
+         button existed, the whole stretch while the room scored a speaker was time they
+         could not use, and what they were shown instead was their own before card, still
+         writable. Two people filled it in and overwrote their pre-speech reading. -->
+    <!-- `hidden` as a CLASS, not the attribute: show() toggles the class, and the two
+         conventions live side by side in this file (self-fresh below uses the attribute
+         and is set directly). Using the attribute here means the button never appears. -->
+    <div class="sec hidden" id="finished-sec">
+      <h3>Finished speaking?</h3>
+      <p class="lock">Your first card is saved. Say the word and this becomes your second
+        one, while the room is still scoring you.</p>
+      <button type="button" id="finished-btn">I have finished speaking</button>
+    </div>
     <div class="sec">
       <h3 id="self-stage">Score yourself, before you speak</h3>
       <p class="lock" id="self-fresh" hidden>Your first card is saved. Score this one from
@@ -315,6 +330,9 @@
   var currentName = '';
   var sentFor = {};          /* speaker ref -> true. Shows the done panel, never locks. */
   var iHaveSpoken = false;   /* decides which half of the self card is being filled */
+  /* Whether the SERVER would allow a second card yet: they have been put up and their
+     first card is saved. Separate from iHaveSpoken, which is whether they have said so. */
+  var mayScoreAfter = false;
   var secondCardOpened = false;
   var roster = [];
   var released = false;
@@ -562,6 +580,33 @@
     });
   };
 
+  /* I HAVE FINISHED SPEAKING.
+   *
+   * Local, and deliberately so. iHaveSpoken governs which half of their own card they
+   * are filling, so the speaker flipping it needs no round trip and cannot be held up
+   * by a poll. The server is not trusting this: drill-score decides the half for
+   * itself from whether they have taken the floor, so a page that gets this wrong in
+   * either direction still cannot overwrite a saved before card.
+   *
+   * Guarded on mayScoreAfter, which is the server's answer to "is their first card
+   * actually saved". Without it this button is the 14 October bug with a label on it:
+   * flipping to the second card clears the first, and an unsaved first card is gone. */
+  document.getElementById('finished-btn').onclick = function () {
+    if (!mayScoreAfter || iHaveSpoken) { return; }
+    iHaveSpoken = true;
+    /* Clear HERE, not on the next poll. poll() owns the "open the second card blank"
+       step and runs every four seconds, so leaving it to poll would hand the speaker a
+       card still carrying their first answers and then wipe it under them, possibly
+       mid-tick. Setting secondCardOpened stops poll doing it a second time. */
+    secondCardOpened = true;
+    clearGroup('my');
+    document.getElementById('my-fix').value = '';
+    render();
+    document.getElementById('self-stage').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    say('mine-msg', 'ok', 'Score it again from scratch, while they are still scoring you. '
+      + 'Your first card is saved.');
+  };
+
   /* ------------------------------------------------------------ scoring ---- */
   document.getElementById('send').onclick = function () {
     var btn = this;
@@ -660,6 +705,11 @@
         list.forEach(function (s) {
           if (s.ref === currentRef) { currentName = s.name; }
           if (s.ref === me.ref && s.hasSpoken) { iHaveSpoken = true; }
+          /* Not the same question as hasSpoken. This one says the speaker COULD move
+             on to their second card now, while they are still on the floor and the room
+             is scoring them. Pressing the button is what actually moves them, so the
+             tool never puts somebody in the past tense while they are still talking. */
+          if (s.ref === me.ref) { mayScoreAfter = s.mayScoreAfter === true; }
         });
         if (was !== currentRef) {
           var lost = scoringHasContent() && was && !sentFor[was];
@@ -753,8 +803,14 @@
       document.getElementById('scoring-title').textContent =
         'Scoring ' + (currentName || 'the speaker');
     }
+    /* The finished button belongs to the stretch between stopping talking and the
+       facilitator moving on. It is offered only while they are the one on the floor,
+       only once their first card is saved, and it disappears the moment they use it. */
+    show('finished-sec', iAmUp && mayScoreAfter && !iHaveSpoken);
+
     document.getElementById('mine-title').textContent =
-      iAmUp ? 'You are up' : (iHaveSpoken ? 'Now you have spoken' : 'When it is your turn');
+      iHaveSpoken ? 'Now you have spoken'
+                  : (iAmUp ? 'You are up' : 'When it is your turn');
     /* THE ONE POINT IS WRITTEN ONCE, BEFORE SPEAKING. On the second card the box came back
        empty and the save demanded it again, which reads as the first card having been lost. */
     show('my-message', !iHaveSpoken);
@@ -798,10 +854,15 @@
       });
   }
 
+  /* THIS SHEET NO LONGER SHOWS A RELAY PERCENTAGE OR COUNTS WHO "CAUGHT" THE POINT.
+     `r.match` is a word overlap, not a reading of whether the point landed. It scored
+     zero whenever the room used different words for the same idea, and the count built
+     on it printed "Nobody wrote down your point" to five of the seven speakers on
+     22 October, immediately below the quotes that disprove it. The worked cases are in
+     ../public-speaking/results/index.html above personCard(). What the room wrote is
+     shown in full and the speaker reads it, which is what it was always for. */
   function sheetHtml(d) {
     var h = '';
-    var caught = (d.relay || []).filter(function (r) {
-      return r.match !== null && r.match >= 35; }).length;
 
     h += '<p>' + d.scorers + ' people scored your ninety seconds.</p>';
 
@@ -812,15 +873,13 @@
     if (d.relay && d.relay.length) {
       h += '<div class="sec"><h3>What they wrote down, before seeing that</h3><ul class="heard">';
       d.relay.forEach(function (r) {
-        var cls = r.match === null ? '' : (r.match >= 35 ? ' hi' : (r.match < 15 ? ' lo' : ''));
-        h += '<li><span>' + esc(r.wrote) + '</span><span class="state' + cls + '">' +
-             (r.match === null ? '' : r.match + '%') + '</span></li>';
+        h += '<li><span>' + esc(r.wrote) + '</span></li>';
       });
       h += '</ul>';
       if (d.intent) {
-        h += '<p style="margin-top:10px">' + (caught === 0
-          ? 'Nobody wrote down your point. Everything else here is about how you said it.'
-          : caught + ' of ' + d.scorers + ' wrote your point back close to how you wrote it.') + '</p>';
+        h += '<p style="margin-top:10px">Read those against your own line above. Where they '
+          + 'used different words for the same thing, it landed. Where they went somewhere '
+          + 'else, that is the one worth sitting with.</p>';
       }
       h += '</div>';
     }

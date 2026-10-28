@@ -191,7 +191,44 @@ export default async (request) => {
        than a position. Both halves live in one record, because the key is
        session/speaker/scorer and a second write would otherwise replace the
        first. */
-    const half = body.when === 'after' ? 'after' : 'before';
+    /* THE BEFORE HALF CLOSES THE MOMENT THE SPEAKER TAKES THE FLOOR, AND THE SERVER
+     * DECIDES THAT, NOT THE PAGE.
+     *
+     * The page sent `when`, and the server wrote whichever half it was told. On
+     * 22 October that destroyed two of seven pre-speech readings and nobody could see
+     * it had happened, because the surviving row looks exactly like a real before.
+     *
+     * The mechanism, from the transcript. A speaker finishes. The floor is still on
+     * them while the room scores them, so `hasSpoken` is false and their page is still
+     * showing the BEFORE card, live and writable. Sharliza: "But it's still asking me
+     * before I speak. That's weird. I've already graded myself." G, reasonably: "Can
+     * you fill that out for after". She did, the page sent `when: "before"`, and her
+     * real pre-speech numbers were overwritten 2.8 minutes AFTER she had spoken. Her
+     * own words a moment later were "I hope he hasn't forgotten my before."
+     *
+     * `sizes[ref]` on the stage record is written the instant the facilitator puts
+     * somebody up and is never removed, so it is the one durable fact that says this
+     * person has been on the floor. Once it exists, a `before` write can only be a
+     * page that has not caught up, so it is PROMOTED to `after` rather than refused.
+     * Refusing would throw away what the person just typed; promoting keeps it and is
+     * what they meant, since they have in fact already spoken. The promotion is
+     * recorded on the side so a reader never has to guess which halves are real.
+     *
+     * Belt and braces: an existing `before` is never overwritten after the floor has
+     * been taken, whatever the client sends. */
+    let takenTheFloor = false;
+    try {
+      const stage = await store.get(`${session}/_stage`, { type: 'json' });
+      const sizes = (stage && stage.sizes && typeof stage.sizes === 'object') ? stage.sizes : {};
+      takenTheFloor = Boolean(sizes[refFor(session, speaker)]);
+    } catch {
+      /* A stage that cannot be read must not block a card. Falling back to the
+         client's own `when` is the behaviour this had for its whole life. */
+      takenTheFloor = false;
+    }
+
+    const asked = body.when === 'after' ? 'after' : 'before';
+    const half = (asked === 'before' && takenTheFloor) ? 'after' : asked;
     const side = {
       at: now,
       outcome: record.outcome,
@@ -200,6 +237,10 @@ export default async (request) => {
       reserve: record.reserve,
       fix: record.fix
     };
+    if (half !== asked) {
+      side.promotedFrom = asked;
+      side.promotedWhy = 'the speaker had already taken the floor';
+    }
     record.before = (prior && prior.before) || null;
     record.after = (prior && prior.after) || null;
     /* Joining writes a self record with nothing on it, and that must not count

@@ -48,13 +48,56 @@ def main():
             continue
         html = io.open(path, encoding="utf-8").read()
 
+        # EVERY PAGE THAT STATES THESE FACTS, NOT ONLY THE ONE NAMED IN `page`.
+        #
+        # The whole point of this file is that one fact lived in six places with nothing
+        # holding them together. It then checked exactly one page, so the SEVENTH place
+        # drifted undisturbed: /skilldrills/ advertised "Thursday, 09:00 CEST, Zoom,
+        # 90 min" from 7 October to 28 October, every value of which is listed as retired
+        # below. That is the funnel page. Anyone arriving from a field note or the
+        # navigation read the wrong time, the wrong day and a platform we had left.
+        #
+        # `alsoOn` lists the other pages carrying the same facts. The retired-value checks
+        # run against all of them; the machine-readable checks stay on the canonical page,
+        # because only it carries schema.org and the calendar link.
+        for extra in e.get("alsoOn", []):
+            xp = os.path.join(ROOT, extra.replace("/", os.sep))
+            if not os.path.exists(xp):
+                problems.append(f"{slug}: alsoOn page not found at {extra}")
+                continue
+            xflat = re.sub(r"\s+", " ", io.open(xp, encoding="utf-8").read())
+            # PLATFORMS ONLY, NOT DURATIONS, ON A SHARED PAGE.
+            # A retired platform is always wrong wherever it appears: we are not on it.
+            # A retired DURATION may be the category's rather than this event's.
+            # /skilldrills/ promises "ninety minutes on one skill, then ninety days",
+            # which is the shape of every drill, while this one event now runs 110. The
+            # first version of this check called all five of those a failure.
+            for retired in e.get("retiredPlatforms", []):
+                hits = len(re.findall(re.escape(retired), xflat, re.I))
+                check(hits == 0, f"{slug}: {extra} still says {retired!r}", f"{hits} time(s)")
+            check(e["displayDate"] in xflat, f"{slug}: {extra} is missing the date",
+                  f"expected {e['displayDate']!r}")
+
+        # SEARCH A WHITESPACE-FLATTENED COPY, NOT THE RAW SOURCE.
+        # "ninety minutes" sat in the hero copy of this page as "ninety\n    minutes",
+        # because the paragraph wrapped at eighty columns between the two words. Every
+        # retired-string check below is an exact match, so the phrase the retired list
+        # exists to catch was invisible to it, and the page advertised ninety minutes
+        # for a 110-minute session through three passes of this script. A reader sees
+        # one space there; so should the check.
+        flat = re.sub(r"\s+", " ", html)
+
         start = datetime.strptime(e["startsUtc"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
         end = datetime.strptime(e["endsUtc"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
 
         # The offset the page's own label claims. CEST is +2, CET is +1. Getting
         # this wrong is the single likeliest error in October, which is why the
         # source file holds UTC and the label separately.
-        offset = {"CEST": 2, "CET": 1, "UTC": 0}.get(e["displayZoneLabel"])
+        # ICT is Indochina Time, UTC+7, and it has no daylight saving at all, which
+        # is why the November drill is published in it: the audience that has to be
+        # awake for it is in Cambodia, Indonesia, Vietnam and Thailand, and a European
+        # label moves under them twice a year while theirs never moves.
+        offset = {"CEST": 2, "CET": 1, "UTC": 0, "ICT": 7}.get(e["displayZoneLabel"])
         check(offset is not None, f"{slug}: unknown zone label {e['displayZoneLabel']}")
         if offset is None:
             continue
@@ -77,15 +120,15 @@ def main():
             check(cal in html, f"{slug}: add-to-calendar UTC range", f"expected dates={cal}")
 
         # 3. what a reader sees
-        check(e["displayTime"] in html, f"{slug}: visible time", f"expected {e['displayTime']!r}")
-        check(e["displayDate"] in html, f"{slug}: visible date", f"expected {e['displayDate']!r}")
-        check(e["lengthLabel"] in html, f"{slug}: visible length", f"expected {e['lengthLabel']!r}")
-        check(e["platform"] in html, f"{slug}: platform named", f"expected {e['platform']!r}")
+        check(e["displayTime"] in flat, f"{slug}: visible time", f"expected {e['displayTime']!r}")
+        check(e["displayDate"] in flat, f"{slug}: visible date", f"expected {e['displayDate']!r}")
+        check(e["lengthLabel"] in flat, f"{slug}: visible length", f"expected {e['lengthLabel']!r}")
+        check(e["platform"] in flat, f"{slug}: platform named", f"expected {e['platform']!r}")
 
         # 4. AND that the old answer is gone. This is the half that catches a
         #    page which is right at the top and stale further down.
         for retired in e.get("retiredPlatforms", []):
-            hits = len(re.findall(re.escape(retired), html, re.I))
+            hits = len(re.findall(re.escape(retired), flat, re.I))
             check(hits == 0, f"{slug}: retired platform {retired!r} still appears",
                   f"{hits} time(s)")
 
@@ -93,12 +136,12 @@ def main():
         # facts list, and those two are what show on every shared link. The page
         # said 90 in seven places while the facts list said 110.
         for retired in e.get("retiredDurations", []):
-            hits = len(re.findall(re.escape(retired), html, re.I))
+            hits = len(re.findall(re.escape(retired), flat, re.I))
             check(hits == 0, f"{slug}: retired duration {retired!r} still appears",
                   f"{hits} time(s)")
 
         if e.get("availability"):
-            check(e["availability"] in html, f"{slug}: availability",
+            check(e["availability"] in flat, f"{slug}: availability",
                   f"expected {e['availability']!r}")
 
         # 5. the duration the page claims must match the times it states

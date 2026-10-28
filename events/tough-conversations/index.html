@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tough Conversations: Giving Feedback, a live 110-minute session | Human Intelligence</title>
+<meta name="description" content="Deliver hard news so the other person still leaves feeling respected. You deliver, somebody receives it, and you both score it. Monday 30 November, 18:00 ICT, on Google Meet.">
+<meta property="og:title" content="Tough Conversations: Giving Feedback, a live 110-minute session">
+<meta property="og:description" content="Most public speaking advice tells you to be confident. This is the handful of things that actually change how a room receives you, and you practise all of them.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://5spheresofempathy.com/og.png">
+<meta property="og:url" content="https://5spheresofempathy.com/events/tough-conversations/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://5spheresofempathy.com/og.png">
+<link rel="canonical" href="https://5spheresofempathy.com/events/tough-conversations/">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<style>
+:root {
+  --navy: #002C45;
+  --navy-deep: #001d2e;
+  --offwhite: #F5E8D6;
+  --offwhite-warm: #efdfc8;
+  --orange: #FF4900;
+  --orange-soft: #FF6500;
+  --text: #23303a;
+  --muted: #6a7480;
+  --line: #ddcdb4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--offwhite);
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 600; line-height: 1.18; }
+
+a { color: var(--orange); }
+
+/* ── Hero ── */
+.hero {
+  background: var(--navy);
+  color: var(--offwhite);
+  padding: 84px 0 72px;
+}
+.eyebrow {
+  display: inline-block;
+  font-size: .78rem; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--orange-soft);
+  margin-bottom: 26px;
+}
+.hero h1 {
+  font-size: clamp(2.5rem, 7vw, 3.9rem);
+  font-weight: 700;
+  letter-spacing: -.015em;
+  margin-bottom: 26px;
+}
+.subhead {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.12rem, 2.6vw, 1.32rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(245,232,214,.9);
+  max-width: 40ch;
+}
+
+/* ── Details bar ── */
+.details {
+  margin-top: 40px;
+  padding-top: 26px;
+  border-top: 1px solid rgba(245,232,214,.22);
+}
+.details dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 20px 26px;
+}
+.details dt {
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: .13em; text-transform: uppercase;
+  color: rgba(245,232,214,.52);
+  margin-bottom: 5px;
+}
+.details dd { font-size: .98rem; font-weight: 600; color: var(--offwhite); }
+.facilitator {
+  margin-top: 24px;
+  font-size: .95rem;
+  color: rgba(245,232,214,.72);
+}
+
+/* ── Sections ── */
+section { padding: 64px 0; }
+section + section { padding-top: 0; }
+
+.label {
+  display: block;
+  font-size: .74rem; font-weight: 700;
+  letter-spacing: .15em; text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 16px;
+}
+section h2 {
+  font-size: clamp(1.6rem, 4vw, 2.05rem);
+  color: var(--navy);
+  margin-bottom: 22px;
+}
+section p { margin-bottom: 20px; max-width: 62ch; }
+section p:last-child { margin-bottom: 0; }
+
+/* ── Ordered run-of-show ── */
+.runlist { list-style: none; counter-reset: run; margin-top: 8px; }
+.runlist li {
+  counter-increment: run;
+  position: relative;
+  padding-left: 62px;
+  padding-bottom: 26px;
+  max-width: 60ch;
+}
+.runlist li:last-child { padding-bottom: 0; }
+.runlist li::before {
+  content: counter(run);
+  position: absolute; left: 0; top: 2px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--navy); color: var(--offwhite);
+  font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.05rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.runlist strong {
+  display: block;
+  font-family: 'Fraunces', serif;
+  font-size: 1.08rem; font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+/* ── Take-away list ── */
+.takeaways { list-style: none; margin-top: 6px; }
+.takeaways li {
+  position: relative;
+  padding-left: 30px;
+  padding-bottom: 16px;
+  max-width: 60ch;
+}
+.takeaways li:last-child { padding-bottom: 0; }
+.takeaways li::before {
+  content: '';
+  position: absolute; left: 4px; top: 11px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--orange);
+}
+
+/* ── Evidence panel ── */
+.evidence {
+  background: var(--offwhite-warm);
+  border-left: 3px solid var(--orange);
+  border-radius: 0 10px 10px 0;
+  padding: 34px 34px 34px 30px;
+  margin-top: 4px;
+}
+.evidence p { max-width: none; }
+.evidence p:last-child { margin-bottom: 0; }
+
+/* ── Sign-up form ── */
+.signup {
+  background: var(--navy);
+  color: var(--offwhite);
+  padding: 60px 0;
+  margin-top: 64px;
+}
+.signup.top { margin-top: 0; }
+.signup h2 {
+  font-size: clamp(1.6rem, 4vw, 2.05rem);
+  color: var(--offwhite);
+  margin-bottom: 10px;
+}
+.signup .intro {
+  color: rgba(245,232,214,.78);
+  margin-bottom: 30px;
+  max-width: 48ch;
+}
+
+form { max-width: 480px; }
+.field { margin-bottom: 18px; }
+label {
+  display: block;
+  font-size: .8rem; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+  color: rgba(245,232,214,.66);
+  margin-bottom: 7px;
+}
+input[type="text"], input[type="email"], select {
+  width: 100%;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--offwhite);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 13px 15px;
+  transition: border-color .18s ease;
+  -webkit-appearance: none; appearance: none;
+}
+select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' stroke='%23002C45' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  padding-right: 42px;
+  cursor: pointer;
+}
+input:focus, select:focus { outline: none; border-color: var(--orange); }
+
+button[type="submit"] {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1rem; font-weight: 700;
+  letter-spacing: .01em;
+  color: #fff;
+  background: var(--orange);
+  border: 0; border-radius: 99px;
+  padding: 15px 34px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background .18s ease;
+}
+button[type="submit"]:hover { background: var(--orange-soft); }
+
+.fineprint {
+  font-size: .88rem;
+  color: rgba(245,232,214,.6);
+  margin-top: 16px;
+  max-width: 44ch;
+}
+
+/* ── Add to calendar ── */
+.addcal { margin-top: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.addcal-label {
+  font-size: .7rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase;
+  color: rgba(245,232,214,.52); margin-right: 4px;
+}
+.addcal-btn {
+  display: inline-block; padding: 8px 16px; border-radius: 99px;
+  border: 1.5px solid rgba(245,232,214,.32);
+  font-size: .86rem; font-weight: 600; color: var(--offwhite);
+  text-decoration: none; transition: border-color .18s ease, color .18s ease;
+}
+.addcal-btn:hover { border-color: var(--orange); color: var(--orange-soft); }
+
+/* ── Tool figure ── */
+.tool { margin: 38px 0 0; }
+.tool img {
+  display: block; width: 100%; max-width: 520px; height: auto;
+  margin: 0 auto; border-radius: 10px;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 30px rgba(0,44,69,.10);
+}
+.tool figcaption {
+  margin: 16px auto 0; max-width: 52ch;
+  font-size: .88rem; line-height: 1.5; color: var(--muted); text-align: center;
+}
+
+/* ── Close line ── */
+.close {
+  padding: 54px 0 64px;
+  text-align: center;
+}
+.close p {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.15rem, 3vw, 1.4rem);
+  font-style: italic;
+  color: var(--navy);
+  max-width: none;
+  margin: 0 auto;
+}
+
+footer {
+  background: var(--navy-deep);
+  color: rgba(245,232,214,.55);
+  font-size: .88rem;
+  padding: 30px 0;
+}
+footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 22px; justify-content: space-between; }
+footer a { color: rgba(245,232,214,.78); text-decoration: none; }
+footer a:hover { color: var(--orange-soft); }
+
+@media (max-width: 560px) {
+  body { font-size: 17px; }
+  .hero { padding: 60px 0 52px; }
+  section { padding: 48px 0; }
+  .signup { padding: 48px 0; margin-top: 48px; }
+  .runlist li { padding-left: 52px; }
+  .runlist li::before { width: 34px; height: 34px; font-size: .95rem; }
+  .evidence { padding: 26px 24px 26px 22px; }
+}
+
+/* The twelve are three groups, not three steps, so they take bullets rather than the
+   numbered circles the run-of-session list uses. */
+.takeaways.grouped li { margin-bottom: 16px; }
+.takeaways.grouped strong { display: block; font-family: 'Fraunces', serif;
+  font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Tough Conversations: Giving Feedback",
+  "description": "A 110-minute live session on holding a room. You deliver, you are scored against twelve delivery behaviours by the people who watched, and you deliver again.",
+  "startDate": "2026-11-30T18:00:00+07:00",
+  "endDate": "2026-11-30T19:50:00+07:00",
+  "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "location": {
+    "@type": "VirtualLocation",
+    "url": "https://5spheresofempathy.com/events/tough-conversations/"
+  },
+  "image": "https://5spheresofempathy.com/og.png",
+  "organizer": { "@type": "Organization", "name": "The 5 Spheres of Empathy" },
+  "performer": { "@type": "Person", "name": "Galeno Chua" },
+  "offers": {
+    "@type": "Offer",
+    "price": "50",
+    "priceCurrency": "EUR",
+    "availability": "https://schema.org/InStock",
+    "url": "https://5spheresofempathy.com/events/tough-conversations/",
+    "validFrom": "2026-09-30T00:00:00+02:00"
+  }
+}
+</script>
+</head>
+<body>
+
+<!-- ══════════ HERO ══════════ -->
+<header class="method-dark">
+  <div class="deco"></div>
+  <div class="wrap-narrow">
+    <span class="eyebrow">Human Intelligence &middot; Live on Google Meet</span>
+    <h1>Tough Conversations: Giving Feedback</h1>
+    <p class="subhead">Somebody has to be told something they do not want to hear. Most of us
+    soften it until it stops being true, or harden it until it stops being human. This is 110
+    minutes on saying the hard thing so the person in front of you still leaves feeling
+    respected.</p>
+
+    <div class="details">
+      <dl>
+        <div><dt>Date</dt><dd>Monday 30 November</dd></div>
+        <div><dt>Time</dt><dd>18:00 ICT, which is 12:00 in Warsaw and 19:00 in Kuala Lumpur</dd></div>
+        <div><dt>Length</dt><dd>110 minutes</dd></div>
+        <div><dt>Where</dt><dd>Google Meet</dd></div>
+        <div><dt>Cost</dt><dd>&euro;50, ten places</dd></div>
+      </dl>
+      <p class="facilitator">Facilitated by Galeno Chua</p>
+      <p class="addcal">
+        <a class="addcal-btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Tough%20Conversations%3A%20Giving%20Feedback&amp;dates=20261130T110000Z/20261130T125000Z&amp;details=A%20110-minute%20live%20session%20on%20delivering%20hard%20news%20so%20the%20other%20person%20still%20leaves%20feeling%20respected.%0A%0AYou%20deliver%2C%20somebody%20receives%20it%2C%20and%20both%20of%20you%20score%20it.%0A%0ADetails%3A%20https%3A//5spheresofempathy.com/events/tough-conversations/&amp;location=Google%20Meet&amp;ctz=Asia/Phnom_Penh" target="_blank" rel="noopener">Google Calendar</a>
+        <a class="addcal-btn" href="/events/tough-conversations/tough-conversations.ics">Download .ics</a>
+      </p>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap-narrow">
+    <div class="kicker">Why this one</div>
+    <h2>You carry a badly handled conversation for years</h2>
+    <p class="prose-body">I let people go during COVID. I was under-slept and running on
+    empty, and I made it about me: my stress, my position, my guilt. I am still carrying
+    that six years later, and so, I expect, are they.</p>
+    <p class="prose-body">That is the thing this drill is built around. The damage is rarely
+    the news itself. People can take hard news. The damage is a person walking out thinking
+    <em>they only care about the business, not me</em>, and that thought surviving in them
+    long after the decision has stopped mattering to anybody else.</p>
+  </div>
+</section>
+
+<section class="method-dark">
+  <div class="wrap-narrow">
+    <div class="kicker">Who it is for</div>
+    <h2>Anyone who has to deliver something the other person will not enjoy</h2>
+    <p class="prose-body">Founders letting somebody go. Managers with an underperformer they
+    have been avoiding for a month. Anyone who has rehearsed a conversation in the shower
+    twelve times and still not had it.</p>
+    <p class="prose-body">You can bring a real situation you are carrying right now. You do
+    not have to. There are scenarios, and they are there precisely so nobody has to put their
+    own on the table in a room of people they have just met.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap-narrow">
+    <div class="kicker">How the time runs</div>
+    <h2>Theory, then you deliver it to a real person who scores you</h2>
+    <p class="prose-body">It runs the same shape as the pitching and sensing drills: a short
+    piece of theory, and then everybody practises it. You are put in a pair, where one of you
+    delivers the feedback and the other receives it, and then the two of you swap over.</p>
+    <p class="prose-body"><strong>Both of you score it, and the receiver's score is the one
+    that counts most.</strong> The question this whole session turns on is whether the person
+    on the other side left feeling respected, and there is exactly one person present who
+    can answer that.</p>
+    <p class="prose-body">Three scenarios, and you pick or bring your own:</p>
+    <ul class="prose-list">
+      <li>Letting someone go.</li>
+      <li>Someone is underperforming.</li>
+      <li>Someone is underperforming, and is also dealing with something serious at home.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="method-dark">
+  <div class="wrap-narrow">
+    <div class="kicker">What you are taught</div>
+    <h2>Five steps, and not one of them is a compliment sandwich</h2>
+    <p class="prose-body">The sandwich is a way of making yourself comfortable while the other
+    person leaves confused about whether anything was actually said. This starts somewhere
+    else, from what you both already agree on.</p>
+    <ol class="prose-list">
+      <li>Start from shared purpose and common ground.</li>
+      <li>Name clearly what has gone wrong, and the impact it is having.</li>
+      <li>State the decision, or the change needed, plainly.</li>
+      <li>Offer a way forward: what you recommend, what support exists, what happens next.</li>
+      <li>Thank them for their time and their contribution.</li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap-narrow">
+    <div class="kicker">Before you walk in</div>
+    <h2>Settle yourself first, or you make the conversation about you</h2>
+    <p class="prose-body">Physical, mental and emotional preparation, the same way the Sensing
+    Drill handles it. You settle yourself, then you come back to why you are doing this at all,
+    and only then do you open your mouth.</p>
+    <p class="prose-body">Skip it and you say the thing you will be apologising for in a year.
+    This is Sphere 2, the Conscious and Physical Self, and it is the half of a tough
+    conversation that happens before anybody speaks.</p>
+  </div>
+</section>
+
+<section class="method-dark">
+  <div class="wrap-narrow">
+    <div class="kicker">While you are in it</div>
+    <h2>Their body is telling you something, and so is yours</h2>
+    <p class="prose-body">Reading the other person is the obvious half. Watching what your own
+    shoulders, hands and jaw are doing to them is the half people miss. We take both apart and
+    then you practise with somebody watching.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap-narrow">
+    <div class="kicker">What you leave with</div>
+    <h2>A structure you can use on Monday, and a reading of how you did</h2>
+    <p class="prose-body">Your own scores, the scores from the people watching, and the
+    scores from the person who actually received it. Where those three disagree is the part
+    worth your attention.</p>
+    <p class="prose-body">If you want to keep working on a real situation, that is what the one
+    to one is for: <a href="/coaching/">coaching</a>, five places, &euro;600 a month, no
+    minimum term.</p>
+  </div>
+</section>
+<footer>
+  <div class="wrap">
+    <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
+    <div><a href="/">Home</a> &middot; <a href="/events/">Events</a> &middot; <a href="mailto:hello@5spheresofempathy.com">hello@5spheresofempathy.com</a> &middot; <a href="/privacy/">Privacy</a></div>
+  </div>
+</footer>
+
+
+<script>
+/* Post the form ourselves and swap in the success state. The page carries the same form
+   twice, so MailerLite's own script cannot be used: it finds a form by a single id. The
+   It goes through /.netlify/functions/subscribe, which makes the MailerLite call
+   server side where there is no CORS restriction, so the real answer can be read.
+   It used to post direct with mode:'no-cors', which cannot read a response and so
+   reported success whatever came back. On the Resource downloads form that hid a
+   reCAPTCHA refusal for months. Without JavaScript the form still submits natively
+   through target="_blank". */
+(function () {
+  var LIST = 'public-speaking';
+
+  /* The failure line is created next to the button rather than written into
+     the markup twice, because this page carries the same form twice. */
+  function fail(form, msg) {
+    var p = form.querySelector('.gate-error');
+    if (!p) {
+      p = document.createElement('p');
+      p.className = 'gate-error';
+      p.setAttribute('role', 'alert');
+      var btn = form.querySelector('button[type="submit"]');
+      if (btn && btn.parentNode) { btn.parentNode.insertBefore(p, btn.nextSibling); }
+      else { form.appendChild(p); }
+    }
+    p.textContent = msg;
+    p.style.display = 'block';
+  }
+
+  document.querySelectorAll('form.drill-form').forEach(function (form) {
+    var sending = false;
+    form.addEventListener('submit', function (e) {
+      if (sending) { return; }
+      if (!form.checkValidity()) { form.reportValidity(); e.preventDefault(); return; }
+      e.preventDefault();
+
+      var btn = form.querySelector('button[type="submit"]');
+      var label = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Holding your place...'; }
+
+      var data = new FormData(form);
+      var extra = {};
+      data.forEach(function (v, k) {
+        var m = /^fields\[([a-z][a-z0-9_]*)\]$/.exec(k);
+        if (m && m[1] !== 'name' && m[1] !== 'email') { extra[m[1]] = v; }
+      });
+      /* The sign-up token, fetched as the page loaded. The function
+         refuses a POST without one, which is what turns away a bot
+         posting straight at the endpoint. */
+      (window.signupToken ? window.signupToken() : Promise.resolve(null))
+        .then(function (token) {
+          if (window.signupTokenSpent) { window.signupTokenSpent(); }
+          return fetch('/.netlify/functions/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            list: LIST,
+            name: data.get('fields[name]'),
+            email: data.get('fields[email]'),
+            website: data.get('website'),
+            fields: extra,
+            token: token
+          })
+          });
+        }).then(function (r) {
+        return r.json().catch(function () { return { ok: false }; });
+      }).then(function (j) {
+        if (!j || !j.ok) {
+          if (btn) { btn.disabled = false; btn.textContent = label; }
+          fail(form, (j && j.error) || 'We could not hold your place just then. Please try again.');
+          return;
+        }
+        document.querySelectorAll('.row-form').forEach(function (el) { el.style.display = 'none'; });
+        document.querySelectorAll('.row-success').forEach(function (el) { el.style.display = 'block'; });
+        var wrap = form.closest('.signup');
+        if (wrap) { wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      }).catch(function () {
+        if (btn) { btn.disabled = false; btn.textContent = label; }
+        fail(form, 'No connection just then. Please try again.');
+      });
+    });
+  });
+})();
+</script>
+
+  <script src="/subscribe.js" defer></script>
+  <!-- Cloudflare Web Analytics. Cookieless, so no consent banner. The CSP in /_headers must allow static.cloudflareinsights.com and cloudflareinsights.com or this is blocked silently. -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "b4f0c82f4b4447798717e8cefda1dc07"}'></script>
+</body>
+</html>

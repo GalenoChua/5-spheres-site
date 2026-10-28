@@ -1,44 +1,82 @@
 {
-  "_what": "The facts about each live event, in one place. The page is checked against this, not the other way round.",
-  "_why": [
-    "On 7 October 2026 the Public Speaking Drill moved to 13:00 Europe/Warsaw on Google Meet.",
-    "The page still said 09:00 CEST on Zoom in SIX places: the meta description, the",
-    "schema.org startDate and endDate, the eyebrow, the Date/Time/Where list, the length,",
-    "and the add-to-calendar link's UTC range. Three of those are machine readable, so a",
-    "search engine and anyone who clicked 'Add to Google Calendar' would have been told a",
-    "time nobody was going to be there.",
-    "",
-    "Times are held in UTC because that is the only form with one meaning. The page says",
-    "CEST, which is correct until Europe falls back on 25 October and wrong after it, and",
-    "that is exactly the kind of thing a human gets right once and then forgets."
-  ],
-  "_howToCheck": "python scripts/check_event_facts.py  (the page)\npython scripts/build_ics.py --check   (the calendar file)",
-  "events": {
-    "public-speaking": {
-      "name": "Human Intelligence: The Public Speaking Drill",
-      "page": "events/public-speaking/index.html",
-      "startsUtc": "2026-10-22T11:00:00Z",
-      "endsUtc": "2026-10-22T12:50:00Z",
-      "displayZone": "Europe/Warsaw",
-      "displayZoneLabel": "CEST",
-      "displayTime": "13:00 CEST",
-      "displayDate": "Thursday 22 October",
-      "lengthMinutes": 110,
-      "lengthLabel": "110 minutes",
-      "platform": "Google Meet",
-      "retiredPlatforms": [
-        "Zoom"
-      ],
-      "priceEur": 50,
-      "availability": "one place left",
-      "retiredDurations": [
-        "90 minutes",
-        "90-minute",
-        "Ninety minutes",
-        "ninety minutes"
-      ],
-      "icsPath": "events/public-speaking/public-speaking-drill.ics",
-      "icsDescription": "A 110-minute live session on holding a room. You deliver, you get read back against twelve delivery behaviours, and you deliver again.\n\nBring ninety seconds of something real you have to say soon.\n\nDetails: https://5spheresofempathy.com/events/public-speaking/"
-    }
+ "_what": "The facts about each live event, in one place. The page is checked against this, not the other way round.",
+ "_why": [
+  "On 7 October 2026 the Public Speaking Drill moved to 13:00 Europe/Warsaw on Google Meet.",
+  "The page still said 09:00 CEST on Zoom in SIX places: the meta description, the",
+  "schema.org startDate and endDate, the eyebrow, the Date/Time/Where list, the length,",
+  "and the add-to-calendar link's UTC range. Three of those are machine readable, so a",
+  "search engine and anyone who clicked 'Add to Google Calendar' would have been told a",
+  "time nobody was going to be there.",
+  "",
+  "Times are held in UTC because that is the only form with one meaning. The page says",
+  "CEST, which is correct until Europe falls back on 25 October and wrong after it, and",
+  "that is exactly the kind of thing a human gets right once and then forgets.",
+  "",
+  "28 October 2026: the drill now publishes in ICT, Indochina Time, UTC+7 with no",
+  "daylight saving. Twelve of the fourteen people who signed up for 22 October did not",
+  "attend, and they are in UTC+7. The same 11:00 UTC slot reads 13:00 in Warsaw in",
+  "October and 12:00 in November, while in Phnom Penh it is 18:00 either way. The clock",
+  "that matters is the one belonging to the people who have to be awake for it."
+ ],
+ "_howToCheck": "python scripts/check_event_facts.py  (the page)\npython scripts/build_ics.py --check   (the calendar file)",
+ "events": {
+  "public-speaking": {
+   "name": "Human Intelligence: The Public Speaking Drill",
+   "page": "events/public-speaking/index.html",
+   "startsUtc": "2026-11-09T11:00:00Z",
+   "endsUtc": "2026-11-09T12:50:00Z",
+   "displayZone": "Asia/Phnom_Penh",
+   "displayZoneLabel": "ICT",
+   "displayTime": "18:00 ICT",
+   "displayDate": "Monday 9 November",
+   "lengthMinutes": 110,
+   "lengthLabel": "110 minutes",
+   "platform": "Google Meet",
+   "retiredPlatforms": [
+    "Zoom"
+   ],
+   "priceEur": 50,
+   "availability": "ten places",
+   "retiredDurations": [
+    "90 minutes",
+    "90-minute",
+    "Ninety minutes",
+    "ninety minutes"
+   ],
+   "icsPath": "events/public-speaking/public-speaking-drill.ics",
+   "icsDescription": "A 110-minute live session on holding a room. You deliver, you get read back against twelve delivery behaviours, and you deliver again.\n\nBring ninety seconds of something real you have to say soon.\n\nDetails: https://5spheresofempathy.com/events/public-speaking/",
+   "alsoOn": [
+    "skilldrills/index.html"
+   ]
+  },
+  "tough-conversations": {
+   "name": "Tough Conversations: Giving Feedback",
+   "page": "events/tough-conversations/index.html",
+   "startsUtc": "2026-11-30T11:00:00Z",
+   "endsUtc": "2026-11-30T12:50:00Z",
+   "displayZone": "Asia/Phnom_Penh",
+   "displayZoneLabel": "ICT",
+   "displayTime": "18:00 ICT",
+   "displayDate": "Monday 30 November",
+   "lengthMinutes": 110,
+   "lengthLabel": "110 minutes",
+   "platform": "Google Meet",
+   "retiredPlatforms": [
+    "Zoom"
+   ],
+   "priceEur": 50,
+   "availability": "ten places",
+   "retiredDurations": [
+    "90 minutes",
+    "90-minute",
+    "Ninety minutes",
+    "ninety minutes"
+   ],
+   "icsPath": "events/tough-conversations/tough-conversations.ics",
+   "icsDescription": "A 110-minute live session on delivering hard news so the other person still leaves feeling respected.\n\nYou deliver, somebody receives it, and both of you score it. Bring a real conversation you are avoiding, or use one of ours.\n\nDetails: https://5spheresofempathy.com/events/tough-conversations/",
+   "alsoOn": [
+    "skilldrills/index.html"
+   ]
   }
+ }
 }

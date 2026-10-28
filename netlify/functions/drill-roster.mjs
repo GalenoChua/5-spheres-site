@@ -86,6 +86,13 @@ export default async (request) => {
         ref: parts[1],
         name: rec.scorerName || 'Unnamed',
         ready: Boolean(rec.intent),
+        /* Whether their pre-speech card is actually saved. This is what makes it
+           safe to offer somebody their second card while they are still on the
+           floor: the reason that was forbidden was that flipping the page cleared
+           an unsaved first card. With the first card in the store, there is
+           nothing left to lose. */
+        savedBefore: Boolean(rec.before),
+        savedAfter: Boolean(rec.after),
         joinedAt: rec.joinedAt || rec.submittedAt || ''
       });
     } else {
@@ -135,6 +142,20 @@ export default async (request) => {
        and that reading is half of what the instrument measures. It also made this list say
        "has spoken" about the person speaking. */
     s.hasSpoken = Boolean(frozen) && s.ref !== current;
+    /* MAY THIS PERSON OPEN THEIR SECOND CARD YET?
+     *
+     * `hasSpoken` answers "did the floor move off them", which is the facilitator's
+     * clock and not the speaker's. Jia Hong named the cost of that in the room on
+     * 22 October: "now the window of time is after I submit mine and before you start
+     * the next person, that's all the time I get to score myself". The whole stretch
+     * while the room is scoring them, which is the natural moment to catch how they
+     * think it went, they are locked out and shown the before card instead.
+     *
+     * `mayScoreAfter` is the speaker's own clock. It opens as soon as they have been
+     * put up AND their first card is saved, so the page can offer them a finished
+     * button while they are still current. The old condition stays as the fallback
+     * for anybody who never presses it. */
+    s.mayScoreAfter = Boolean(frozen) && s.savedBefore;
   });
 
   return json(200, { session, current, released, roomNow: speakers.length, speakers });

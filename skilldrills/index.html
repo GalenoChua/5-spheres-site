@@ -259,30 +259,40 @@
     <div class="label">Next up</div>
     <h2 style="margin-bottom:24px">Booked and happening</h2>
     <div class="booked">
+      <!-- THESE FACTS BELONG TO events/_events.json AND ARE CHECKED AGAINST IT.
+           This board carried the old day, the old hour, the retired platform and the
+           retired length until 28 October,
+           every one of which the facts file lists as retired. The event page itself was
+           corrected on 7 October and this page was not, because check_event_facts.py
+           only ever looked at the one page named in `page`. It now checks every page
+           that states an event fact, this one included. -->
       <div class="dcard">
-        <div class="when"><div class="d">22</div><div class="m">OCT</div></div>
+        <div class="when"><div class="d">9</div><div class="m">NOV</div></div>
         <div>
           <h3>Public Speaking</h3>
-          <div class="meta">Thursday, 09:00 CEST &middot; Zoom &middot; 90 min &middot; holding a room</div>
+          <div class="meta">Monday 9 November, 18:00 ICT &middot; Google Meet &middot; 110 minutes &middot; holding a room</div>
           <a class="book" href="/events/public-speaking/">Take a place &rarr;</a>
         </div>
         <span class="tagp">&euro;50</span>
       </div>
-      <!-- 5 November is after the clocks go back on 25 October, so this one is
-           CET and the two before it are CEST. Getting that wrong puts people on
-           the call an hour out. -->
+      <!-- Tough Conversations replaces "Active Listening & The Unsaid", which had sat
+           on this board with a date and no page behind it. No date yet: the brief is at
+           ops-log/2026-10-28_tough-conversations-drill-brief.md and it needs a question
+           set of its own before it can run, because the outcome here is whether the
+           person on the receiving end left feeling respected. -->
       <div class="dcard">
-        <div class="when"><div class="d">5</div><div class="m">NOV</div></div>
+        <div class="when"><div class="d">30</div><div class="m">NOV</div></div>
         <div>
-          <h3>Active Listening &amp; The Unsaid</h3>
-          <div class="meta">Thursday, 09:00 CET &middot; Zoom &middot; 90 min</div>
-          <a class="book" href="#request">Take a place &rarr;</a>
+          <h3>Tough Conversations: Giving Feedback</h3>
+          <div class="meta">Monday 30 November, 18:00 ICT &middot; Google Meet &middot; 110 minutes &middot; delivering hard news so the other person still feels respected</div>
+          <a class="book" href="/events/tough-conversations/">Take a place &rarr;</a>
         </div>
         <span class="tagp">&euro;50</span>
       </div>
     </div>
     <p style="margin-top:22px; font-size:.95rem; color:var(--muted);">
-      Already run: <b style="color:var(--ink);">The Sensing Drill</b>, 17 September.
+      Already run: <b style="color:var(--ink);">The Sensing Drill</b>, 17 September, and
+      <b style="color:var(--ink);">Public Speaking</b>, 22 October.
       <a style="color:var(--ember); text-decoration:none; font-weight:600;" href="/field-notes/i-have-gone-through-that/">What happened in the room &rarr;</a>
       &nbsp;&middot;&nbsp;
       <a style="color:var(--ember); text-decoration:none; font-weight:600;" href="/resources/sensing-cheat-sheet/">The cheat sheet &rarr;</a>
@@ -448,9 +458,15 @@
                    drill scrolls to this form, and it would be absurd to arrive
                    and find the thing you clicked is not in the list. -->
               <optgroup label="Booked">
-                <option>The Sensing Drill &mdash; 17 September</option>
-                <option>Public Speaking &mdash; 22 October</option>
-                <option>Active Listening &amp; The Unsaid &mdash; 5 November</option>
+                <option>Public Speaking &mdash; 9 November</option>
+                <option>Tough Conversations: Giving Feedback &mdash; 30 November</option>
+              </optgroup>
+              <!-- A drill that has already run is not something to request a place on.
+                   This list had Public Speaking on 22 October and the Sensing Drill on
+                   17 September in it for weeks after both had happened. -->
+              <optgroup label="Already run, tell me if you want it again">
+                <option>The Sensing Drill &mdash; ran 17 September</option>
+                <option>Public Speaking &mdash; ran 22 October</option>
               </optgroup>
               <optgroup label="The five spheres">
                 <option>The Sphere 1 Self-Audit</option>

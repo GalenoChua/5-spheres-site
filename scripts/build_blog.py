@@ -182,6 +182,13 @@ def load_sources():
         for f in sorted(files):
             if not f.endswith(".md"):
                 continue
+            # content/README.md documents the layout for whoever opens the folder;
+            # it is not a post and has no front matter. Walking it exited the build
+            # before a single post was rendered, so the first markdown post could
+            # never be published. A leading underscore is the same case: a note to
+            # the next person, kept beside the posts rather than away from them.
+            if f == "README.md" or f.startswith("_"):
+                continue
             path = os.path.join(base, f)
             raw = io.open(path, encoding="utf-8").read()
             m = re.match(r"^---\n(.*?)\n---\n(.*)$", raw, re.S)
@@ -488,7 +495,20 @@ def main():
 
     # 1. render markdown posts
     if sources:
-        siblings = [dict(s, url=url_for(s)) for s in sources]
+        # THE "KEEP GOING" CARDS READ EVERY POST ON DISK, NOT ONLY THE MARKDOWN ONES.
+        # This used to be `[dict(s, url=url_for(s)) for s in sources]`, which meant a
+        # post's siblings were the other MARKDOWN posts. With one markdown post and six
+        # hand-written ones, `others` was empty and the first post rendered with no cards
+        # at all, which is how it shipped on 28 October 2026 before anyone looked at the
+        # foot of the page. The index and the sitemap already scan rendered HTML for
+        # exactly this reason, stated twelve lines into this file: old and new posts on
+        # the same footing, one code path rather than two. The cards were the one place
+        # that still had two. A markdown source wins over its own rendered page, because
+        # it is the newer of the two and may not be rendered yet on a first build.
+        by_slug = {(p["lang"], p["slug"]): p for p in scan_posts()}
+        by_slug.update({(s["lang"], s["slug"]): dict(s, url=url_for(s))
+                        for s in sources})
+        siblings = list(by_slug.values())
         for s in sources:
             out_dir = os.path.join(ROOT, SECTIONS[s["lang"]]["dir"], s["slug"])
             out = os.path.join(out_dir, "index.html")

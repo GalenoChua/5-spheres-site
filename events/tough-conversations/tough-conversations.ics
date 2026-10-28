@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//The 5 Spheres of Empathy//Tough Conversations: Giving Feedback//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:tough-conversations-2026-11-30@5spheresofempathy.com
+DTSTAMP:20261130T110000Z
+DTSTART:20261130T110000Z
+DTEND:20261130T125000Z
+SUMMARY:Tough Conversations: Giving Feedback
+DESCRIPTION:A 110-minute live session on delivering hard news so the othe
+ r person still leaves feeling respected.\n\nYou deliver\, somebody recei
+ ves it\, and both of you score it. Bring a real conversation you are avo
+ iding\, or use one of ours.\n\nDetails: https://5spheresofempathy.com/ev
+ ents/tough-conversations/
+LOCATION:Google Meet
+URL:https://5spheresofempathy.com/events/tough-conversations/
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:Tough Conversations: Giving Feedback starts in an hour
+END:VALARM
+END:VEVENT
+END:VCALENDAR
