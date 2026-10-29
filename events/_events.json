@@ -16,7 +16,11 @@
   "daylight saving. Twelve of the fourteen people who signed up for 22 October did not",
   "attend, and they are in UTC+7. The same 11:00 UTC slot reads 13:00 in Warsaw in",
   "October and 12:00 in November, while in Phnom Penh it is 18:00 either way. The clock",
-  "that matters is the one belonging to the people who have to be awake for it."
+  "that matters is the one belonging to the people who have to be awake for it.",
+  "",
+  "29 October 2026: eight places is the standard for every skill drill, not a number",
+  "set per event. The pages had said ten while the sign-up fineprint said two were left",
+  "of a room of twelve, so one page carried three different capacities. G's ruling."
  ],
  "_howToCheck": "python scripts/check_event_facts.py  (the page)\npython scripts/build_ics.py --check   (the calendar file)",
  "events": {
@@ -65,7 +69,7 @@
     "Zoom"
    ],
    "priceEur": 50,
-   "availability": "ten places",
+   "availability": "eight places",
    "retiredDurations": [
     "90 minutes",
     "90-minute",
