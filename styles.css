@@ -260,6 +260,65 @@ p.lead { font-size: 1.08rem; max-width: 62ch; margin-bottom: 8px; }
 .article-body img { display: block; width: 100%; height: auto; border-radius: 10px;
                     margin: 34px 0 10px; }
 
+/* Lists. This is the first field note to carry one, so `ul` was falling through to the
+   browser default: no space under it, and the paragraph that followed sat tight against
+   the last bullet and read as part of it. Same gap the links, images and quotes above
+   each had. Spacing matches the paragraph rhythm rather than the browser's. */
+.article-body ul, .article-body ol { margin: 0 0 21px; padding-left: 1.35em; max-width: 62ch; }
+.article-body li { margin-bottom: 11px; padding-left: 2px; }
+.article-body li:last-child { margin-bottom: 0; }
+.article-body li > strong { color: var(--ink); }
+
+/* Pull quote. A field note runs long enough that the eye needs somewhere to stop, and
+   until now the only break was an image. This lifts one of the author's own sentences
+   in place rather than repeating a line from elsewhere on the page. Serif and larger
+   than the prose, so it reads as a change of voice and not as a heading. */
+.article-body .pull {
+  margin: 40px 0; padding: 24px 0;
+  border-top: 2px solid var(--ember); border-bottom: 2px solid var(--ember);
+  font-family: 'Fraunces', Georgia, serif; font-weight: 500;
+  font-size: 1.44rem; line-height: 1.34; color: var(--ink);
+  max-width: 30ch;
+}
+.article-body .pull p { font: inherit; color: inherit; margin: 0; max-width: none; }
+
+/* Closing call to action. First it was a sentence of prose with an inline link in it,
+   which read as a footnote. Then it was a warm-paper box on a warm-paper page, which G
+   read straight past: "this box blends in too much, you wouldn't read it."
+   So it stops pretending to be part of the article. Ink ground against the cream page,
+   ember pill, and a hand-drawn arrow leading the eye in from the last line of prose. */
+.article-body .cta-end {
+  margin: 4px 0 12px; padding: 30px 34px 34px;
+  background: var(--ink); border-radius: 14px; border: none;
+  box-shadow: 0 10px 28px rgba(29, 42, 82, .16);
+}
+.article-body .cta-end p { color: rgba(250, 246, 239, .9); margin-bottom: 20px; max-width: 50ch; }
+.article-body .cta-end p:last-child { margin-bottom: 0; }
+.article-body .cta-end strong { color: var(--paper); }
+.article-body .cta-end .cta-kicker {
+  font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ember); margin-bottom: 10px;
+}
+.article-body .cta-end a.btn { background: var(--ember); color: var(--ink); }
+.article-body .cta-end a.btn:hover { background: var(--paper); color: var(--ink); }
+.article-body a.btn { color: var(--paper); text-decoration: none; }
+.article-body a.btn:hover { color: var(--paper); text-decoration: none; }
+
+/* The arrow out of the last sentence and into the box. Decoration, so it is aria-hidden
+   in the markup and carries no meaning a screen reader would miss. */
+.article-body .cta-arrow {
+  display: block; width: 150px; height: 86px; color: var(--ember);
+  margin: 2px 0 -6px 18px; overflow: visible;
+}
+
+/* An image with a line under it saying what it is. Every photo so far has been
+   self-explanatory; a screenshot of a video call is not. */
+.article-body figure { margin: 36px 0 26px; }
+.article-body figure img { margin: 0; }
+.article-body figcaption {
+  font-size: .86rem; color: var(--muted); margin-top: 10px; max-width: 54ch;
+}
+
 /* Participant quotes. This is the first field note to carry any, so there was no rule for
    them and they rendered identically to the prose around them. In a piece where three
    different people are quoted in the same section, the reader could not see where
