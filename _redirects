@@ -23,3 +23,10 @@
 /package.json       /   404!
 /package-lock.json  /   404!
 /netlify.toml       /   404!
+
+# Tough Conversations is written but the copy is not approved, so the page is held
+# back rather than deleted. The bang forces the redirect to win over the static file
+# that is still in the repo; without it Netlify serves the file and ignores this.
+# Remove these three lines to put it back. 29 October 2026.
+/events/tough-conversations/*   /events/  302!
+/events/tough-conversations     /events/  302!
