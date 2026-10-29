@@ -50,7 +50,9 @@
    "icsPath": "events/public-speaking/public-speaking-drill.ics",
    "icsDescription": "A 110-minute live session on holding a room. You deliver, you get read back against twelve delivery behaviours, and you deliver again.\n\nBring ninety seconds of something real you have to say soon.\n\nDetails: https://5spheresofempathy.com/events/public-speaking/",
    "alsoOn": [
-    "skilldrills/index.html"
+    "skilldrills/index.html",
+    "index.html",
+    "events/index.html"
    ]
   },
   "tough-conversations": {
@@ -79,7 +81,9 @@
    "icsPath": "events/tough-conversations/tough-conversations.ics",
    "icsDescription": "A 110-minute live session on delivering hard news so the other person still leaves feeling respected.\n\nYou deliver, somebody receives it, and both of you score it. Bring a real conversation you are avoiding, or use one of ours.\n\nDetails: https://5spheresofempathy.com/events/tough-conversations/",
    "alsoOn": [
-    "skilldrills/index.html"
+    "skilldrills/index.html",
+    "index.html",
+    "events/index.html"
    ]
   }
  }

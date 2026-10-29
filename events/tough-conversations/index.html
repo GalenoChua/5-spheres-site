@@ -463,6 +463,55 @@ footer a:hover { color: var(--orange-soft); }
     minimum term.</p>
   </div>
 </section>
+<div class="signup bottom" id="signup-bottom">
+  <div class="wrap">
+    <div class="row-form">
+    <h2>Take a place</h2>
+
+    <!-- Posts through /.netlify/functions/subscribe to MailerLite form
+         202661305651299601, which adds to Events and to Event 2026-11-30 Tough
+         Conversations. MailerLite's own widget is not used: it pulls in Google
+         reCAPTCHA, which this site's CSP blocks, so it renders and then silently
+         fails to submit. -->
+    <form class="drill-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/202661305651299601/subscribe" method="post" target="_blank" rel="noopener">
+      <div class="field">
+        <label for="name-bottom">First name</label>
+        <input type="text" id="name-bottom" name="fields[name]" autocomplete="given-name" required>
+      </div>
+      <div class="field">
+        <label for="email-bottom">Email</label>
+        <input type="email" id="email-bottom" name="fields[email]" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="why-bottom">What conversation are you avoiding, and with whom?</label>
+        <input type="text" id="why-bottom" name="fields[why_now]"
+               placeholder="Underperformance, a missed deadline, a habit nobody names">
+      </div>
+      <input type="hidden" name="ml-submit" value="1">
+      <input type="hidden" name="anticsrf" value="true">
+      <!-- A field no person sees and no person fills in. Answered means a bot. -->
+      <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      <button type="submit">Take a place</button>
+      <p class="fineprint">&euro;50. Our card payments are not switched on yet, so I will
+      contact you to arrange the invoice, to you or to your company, along with the
+      Google Meet details.</p>
+    </form>
+    </div>
+    <div class="row-success" style="display:none">
+      <h2>Your place is held.</h2>
+      <p class="intro">We are still setting up our payment infrastructure, so there is no
+      card checkout yet. I will email you to arrange the invoice, to you or to your company,
+      and send the Google Meet details before Monday 30 November. Have a think about the
+      conversation you want to practise.</p>
+      <div class="addcal">
+        <span class="addcal-label">Add to calendar</span>
+        <a class="addcal-btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;amp;text=Tough%20Conversations%3A%20Giving%20Feedback&amp;amp;dates=20261130T110000Z/20261130T125000Z&amp;amp;details=A%20110-minute%20live%20session%20on%20delivering%20hard%20news%20so%20the%20other%20person%20still%20leaves%20feeling%20respected.%0A%0AYou%20deliver%2C%20somebody%20receives%20it%2C%20and%20both%20of%20you%20score%20it.%0A%0ADetails%3A%20https%3A//5spheresofempathy.com/events/tough-conversations/&amp;amp;location=Google%20Meet&amp;amp;ctz=Asia/Phnom_Penh" target="_blank" rel="noopener">Google Calendar</a>
+        <a class="addcal-btn" href="/events/tough-conversations/tough-conversations.ics" download>Download a calendar file for Outlook or Apple</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer>
   <div class="wrap">
     <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
@@ -481,7 +530,7 @@ footer a:hover { color: var(--orange-soft); }
    reCAPTCHA refusal for months. Without JavaScript the form still submits natively
    through target="_blank". */
 (function () {
-  var LIST = 'public-speaking';
+  var LIST = 'tough-conversations';
 
   /* The failure line is created next to the button rather than written into
      the markup twice, because this page carries the same form twice. */

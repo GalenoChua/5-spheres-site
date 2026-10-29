@@ -52,6 +52,9 @@ const FORMS = {
   'resource-downloads': '191733181639034609',
   'sensing-drill': '196872740626498737',
   'public-speaking': '200050059381835246',
+  /* Added 29 October, with the form on the page. The page had been selling the
+     session with nothing to submit, so this list name had never been needed. */
+  'tough-conversations': '202661305651299601',
   /* Added 26 October. These four forms posted straight to MailerLite with no
      honeypot and no validation of any kind, on the homepage, the application
      page and the sphere one audit. They were never in the no-cors trap because
