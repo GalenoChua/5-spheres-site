@@ -110,7 +110,7 @@ All three work for someone who feels sick when they think about public speaking.
 <div class="cta-end">
   <p class="cta-kicker">Next drop-in</p>
   <p>If you want more practice and tips on Speaking with Empathy, our next drop-in is
-  <strong>Monday 9 November, 18:00 Phnom Penh / 12:00 Warsaw</strong>. Eight places, $50.
+  <strong>Monday 9 November, 18:00 Phnom Penh / 12:00 Warsaw</strong>. Eight places, €50.
   Bring 90 seconds of something real you need to say soon.</p>
   <p><a class="btn" href="/events/public-speaking/">Take a place</a></p>
 </div>
