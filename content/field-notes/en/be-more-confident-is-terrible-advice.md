@@ -16,7 +16,7 @@ image: /images/field-notes/public-speaking-drill-room.jpg
 At the end of my last workshop, I asked what people were taking away. Someone said:
 "You have to be more confident."
 
-And I thought: shit, what have I done?
+<div class="pull">And I thought: shit, what have I done?</div>
 
 It is terrible advice and people (absolutely everywhere) tell me this is both what they
 hear all the time *and* what they tell others.
@@ -100,10 +100,10 @@ So instead of saying 'just be more confident', try:
 
 All three work for someone who feels sick when they think about public speaking.
 
-<svg class="cta-arrow" viewBox="0 0 150 86" aria-hidden="true" focusable="false">
-  <path d="M8 6 C 10 44, 44 70, 104 72" fill="none" stroke="currentColor"
+<svg class="cta-arrow" viewBox="0 0 90 80" aria-hidden="true" focusable="false">
+  <path d="M12 4 C 14 30, 26 54, 52 70" fill="none" stroke="currentColor"
         stroke-width="2.6" stroke-linecap="round"/>
-  <path d="M88 60 L 106 72 L 87 81" fill="none" stroke="currentColor"
+  <path d="M46 55 L 52 70 L 36 71" fill="none" stroke="currentColor"
         stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 
