@@ -35,6 +35,15 @@ nul
 /*.jpeg
 /*.png
 !/og.png
+# The favicon set. /*.png exists to keep loose working images out of the repo,
+# and it silently swallowed these: without these five lines the markup ships,
+# the files do not, and every tab shows a broken icon in production while
+# looking correct on this disk.
+!/favicon-16x16.png
+!/favicon-32x32.png
+!/apple-touch-icon.png
+!/icon-192.png
+!/icon-512.png
 !/Mr_G_headshots_ZuzannaGerulewiczPhotography_06.jpg
 
 # Source PDFs parked in page directories rather than /assets/
