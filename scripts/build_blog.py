@@ -401,7 +401,7 @@ NOINDEX = [
     ("/pah-pitch/", "a pitch, not a public page"),
     ("/video/", "working footage"),
     ("/Course Core Competencies/", "internal planning, and the URL has spaces"),
-    ("/pt2/", "ASC Credibility Programme session tool, and it declares no robots tag"),
+    ("/pt2/", "ASC Credibility Programme session tool; it now says noindex itself"),
 ]
 
 
