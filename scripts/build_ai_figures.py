@@ -41,7 +41,10 @@ its own bar, that label-on-bar contrast clears 4.5:1, that the two rows finish
 within a hair of each other, that piloting gains rounds while each round
 shortens, and that the rendered ink sits inside the page margins.
 """
+import json
+import math
 import os
+import random
 
 import fitz
 import numpy as np
@@ -61,8 +64,50 @@ VERSION = 5
 HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.dirname(HERE)
 WINF = r"C:\Windows\Fonts"
-for n, f in (("Arial", "arial.ttf"), ("Arial-B", "arialbd.ttf")):
+for n, f in (("Arial", "arial.ttf"), ("Arial-B", "arialbd.ttf"),
+             ("Hand", "segoeprb.ttf")):
     pdfmetrics.registerFont(TTFont(n, os.path.join(WINF, f)))
+
+# Pencil. Ported from ops-log/_ai_people_figure.py, which drew the annotated
+# version of the old two-row figure: a ring that wobbles and overshoots where
+# it closes reads as someone marking up a printout, and a perfect ellipse
+# reads as another piece of chart furniture.
+WOBBLE = 3.0
+RING_PAD_X, RING_PAD_Y = 16, 14
+PENCIL = "#B9B9B9"
+
+# ----------------------------------------------------------------- i18n ---
+# ENGLISH IS THE KEY, ALWAYS. Stage names are not only labels: they index
+# LEVERS, span_of(), the per-subject rules and OUTCOMES. Translating the data
+# would mean translating the keys, and then a Polish figure would look up a
+# Polish lever against an English stage and find nothing. So the data stays
+# English end to end and the only thing that changes is what gets DRAWN.
+#
+# A missing key falls back to English rather than raising, so a half-finished
+# translation renders as a mixed figure that is obviously incomplete instead
+# of a crash. `coverage()` reports exactly what is missing.
+NL = chr(10)      # a translation may carry its own line breaks
+LANG = os.environ.get("FIG_LANG", "en")
+LANG_DIR = os.path.join(SITE, "lang")
+
+
+def _load(code):
+    p = os.path.join(LANG_DIR, "figures.%s.json" % code)
+    if not os.path.exists(p):
+        return {}
+    with open(p, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+STRINGS = _load(LANG) if LANG != "en" else {}
+
+
+def T(key):
+    """Draw-time only. Never use the result as a key."""
+    if isinstance(key, (list, tuple)):
+        return [T(k) for k in key]
+    return STRINGS.get(key, key)
+
 
 BLACK = HexColor("#000000")
 WHITE = HexColor("#FFFFFF")
@@ -82,14 +127,29 @@ TRACKING = 3.6
 # because it is the only light, unsaturated thing in the file.
 MARK_SRC = os.path.join(SITE, "images", "5-spheres-mark.png")
 CREDIT = "5spheresofempathy.com"
+# G, 3 November. It goes UNDER the url rather than beside it: the credit block
+# is a mark, a rule and a domain, and a fourth element on that line turns a
+# signature into a sentence. Grey rather than white so it reads as a subtitle
+# to the domain and does not compete with the board above it.
+TAGLINE = "Human intelligence AI can’t replace"
+SZ_TAGLINE = 21
+TAGLINE_GAP = 22          # baseline to baseline ends up 34, not 25
+TAGLINE_GREY = "#9A9A9A"
+TAGLINE_STYLE = os.environ.get("TAGLINE_STYLE", "caps")
 MARK_H = 46
 MARK_GAP = 18
 SZ_CREDIT = 24
 RULE_W = 1.6
-CREDIT_Y = 130        # sits on the same margin the sides use
+# Lifted from 130 to make room for the tagline UNDER the domain while the
+# tagline's own descenders still land on the margin the sides use.
+CREDIT_Y = 162
 
 BAR_H = 76
 SEG_GAP = 8
+
+# A part-filled stage with rounds is drawn round by round rather than as
+# one white head. Off would restore the single-split drawing.
+PER_CYCLE = True
 
 # (name, length, cycles, ai). cycles > 1 draws internal dividers.
 #
@@ -145,6 +205,70 @@ ROW_BEFORE = (["Before AI"], BEFORE, 0, False)
 ROW_THINK = (["With AI", "what people think"], THINK, 0, True)
 ROW_REAL = (["With AI", "in reality"], REAL, 0, True)
 
+# ---------------------------------------------------------------- product ---
+# G, 3 November: "let's change the business one, let's adopt the same type of
+# thinking with Before AI, With AI (What people think), then With AI the
+# reality".
+#
+# ONE BUILDER, TWO SUBJECTS, rather than a second script. The product figure
+# used to live in ops-log/_ai_speed_figure.py with its own copy of every
+# drawing routine, which is how two figures that make the same argument end up
+# disagreeing about what a bar looks like. This file already carried the note
+# that the ministry stages were chosen to map onto the product ones, so the
+# two were always meant to be one thing.
+#
+# WHAT CHANGED IN THE MODEL. The old product figure had two rows and a binary
+# legend, "Faster with AI" against "Not faster with AI", which is a property of
+# the STAGE. The ministry model asks a different question of each row: in THIS
+# row, who does it. That is what lets a stage be partly AI and partly a person,
+# and it is the whole reason the reality row can land where Before AI landed.
+# A SEVENTH STAGE AT THE FRONT. G, 3 November: "I'd add a little strip at the
+# very beginning with a wee arrow that says 'your idea / trigger'". It is the
+# product's version of the ministry's Trigger, and it was the one stage the
+# old two-row figure never had: the thing that starts the work. Narrow,
+# because it is a moment rather than a phase, and a person's in every row,
+# because nothing about AI hands you the idea.
+#
+# VALIDATION IS SOLID IN THE BELIEF ROW NOW. G: "validation people think it's
+# gonna be faster too." It was drawn as a person's job even in the fantasy,
+# which understated the belief the slide exists to correct.
+#
+# Lengths are pixels and the page is 1920 wide, so adding a stage means every
+# other one gives up a little. All three rows are scaled by the same factor:
+# the comparison is between rows, so they shrink together and the argument is
+# untouched. BEFORE and REAL both total 1197, which is the whole point.
+P_BEFORE = [("Your idea", 81, 1, False), ("Validation", 141, 1, False),
+            ("Design", 167, 1, False), ("Build", 274, 1, False),
+            ("Sell", 192, 1, False), ("Iteration", 201, 2, False),
+            ("Adopt", 141, 1, False)]
+
+P_THINK = [("Your idea", 81, 1, True), ("Validation", 77, 1, True),
+           ("Design", 68, 1, True), ("Build", 73, 1, True),
+           ("Sell", 81, 1, True), ("Iteration", 98, 4, True),
+           ("Adopt", 81, 1, True)]
+
+# Validation is 25% AI: it will summarise what people said, and it will not
+# have the conversation. Sell is 25% for the same reason one layer out.
+P_REAL = [("Your idea", 81, 1, 0.20), ("Validation", 141, 1, 0.25),
+          ("Design", 111, 1, 0.70), ("Build", 107, 1, 0.75),
+          ("Sell", 274, 1, 0.25), ("Iteration", 342, 8, 0.55),
+          ("Adopt", 141, 1, 0.18)]
+
+# G, 3 November, naming the rest himself. Six now, one on every stage but the
+# idea, which is the same claim his annotated figure made in handwriting:
+# all of it requires people to go through other people.
+# G, 3 November: "'your idea' should remove & awareness here, that's the
+# human skill that's needed to have an idea". So it moves off the bar and
+# onto the bottom line with the other six, which also takes the widest
+# label in the figure off the narrowest bar.
+P_LEVERS = [("Your idea", ["Awareness"]),
+            ("Validation", ["Deep curiosity"]),
+            ("Design", ["Creativity"]),
+            ("Build", ["Judgement on tools", "and imagination"]),
+            ("Sell", ["Strong relationships"]),
+            ("Iteration", ["Judgement of", "quality"]),
+            ("Adopt", ["Adaptability to", "pivot and change"])]
+
 ROW_Y = [700, 470]
 
 ROWS = [ROW_BEFORE, ROW_THINK, ROW_REAL]
@@ -190,6 +314,99 @@ OUTCOMES = {"Before AI": "Serves the public",
             "With AI, in reality": "Serves the public really well"}
 LEGEND = [(True, "AI does it"), (0.45, "AI does part of it"),
           (False, "A person does it")]
+
+
+SUBJECTS = {
+    "ministry": dict(
+        eyebrow="DELIVERING A PUBLIC SERVICE",
+        slug="ministry",
+        start_arrow=False,
+        before=BEFORE, think=THINK, real=REAL,
+        levers=LEVERS,
+        value=["Perceived", "public value"],
+        outcomes={"Before AI": "Serves the public",
+                  "With AI, what people think": "Sooner, and better",
+                  "With AI, in reality": "Serves the public really well"},
+        # What the assertions below mean FOR THIS SUBJECT. They were written
+        # against the ministry stage names, so parameterising the data without
+        # parameterising these would leave every check silently testing the
+        # ministry while the product is on the page.
+        rules=dict(first="Trigger", cycle="Pilot",
+                   collapse=("Design", "Build"),
+                   grow=("Approval", "Redesign"),
+                   mostly_ai=("Design", "Build", "Pilot"),
+                   mostly_person=("Consultation", "Approval", "Redesign"),
+                   levers={"Consultation", "Approval", "Pilot", "Redesign",
+                           "Adoption"},
+                   no_lever=("Trigger", "Design", "Build"),
+                   first_note="nothing about AI makes a minister ask sooner")),
+    "product": dict(
+        eyebrow="BUILDING A PRODUCT",
+        slug="product",
+        start_arrow=True,
+        before=P_BEFORE, think=P_THINK, real=P_REAL,
+        levers=P_LEVERS,
+        value=["Perceived", "value"],
+        outcomes={"Before AI": "Solves their problem",
+                  "With AI, what people think": "Sooner, and better",
+                  "With AI, in reality": "Solves their problem really well"},
+        rules=dict(first="Your idea", cycle="Iteration",
+                   collapse=("Design", "Build"),
+                   grow=("Sell",),
+                   mostly_ai=("Design", "Build", "Iteration"),
+                   mostly_person=("Sell", "Validation",
+                                  "Your idea", "Adopt"),
+                   levers={"Your idea", "Validation", "Design", "Build",
+                           "Sell", "Iteration", "Adopt"},
+                   no_lever=(),
+                   first_note="nothing about AI hands you the idea")),
+}
+
+SUBJECT = "ministry"
+START_ARROW = False
+EYEBROW = SUBJECTS[SUBJECT]["eyebrow"]
+SLUG = SUBJECTS[SUBJECT]["slug"]
+
+
+def use(key):
+    """Rebind the module state one subject at a time.
+
+    The drawing code reads ROWS, LEVERS, VALUE_LABEL and OUTCOMES as module
+    globals, which emit() already rebinds per variant. This does the same one
+    level up, so a subject is data rather than a second copy of the file.
+    """
+    global START_ARROW
+    global SUBJECT, EYEBROW, SLUG, LEVERS, VALUE_LABEL, OUTCOMES
+    global ROW_BEFORE, ROW_THINK, ROW_REAL, VARIANTS
+    global BEFORE, THINK, REAL, RULES
+    d = SUBJECTS[key]
+    SUBJECT, EYEBROW, SLUG = key, d["eyebrow"], d["slug"]
+    START_ARROW = d.get("start_arrow", False)
+    # check() and the value-dot geometry read these by name, so rebinding only
+    # the ROW_ tuples would draw the product and verify the ministry.
+    BEFORE, THINK, REAL, RULES = d["before"], d["think"], d["real"], d["rules"]
+    LEVERS, VALUE_LABEL, OUTCOMES = d["levers"], d["value"], d["outcomes"]
+    ROW_BEFORE = (["Before AI"], d["before"], 0, False)
+    ROW_THINK = (["With AI", "what people think"], d["think"], 0, True)
+    ROW_REAL = (["With AI", "in reality"], d["real"], 0, True)
+    VARIANTS = [
+        ("belief", [ROW_BEFORE, ROW_THINK],
+         dict(levers=False, outcomes=False, cycles=False, mark=True,
+              before_mark=False),
+         "it is all fast, and it is over early"),
+        ("reality", [ROW_THINK, ROW_REAL],
+         dict(levers=False, outcomes=False, cycles=False, mark=True,
+              before_mark=True),
+         "it lands no sooner"),
+        ("levers", [ROW_REAL],
+         dict(levers=True, outcomes=False, cycles=True, mark=False,
+              before_mark=False, rings=False),
+         "where the time went, and that they are all people"),
+        ("skills", [ROW_REAL],
+         dict(levers=True, outcomes=False, cycles=True, mark=False,
+              before_mark=False, rings=True),
+         "the same board, marked up: every one of them is a human skill"),
+    ]
 
 
 def row_end(stages):
@@ -281,6 +498,33 @@ def bar(c, x0, x1, y, cycles, ai):
     the same two inks as everything else, so it needs no new visual idea, and
     the proportion carries the claim.
     """
+    if is_partly(ai) and cycles > 1 and PER_CYCLE:
+        # EACH ROUND IS ITS OWN LITTLE BLOCK. G, 3 November: "iteration is many
+        # shorter black and white blocks together actually". One white head
+        # across the whole stage says AI does the first 55% of the iterating and
+        # then stops, which is not what happens: every round has a machine part
+        # and a human part, and there are eight rounds. Drawn per cycle, the
+        # stage reads as alternating work, which is the claim.
+        step = (x1 - x0) / float(cycles)
+        c.setFillColor(BLACK)
+        c.setStrokeColor(WHITE)
+        c.setLineWidth(2.6)
+        c.roundRect(x0, y, x1 - x0, BAR_H, 6, stroke=1, fill=1)
+        c.saveState()
+        p = c.beginPath()
+        p.roundRect(x0, y, x1 - x0, BAR_H, 6)
+        c.clipPath(p, stroke=0, fill=0)
+        c.setFillColor(WHITE)
+        for k in range(cycles):
+            sx = x0 + step * k
+            c.rect(sx, y, step * ai, BAR_H, stroke=0, fill=1)
+        c.restoreState()
+        c.setStrokeColor(WHITE)
+        c.setLineWidth(2.2)
+        for k in range(1, cycles):
+            c.line(x0 + step * k, y + 7, x0 + step * k, y + BAR_H - 7)
+        return WHITE
+
     if is_partly(ai):
         c.setFillColor(BLACK)
         c.setStrokeColor(WHITE)
@@ -346,9 +590,45 @@ def lever(c, x0, x1, y, text, drop=0):
     p.lineTo(x0 + 16, y - 7)
     p.close()
     c.drawPath(p, stroke=0, fill=1)
-    for i, line in enumerate(text):
+    # FALL BACK TO THE ORIGINAL LINES, not to the joined key. Joining is
+    # only how a translator is asked the question; in English the data
+    # already carries the line break, and returning the joined string
+    # rendered "Perceived public value" as one line 25 units past the
+    # right margin.
+    joined = " ".join(text)
+    rendered = T(joined).split(NL) if joined in STRINGS else list(text)
+    for i, line in enumerate(rendered):
         label(c, (x0 + x1) / 2.0, y - 46 - drop - i * SZ_LABEL * 1.1,
               line, align="c")
+
+
+def ring_points(cx, cy, rx, ry, rng, n=96):
+    """A hand drawn ellipse: smooth wobble, and it overshoots where it closes."""
+    amps = [rng.uniform(0.4, 1.0) * WOBBLE for _ in range(3)]
+    phs = [rng.uniform(0, 2 * math.pi) for _ in range(3)]
+    start = rng.uniform(-0.3, 0.3)
+    sweep = 2 * math.pi + rng.uniform(0.18, 0.40)
+    out = []
+    for i in range(n + 1):
+        t = start + sweep * i / float(n)
+        d = sum(a * math.sin(k * t + p)
+                for a, k, p in zip(amps, (2, 3, 5), phs))
+        out.append((cx + math.cos(t) * (rx + d), cy + math.sin(t) * (ry + d)))
+    return out
+
+
+def draw_ring(c, cx, cy, rx, ry, rng):
+    pts = ring_points(cx, cy, rx, ry, rng)
+    c.setStrokeColor(HexColor(PENCIL))
+    c.setLineWidth(2.4)
+    c.setDash()
+    c.setLineCap(1)
+    c.setLineJoin(1)
+    p = c.beginPath()
+    p.moveTo(*pts[0])
+    for pt in pts[1:]:
+        p.lineTo(*pt)
+    c.drawPath(p, stroke=1, fill=0)
 
 
 def outcome_y(by):
@@ -435,6 +715,39 @@ def draw_credit(c):
     c.setFont("Arial", SZ_CREDIT)
     c.setFillColor(WHITE)
     c.drawString(rx + MARK_GAP, CREDIT_Y + 12, CREDIT)
+    # Right-aligned to the same edge as the block above it, so the two share a
+    # margin instead of merely sitting near each other.
+    # G, 3 November: "the tagline is spaced strangely and the font doesn't
+    # quite fit". Three treatments, switchable, so the choice is made by
+    # looking. "caps" echoes the tracked eyebrow at top left, which makes the
+    # two corners one typographic system instead of two.
+    ty = CREDIT_Y - TAGLINE_GAP
+    if TAGLINE_STYLE == "caps":
+        f, sz, track = "Arial", 15, 2.3
+        txt = T(TAGLINE).upper()
+        wid = pdfmetrics.stringWidth(txt, f, sz) + track * (len(txt) - 1)
+        t = c.beginText(W - MARGIN - wid, ty)
+        t.setFont(f, sz)
+        t.setFillColor(HexColor(TAGLINE_GREY))
+        t.setCharSpace(track)
+        t.textOut(txt)
+        c.drawText(t)
+        reset = c.beginText(0, 0)
+        reset.setCharSpace(0)
+        reset.textOut("")
+        c.drawText(reset)
+    elif TAGLINE_STYLE == "left":
+        # left edge flush with the domain rather than the block's right edge
+        m = white_mark()
+        lx = (W - MARGIN - credit_width()
+              + MARK_H * m.width / float(m.height) + MARK_GAP * 2 + RULE_W)
+        c.setFont("Arial", 18)
+        c.setFillColor(HexColor("#B0B0B0"))
+        c.drawString(lx, ty, T(TAGLINE))
+    else:
+        c.setFont("Arial", SZ_TAGLINE)
+        c.setFillColor(HexColor(TAGLINE_GREY))
+        c.drawRightString(W - MARGIN, ty, T(TAGLINE))
 
 
 def build(pdf_path):
@@ -446,7 +759,7 @@ def build(pdf_path):
     t.setFont("Arial-B", SZ_EYEBROW)
     t.setFillColor(WHITE)
     t.setCharSpace(TRACKING)
-    t.textOut("DELIVERING A PUBLIC SERVICE")
+    t.textOut(T(EYEBROW))
     c.drawText(t)
     # Tc is page state. Without this reset every later string is letterspaced
     # while stringWidth stays blind to it.
@@ -465,17 +778,45 @@ def build(pdf_path):
         # at 54pt bold is 456 units against a 270 unit column, and making the
         # column wide enough for it would have cost the bars a fifth of the
         # page.
+        # A WEE ARROW INTO THE FIRST STRIP. G, 3 November. It goes in the gap
+        # between the row-name column and the bars, which is 34 units wide and
+        # otherwise empty, so it costs the timeline nothing. It marks where the
+        # work starts, which is the point of the narrow first stage: the idea
+        # is yours, and no part of the row before it belongs to anyone else.
+        if START_ARROW:
+            # The row name is right-aligned at LABEL_COL - 34, so a 22-unit
+            # arrow starting at LABEL_COL - 30 left four units of air and read
+            # as part of the words: "Before AI" with a tail. Shorter, and
+            # pushed right, so it sits in clear space between the name and the
+            # first bar.
+            ay = by + BAR_H / 2.0
+            tip = LABEL_COL - 5
+            tail = tip - 13
+            c.setStrokeColor(WHITE)
+            c.setLineWidth(3.0)
+            c.setDash()
+            c.setLineCap(1)
+            c.line(tail, ay, tip, ay)
+            c.line(tip - 6, ay + 5.5, tip, ay)
+            c.line(tip - 6, ay - 5.5, tip, ay)
+            c.setLineCap(0)
+            assert tail > LABEL_COL - 34 + 14, "the arrow is touching the row name"
+
         c.setFillColor(WHITE)
         head_y = by + BAR_H / 2.0 - 9 + (len(lines) - 1) * 16
         for i, line in enumerate(lines):
             if i == 0:
                 c.setFont("Arial-B", SZ_HEADING)
-                c.drawRightString(LABEL_COL - 34, head_y, line)
+                c.drawRightString(LABEL_COL - 34, head_y, T(line))
             else:
                 c.setFont("Arial", SZ_LABEL)
-                c.drawRightString(LABEL_COL - 34,
+                # The qualifier was the one draw site T() missed, so the
+                # Polish board read "Z AI / in reality". Caught by looking at
+                # the render, not by any check: a missing translation is a
+                # legal string, so nothing can assert its way to finding one.
+                c.drawRightString(LABEL_COL - 34,   # qualifier
                                   head_y - SZ_HEADING * 0.72 - (i - 1) * SZ_LABEL * 1.1,
-                                  line)
+                                  T(line))
 
         levels = stagger(stages)
 
@@ -494,8 +835,19 @@ def build(pdf_path):
             # still need to show the stages underneath or over the top of the
             # blocks." A reader cannot check a claim about Approval against a
             # bar nobody labelled.
-            label(c, (x0 + x1) / 2.0, by + BAR_H + LABEL_DY + levels[name],
-                  size=SZ_BAR, colour=WHITE, align="c", text=name)
+            # A LEADER LINE UNDER A RAISED NAME. G, 3 November: the belief row
+            # "is so messy". The names already alternated, but with nothing
+            # joining a raised name to its bar the reader has to guess, and on
+            # a row of 70-unit bars every guess is between two neighbours.
+            ly = by + BAR_H + LABEL_DY + levels[name]
+            if levels[name]:
+                c.setStrokeColor(HexColor("#7A7A7A"))
+                c.setLineWidth(1.3)
+                c.setDash()
+                c.line((x0 + x1) / 2.0, by + BAR_H + 5,
+                       (x0 + x1) / 2.0, ly - 4)
+            label(c, (x0 + x1) / 2.0, ly,
+                  size=SZ_BAR, colour=WHITE, align="c", text=T(name))
 
         end = row_end(stages)
         c.setFillColor(WHITE)
@@ -505,7 +857,7 @@ def build(pdf_path):
         # pieces of furniture were saying what the dot and the dashed line
         # already say, and the bar ending where it ends IS the claim.
         if OPTS["outcomes"]:
-            text = OUTCOMES[", ".join(lines)]
+            text = T(OUTCOMES[", ".join(lines)])
             tw = pdfmetrics.stringWidth(text, "Arial", SZ_LABEL)
             left = end + 18
             if left + tw > W - MARGIN:
@@ -517,7 +869,10 @@ def build(pdf_path):
         vy = (ROWS[0][2] + BAR_H + LABEL_DY + max(stagger(ROWS[0][1]).values())
               + SZ_BAR * 0.75 + 22)
         vx = row_end(ROWS[0][1]) + 30
-        for i, line in enumerate(VALUE_LABEL):
+        vjoin = " ".join(VALUE_LABEL)
+        vlines = (T(vjoin).split(NL) if vjoin in STRINGS
+                  else list(VALUE_LABEL))
+        for i, line in enumerate(vlines):
             label(c, vx, vy + (len(VALUE_LABEL) - 1 - i) * SZ_LABEL * 1.1, line,
                   align="c")
 
@@ -552,7 +907,8 @@ def build(pdf_path):
         c.setLineWidth(2.2)
         for yy in (top_y, bot_y):
             c.line(bx - 9, yy, bx + 9, yy)
-        label(c, W - MARGIN, bot_y - 36, "Where it finished before AI", align="r")
+        label(c, W - MARGIN, bot_y - 36, T("Where it finished before AI"),
+              align="r")
 
     by = ROWS[-1][2]
     # The brackets are their own image now. On the other two they were a third
@@ -563,25 +919,82 @@ def build(pdf_path):
     # measured. Anything that would overlap its neighbour drops a line, and the
     # drop alternates rather than accumulating, so a run of long labels does not
     # walk off the bottom of the page.
-    placed = []
-    for name, lines in (LEVERS if showing_reality else []):
+    # TWO LEVELS, STRICTLY ALTERNATING, each with a leader line. G, 3
+    # November: "the P3 words are quite muddled and hard to read."
+    #
+    # The old rule dropped a label only when it would have collided, which
+    # with six adjacent brackets produced three depths in no pattern, and a
+    # reader could not tell which bracket a word belonged to. Alternating
+    # every other one is regular, so the eye learns it at a glance, and the
+    # leader line removes the guess.
+    #
+    # Wrapping each label to its own bar was tried first and cannot work:
+    # "Judgement on tools and imagination" over a 107-unit Build bar is about
+    # three characters a line.
+    many = len(LEVERS) > 3
+    step = 2 * SZ_LABEL * 1.1 + 14
+    placed, rings = [], []
+    for i, (name, lines) in enumerate(LEVERS if showing_reality else []):
         x0, x1 = span_of(REAL, name)
         mid = (x0 + x1) / 2.0
         half = max(pdfmetrics.stringWidth(l, "Arial", SZ_LABEL)
                    for l in lines) / 2.0
-        drop = 0
-        for pmid, phalf, pdrop, pn in placed:
-            if pdrop == 0 and abs(mid - pmid) < half + phalf + 18:
-                # just clear of the previous label's last line, not a line
-                # further: at 30 + (pn + 1) lines the Adoption lever ended up
-                # beside the credit with nothing to connect it to its bracket
-                drop = pn * SZ_LABEL * 1.1 + 16
-        lever(c, x0, x1, by - LEVER_DY, lines, drop=drop)
+        if many:
+            drop = (i % 2) * step
+        else:
+            drop = 0
+            for pmid, phalf, pdrop, pn in placed:
+                if pdrop == 0 and abs(mid - pmid) < half + phalf + 18:
+                    drop = pn * SZ_LABEL * 1.1 + 16
+        base = by - LEVER_DY
+        if many and drop:
+            c.setStrokeColor(HexColor("#7A7A7A"))
+            c.setLineWidth(1.4)
+            c.setDash()
+            c.line(mid, base - 10, mid, base - drop - 18)
+        lever(c, x0, x1, base, lines, drop=drop)
         placed.append((mid, half, drop, len(lines)))
+        top = base - 46 - drop + SZ_LABEL * 0.72
+        bot = (base - 46 - drop
+               - (len(lines) - 1) * SZ_LABEL * 1.1
+               - SZ_LABEL * 0.22)
+        rings.append((mid, (top + bot) / 2.0, half + RING_PAD_X,
+                      (top - bot) / 2.0 + RING_PAD_Y))
+
+    # ALL OF THESE ARE HUMAN SKILLS. G, 3 November: "we circle in highlighter
+    # or pencil these human skills and point an arrow". The rings go round the
+    # WORDS, not the bars: the bar is the measurement and the word is the
+    # skill, and ringing a bar puts a lens over a length nobody is arguing
+    # about. Seeded per figure so two runs give the same wobble.
+    if OPTS.get("rings") and rings:
+        rng = random.Random(11)
+        for cx, cy, rx, ry in rings:
+            draw_ring(c, cx, cy, rx, ry, rng)
+        low = min(cy - ry for _cx, cy, _rx, ry in rings)
+        mids = sorted(cx for cx, _cy, _rx, _ry in rings)
+        nx = (mids[0] + mids[-1]) / 2.0
+        ny = low - 104
+        c.setFont("Hand", 40)
+        c.setFillColor(HexColor(PENCIL))
+        note = T("all of these are human skills")
+        nw = pdfmetrics.stringWidth(note, "Hand", 40)
+        c.drawCentredString(nx, ny, note)
+        # one arrow, from the note up to the nearest ring above it
+        target = min(rings, key=lambda r: abs(r[0] - nx))
+        tx, ty = target[0], target[1] - target[3] - 6
+        c.setStrokeColor(HexColor(PENCIL))
+        c.setLineWidth(2.4)
+        c.setLineCap(1)
+        c.line(nx, ny + 46, tx, ty)
+        ang = math.atan2(ty - (ny + 46), tx - nx)
+        for d in (2.6, -2.6):
+            c.line(tx, ty, tx - 20 * math.cos(ang + d), ty - 20 * math.sin(ang + d))
+        assert ny - 14 > 180 + SZ_LABEL * 0.8,             "the pencil note reaches the legend"
 
     y, x = 180, MARGIN
     spans = []
-    for ai, text in LEGEND:
+    for ai, _t in LEGEND:
+        text = T(_t)
         start = x
         if is_partly(ai):
             c.setFillColor(BLACK)
@@ -631,8 +1044,15 @@ def check(spans):
     # 1. The belief row is short and almost entirely AI's. That is the claim it
     #    is there to make, so it is the claim to assert.
     solid = [n for n, _d, _c, x in THINK if x is True]
-    assert len(solid) >= 6,         "the belief row has to look like AI did nearly all of it: %s" % solid
-    assert row_end(THINK) < row_end(BEFORE) - 300,         "the belief row has to finish visibly early: %d vs %d"         % (row_end(THINK), row_end(BEFORE))
+    # ALL BUT THE FIRST, not a fixed six. The ministry row has eight stages
+    # and the product row has six, so a literal count passes one subject
+    # and fails the other while meaning the same thing in both.
+    # ALL BUT THE FIRST, not a fixed six. The ministry row has eight
+    # stages and the product row has six, so a literal count passes one
+    # subject and fails the other while meaning the same thing in both.
+    assert len(solid) >= len(THINK) - 1, (
+        "the belief row has to look like AI did nearly all of it: %s"
+        % solid)
 
     # 2. Reality lands where Before AI landed. The whole argument is that the
     #    date did not move, so a gap here would quietly concede the point.
@@ -643,26 +1063,27 @@ def check(spans):
     #    pilot "shouldn't be completely white blocks".
     for name, _d, _c, x in REAL:
         assert x is not True,             "%s is drawn as wholly AI's in the reality row" % name
-    for name in ("Design", "Build", "Pilot"):
+    for name in RULES["mostly_ai"]:
         share = dict((n, x) for n, _d, _c, x in REAL)[name]
         assert is_partly(share) and share >= 0.5,             "%s is where AI really does help, so it has to be mostly filled" % name
-    for name in ("Consultation", "Approval", "Redesign"):
+    for name in RULES["mostly_person"]:
         share = dict((n, x) for n, _d, _c, x in REAL)[name]
         assert is_partly(share) and share <= 0.45,             "%s is mostly a person's job, so it has to be mostly open" % name
 
     # 4. AI still collapses the making, measured against Before AI
-    for name in ("Design", "Build"):
+    for name in RULES["collapse"]:
         assert r[name][0] < b[name][0] * 0.75, "%s has to visibly collapse" % name
-    assert r["Trigger"][0] == b["Trigger"][0],         "nothing about AI makes a minister ask sooner"
-    for name in ("Approval", "Redesign"):
+    assert r[RULES["first"]][0] == b[RULES["first"]][0],         RULES["first_note"]
+    for name in RULES["grow"]:
         assert r[name][0] > b[name][0],             "%s grows: more arrives at the same desk" % name
 
     # 5. Piloting: more rounds, each shorter, more time in total
-    assert r["Pilot"][1] >= b["Pilot"][1] * 3,         "AI has to add pilot rounds: %d vs %d" % (r["Pilot"][1], b["Pilot"][1])
-    per_b = b["Pilot"][0] / float(b["Pilot"][1])
-    per_r = r["Pilot"][0] / float(r["Pilot"][1])
+    _cy = RULES["cycle"]
+    assert r[_cy][1] >= b[_cy][1] * 3,         "AI has to add rounds: %d vs %d" % (r[_cy][1], b[_cy][1])
+    per_b = b[_cy][0] / float(b[_cy][1])
+    per_r = r[_cy][0] / float(r[_cy][1])
     assert per_r < per_b * 0.6,         "each round has to be clearly shorter: %.0f vs %.0f" % (per_r, per_b)
-    assert r["Pilot"][0] > b["Pilot"][0],         "more rounds means piloting takes longer in total"
+    assert r[_cy][0] > b[_cy][0],         "more rounds means it takes longer in total"
 
     # 6. The levers, stated rather than derived. There is no numeric rule that
     #    produces this set: Pilot is drawn as 55% AI and still carries a lever,
@@ -670,13 +1091,12 @@ def check(spans):
     #    the share would either drop Pilot or pick up Design, and inventing one
     #    to look principled would be worse than naming the five.
     levered = set(n for n, _t in LEVERS)
-    assert levered == {"Consultation", "Approval", "Pilot", "Redesign",
-                       "Adoption"}, "the levers are %s" % sorted(levered)
+    assert levered == RULES["levers"], "the levers are %s" % sorted(levered)
     shares = dict((n, x) for n, _d, _c, x in REAL)
     for name in levered:
         assert shares[name] is not True, \
             "%s carries a lever and is drawn as wholly AI's" % name
-    for name in ("Trigger", "Design", "Build"):
+    for name in RULES["no_lever"]:
         assert name not in levered, \
             "%s has a lever; it is not one of the five G named" % name
 
@@ -856,9 +1276,11 @@ def emit(name, rows, opts, note):
         ys = [690, 400]
     ROWS = [(lines, stages, by, fills)
             for (lines, stages, _old_by, fills), by in zip(rows, ys)]
-    pdf = os.path.join(HERE, "_ai-speed-ministry-%s.pdf" % name)
+    pdf = os.path.join(HERE, "_ai-speed-%s-%s-%s.pdf" % (SLUG, name, LANG))
     png = os.path.join(SITE, "images",
-                       "ai-before-after-ministry-%s-v%d.png" % (name, VERSION))
+                       "ai-before-after-%s-%s-v%d%s.png"
+                       % (SLUG, name, VERSION,
+                          "" if LANG == "en" else "-" + LANG))
     spans = build(pdf)
     check(spans)
     doc = fitz.open(pdf)
@@ -882,6 +1304,9 @@ _pb = dict((n, (d, c)) for n, d, c, _a in BEFORE)["Pilot"]
 _pr = dict((n, (d, c)) for n, d, c, _a in REAL)["Pilot"]
 print("pilot: %d rounds of %.0f becomes %d rounds of %.0f"
       % (_pb[1], _pb[0] / float(_pb[1]), _pr[1], _pr[0] / float(_pr[1])))
-for _name, _rows, _opts, _note in VARIANTS:
-    emit(_name, _rows, _opts, _note)
+for _subject in ("ministry", "product"):
+    use(_subject)
+    print("%s  (%s)" % (_subject, EYEBROW))
+    for _name, _rows, _opts, _note in VARIANTS:
+        emit(_name, _rows, _opts, _note)
 print("checks passed")

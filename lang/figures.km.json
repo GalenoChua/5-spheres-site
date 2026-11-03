@@ -1,0 +1,3 @@
+{
+  "_README": "EMPTY ON PURPOSE. Khmer for a Cambodian ministry audience needs a native speaker; Serey Rath is the obvious reviewer via ASC. The renderer is built and proven, so filling these in and running FIG_LANG=km is all that is left. Use \n inside a value to choose where a line breaks. A key left out falls back to English, so a partial file renders as an obviously mixed board, not a crash."
+}

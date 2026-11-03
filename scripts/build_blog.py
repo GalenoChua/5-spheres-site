@@ -209,6 +209,15 @@ def load_sources():
             if meta["lang"] not in SECTIONS:
                 sys.exit("%s has lang %r, expected one of %s"
                          % (path, meta["lang"], sorted(SECTIONS)))
+            # DATES BECOME STRINGS HERE, ALWAYS. yaml.safe_load turns an
+            # unquoted 2026-11-03 into a datetime.date, while a sibling
+            # discovered from already-built HTML carries its date as a string.
+            # With one markdown source the two never met; the second source
+            # made them sort against each other and the build died on
+            # "'<' not supported between instances of 'str' and 'date'".
+            for k in ("date", "updated"):
+                if meta.get(k) is not None and not isinstance(meta[k], str):
+                    meta[k] = meta[k].isoformat()
             meta.setdefault("slug", os.path.splitext(f)[0])
             meta.setdefault("kicker", SECTIONS[meta["lang"]]["label"])
             meta.setdefault("updated", meta["date"])

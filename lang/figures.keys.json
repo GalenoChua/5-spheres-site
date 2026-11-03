@@ -1,0 +1,284 @@
+[
+  {
+    "key": "BUILDING A PRODUCT",
+    "english": "BUILDING A PRODUCT",
+    "where": "eyebrow, top left, set in caps",
+    "note": ""
+  },
+  {
+    "key": "DELIVERING A PUBLIC SERVICE",
+    "english": "DELIVERING A PUBLIC SERVICE",
+    "where": "eyebrow, top left, set in caps",
+    "note": ""
+  },
+  {
+    "key": "Before AI",
+    "english": "Before AI",
+    "where": "row name, large bold, left column",
+    "note": ""
+  },
+  {
+    "key": "With AI",
+    "english": "With AI",
+    "where": "row name, large bold, left column",
+    "note": ""
+  },
+  {
+    "key": "what people think",
+    "english": "what people think",
+    "where": "qualifier under a row name, small",
+    "note": ""
+  },
+  {
+    "key": "in reality",
+    "english": "in reality",
+    "where": "qualifier under a row name, small",
+    "note": ""
+  },
+  {
+    "key": "Your idea",
+    "english": "Your idea",
+    "where": "stage name, product timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Validation",
+    "english": "Validation",
+    "where": "stage name, product timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Design",
+    "english": "Design",
+    "where": "stage name, product timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Build",
+    "english": "Build",
+    "where": "stage name, product timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Sell",
+    "english": "Sell",
+    "where": "stage name, product timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Iteration",
+    "english": "Iteration",
+    "where": "stage name, product timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Adopt",
+    "english": "Adopt",
+    "where": "stage name, product timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Trigger",
+    "english": "Trigger",
+    "where": "stage name, public service timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Consultation",
+    "english": "Consultation",
+    "where": "stage name, public service timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Approval",
+    "english": "Approval",
+    "where": "stage name, public service timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Pilot",
+    "english": "Pilot",
+    "where": "stage name, public service timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Redesign",
+    "english": "Redesign",
+    "where": "stage name, public service timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Adoption",
+    "english": "Adoption",
+    "where": "stage name, public service timeline",
+    "note": "short: it sits over a narrow bar"
+  },
+  {
+    "key": "Awareness",
+    "english": "Awareness",
+    "where": "human skill, under the product timeline",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Deep curiosity",
+    "english": "Deep curiosity",
+    "where": "human skill, under the product timeline",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Creativity",
+    "english": "Creativity",
+    "where": "human skill, under the product timeline",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Judgement on tools and imagination",
+    "english": "Judgement on tools and imagination",
+    "where": "human skill, under the product timeline",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Strong relationships",
+    "english": "Strong relationships",
+    "where": "human skill, under the product timeline",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Judgement of quality",
+    "english": "Judgement of quality",
+    "where": "human skill, under the product timeline",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Adaptability to pivot and change",
+    "english": "Adaptability to pivot and change",
+    "where": "human skill, under the product timeline",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Trust across agencies",
+    "english": "Trust across agencies",
+    "where": "human skill, under the public service timeline",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Judgement of what works",
+    "english": "Judgement of what works",
+    "where": "human skill, under the public service timeline",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Courage to change it",
+    "english": "Courage to change it",
+    "where": "human skill, under the public service timeline",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Adaptive thinking and relationships",
+    "english": "Adaptive thinking and relationships",
+    "where": "human skill, under the public service timeline",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "AI does it",
+    "english": "AI does it",
+    "where": "legend, bottom left",
+    "note": ""
+  },
+  {
+    "key": "AI does part of it",
+    "english": "AI does part of it",
+    "where": "legend, bottom left",
+    "note": ""
+  },
+  {
+    "key": "A person does it",
+    "english": "A person does it",
+    "where": "legend, bottom left",
+    "note": ""
+  },
+  {
+    "key": "Serves the public",
+    "english": "Serves the public",
+    "where": "outcome line at the end of a row (currently off)",
+    "note": ""
+  },
+  {
+    "key": "Serves the public really well",
+    "english": "Serves the public really well",
+    "where": "outcome line at the end of a row (currently off)",
+    "note": ""
+  },
+  {
+    "key": "Solves their problem",
+    "english": "Solves their problem",
+    "where": "outcome line at the end of a row (currently off)",
+    "note": ""
+  },
+  {
+    "key": "Solves their problem really well",
+    "english": "Solves their problem really well",
+    "where": "outcome line at the end of a row (currently off)",
+    "note": ""
+  },
+  {
+    "key": "Sooner, and better",
+    "english": "Sooner, and better",
+    "where": "outcome line at the end of a row (currently off)",
+    "note": ""
+  },
+  {
+    "key": "Perceived public value",
+    "english": "Perceived public value",
+    "where": "value label (currently off)",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Perceived value",
+    "english": "Perceived value",
+    "where": "value label (currently off)",
+    "note": "use \n for a line break"
+  },
+  {
+    "key": "Where it finished before AI",
+    "english": "Where it finished before AI",
+    "where": "label on the comparison bracket, right side",
+    "note": ""
+  },
+  {
+    "key": "all of these are human skills",
+    "english": "all of these are human skills",
+    "where": "handwritten pencil note on the skills slide",
+    "note": ""
+  },
+  {
+    "key": "Human intelligence AI can’t replace",
+    "english": "Human intelligence AI can’t replace",
+    "where": "tagline under the website, set in caps",
+    "note": ""
+  },
+  {
+    "key": "What everyone expects",
+    "english": "What everyone expects",
+    "where": "headline on the SQUARE version only",
+    "note": "two short lines is ideal"
+  },
+  {
+    "key": "What actually happens",
+    "english": "What actually happens",
+    "where": "headline on the SQUARE version only",
+    "note": "two short lines is ideal"
+  },
+  {
+    "key": "Where the time goes",
+    "english": "Where the time goes",
+    "where": "headline on the SQUARE version only",
+    "note": "two short lines is ideal"
+  },
+  {
+    "key": "All of these are human skills",
+    "english": "All of these are human skills",
+    "where": "headline on the SQUARE version only",
+    "note": "two short lines is ideal"
+  }
+]
