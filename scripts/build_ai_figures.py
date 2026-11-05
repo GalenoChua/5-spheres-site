@@ -151,6 +151,28 @@ SEG_GAP = 8
 # one white head. Off would restore the single-split drawing.
 PER_CYCLE = True
 
+# WHITE IS THE HUMAN SHARE. G, 5 November: "the black boxes should be AI (often
+# people call the workings of AI a black box), and the white boxes, the light,
+# human judgement and clarity".
+#
+# It is the better metaphor and it does something the first version got
+# backwards: it makes the human part the BRIGHT part of every bar, which is the
+# argument the figure exists to make. Before, the eye went straight to the AI.
+#
+# The DATA still records AI's share, because that is the honest way to hold it
+# and every check reads it that way. Only the ink is inverted, in one function,
+# so the legend and the bars cannot disagree.
+AI_IS_BLACK = True
+
+
+def white_share(ai):
+    """The fraction of a bar drawn in the light ink."""
+    if ai is True:
+        return 0.0 if AI_IS_BLACK else 1.0
+    if ai is False:
+        return 1.0 if AI_IS_BLACK else 0.0
+    return (1.0 - ai) if AI_IS_BLACK else ai
+
 # (name, length, cycles, ai). cycles > 1 draws internal dividers.
 #
 # `ai` is no longer a yes or no. G's walkthrough of the ministry pipeline on
@@ -178,10 +200,17 @@ BEFORE = [("Trigger", 130, 1, False), ("Consultation", 175, 1, False),
           ("Approval", 140, 1, False), ("Pilot", 130, 2, True),
           ("Redesign", 145, 1, False), ("Adoption", 145, 1, False)]
 
-# What people think AI did. Almost everything solid, and the whole thing over
-# early. This row is the belief the talk is there to correct, so it is drawn
+# What people think AI did. EVERYTHING solid, and the whole thing over early.
+#
+# Trigger was the one exception, on the reasoning that nobody imagines AI
+# asking the question for a minister. G's own caption for this set says the
+# assumption is that "AI turns them all black", and the product set already
+# draws its first stage that way, so the exception contradicted both the words
+# he is publishing and the other subject. The LENGTH still does not move,
+# which is the claim that matters: nothing about AI makes a minister ask
+# sooner. This row is the belief the talk is there to correct, so it is drawn
 # the way the belief feels: short, white, and unbothered.
-THINK = [("Trigger", 130, 1, False), ("Consultation", 85, 1, True),
+THINK = [("Trigger", 130, 1, True), ("Consultation", 85, 1, True),
          ("Design", 75, 1, True), ("Build", 70, 1, True),
          ("Approval", 90, 1, True), ("Pilot", 110, 4, True),
          ("Redesign", 70, 1, True), ("Adoption", 95, 1, True)]
@@ -190,10 +219,10 @@ THINK = [("Trigger", 130, 1, False), ("Consultation", 85, 1, True),
 # moves, and even those are not whole: somebody still decides what to build,
 # still reads what the pilot found, and is still the one being piloted on. So
 # none of them is a solid block. The row lands where Before AI landed.
-REAL = [("Trigger", 130, 1, False), ("Consultation", 160, 1, 0.30),
+REAL = [("Trigger", 130, 1, 0.12), ("Consultation", 160, 1, 0.22),
         ("Design", 105, 1, 0.70), ("Build", 110, 1, 0.75),
-        ("Approval", 185, 1, 0.30), ("Pilot", 240, 8, 0.55),
-        ("Redesign", 165, 1, 0.35), ("Adoption", 130, 1, False)]
+        ("Approval", 185, 1, 0.22), ("Pilot", 240, 8, 0.35),
+        ("Redesign", 165, 1, 0.25), ("Adoption", 130, 1, 0.12)]
 
 # (heading lines, stages, bar bottom, does this row fill)
 #
@@ -249,10 +278,10 @@ P_THINK = [("Your idea", 81, 1, True), ("Validation", 77, 1, True),
 
 # Validation is 25% AI: it will summarise what people said, and it will not
 # have the conversation. Sell is 25% for the same reason one layer out.
-P_REAL = [("Your idea", 81, 1, 0.20), ("Validation", 141, 1, 0.25),
+P_REAL = [("Your idea", 81, 1, 0.15), ("Validation", 141, 1, 0.18),
           ("Design", 111, 1, 0.70), ("Build", 107, 1, 0.75),
-          ("Sell", 274, 1, 0.25), ("Iteration", 342, 8, 0.55),
-          ("Adopt", 141, 1, 0.18)]
+          ("Sell", 274, 1, 0.18), ("Iteration", 342, 8, 0.35),
+          ("Adopt", 141, 1, 0.12)]
 
 # G, 3 November, naming the rest himself. Six now, one on every stage but the
 # idea, which is the same claim his annotated figure made in handwriting:
@@ -334,8 +363,9 @@ SUBJECTS = {
         rules=dict(first="Trigger", cycle="Pilot",
                    collapse=("Design", "Build"),
                    grow=("Approval", "Redesign"),
-                   mostly_ai=("Design", "Build", "Pilot"),
-                   mostly_person=("Consultation", "Approval", "Redesign"),
+                   mostly_ai=("Design", "Build"),
+                   mostly_person=("Consultation", "Approval", "Redesign",
+                                  "Pilot"),
                    levers={"Consultation", "Approval", "Pilot", "Redesign",
                            "Adoption"},
                    no_lever=("Trigger", "Design", "Build"),
@@ -353,8 +383,8 @@ SUBJECTS = {
         rules=dict(first="Your idea", cycle="Iteration",
                    collapse=("Design", "Build"),
                    grow=("Sell",),
-                   mostly_ai=("Design", "Build", "Iteration"),
-                   mostly_person=("Sell", "Validation",
+                   mostly_ai=("Design", "Build"),
+                   mostly_person=("Sell", "Validation", "Iteration",
                                   "Your idea", "Adopt"),
                    levers={"Your idea", "Validation", "Design", "Build",
                            "Sell", "Iteration", "Adopt"},
@@ -488,15 +518,18 @@ def is_partly(ai):
 
 
 def bar(c, x0, x1, y, cycles, ai):
-    """Filled where AI made it faster, outlined otherwise, part filled between.
+    """White where a person does it, dark where AI does, split where both.
 
-    Only the second row fills. A filled bar in the Before AI row would be
-    labelled "faster with AI" inside a row where AI is not present yet.
+    THE LIGHT PART LEADS. G, 5 November: "it should be more white on the left
+    side of the boxes and less black". The first version put AI first on the
+    reasoning that a machine drafts and a person judges after. That is the
+    wrong way round for most of this work: a person decides what is worth
+    validating, what to sell and what the pilot means BEFORE a machine touches
+    it, and the machine executes inside that decision. So the bar opens light
+    and the dark is what the machine takes out of the middle of it.
 
-    A part-filled bar is read left to right: the solid head is the share of the
-    stage AI takes, the outlined tail is the share still done by a person. It is
-    the same two inks as everything else, so it needs no new visual idea, and
-    the proportion carries the claim.
+    The Before AI row comes through as solid white, and that is correct rather
+    than a side effect: before AI a person did all of it.
     """
     if is_partly(ai) and cycles > 1 and PER_CYCLE:
         # EACH ROUND IS ITS OWN LITTLE BLOCK. G, 3 November: "iteration is many
@@ -515,9 +548,12 @@ def bar(c, x0, x1, y, cycles, ai):
         p.roundRect(x0, y, x1 - x0, BAR_H, 6)
         c.clipPath(p, stroke=0, fill=0)
         c.setFillColor(WHITE)
+        ws = white_share(ai)
         for k in range(cycles):
             sx = x0 + step * k
-            c.rect(sx, y, step * ai, BAR_H, stroke=0, fill=1)
+            # the light part OPENS each round: a person decides what this
+            # round is for, the machine runs it
+            c.rect(sx, y, step * ws, BAR_H, stroke=0, fill=1)
         c.restoreState()
         c.setStrokeColor(WHITE)
         c.setLineWidth(2.2)
@@ -530,7 +566,8 @@ def bar(c, x0, x1, y, cycles, ai):
         c.setStrokeColor(WHITE)
         c.setLineWidth(2.6)
         c.roundRect(x0, y, x1 - x0, BAR_H, 6, stroke=1, fill=1)
-        cut = x0 + (x1 - x0) * ai
+        # the cut is where the person stops and the machine starts
+        cut = x0 + (x1 - x0) * white_share(ai)
         c.saveState()
         p = c.beginPath()
         p.rect(x0, y, cut - x0, BAR_H)
@@ -555,7 +592,7 @@ def bar(c, x0, x1, y, cycles, ai):
                 c.setStrokeColor(BLACK if dx < cut else WHITE)
                 c.line(dx, y + 7, dx, y + BAR_H - 7)
         return WHITE
-    if ai:
+    if white_share(ai) >= 0.999:
         c.setFillColor(WHITE)
         c.roundRect(x0, y, x1 - x0, BAR_H, 6, stroke=0, fill=1)
         divider, text = BLACK, BLACK
@@ -996,6 +1033,10 @@ def build(pdf_path):
     for ai, _t in LEGEND:
         text = T(_t)
         start = x
+        # The legend reads white_share() like the bars do. It used to carry its
+        # own copy of the fill logic, which is how a legend ends up describing
+        # a board that no longer looks like that.
+        ws = white_share(ai)
         if is_partly(ai):
             c.setFillColor(BLACK)
             c.setStrokeColor(WHITE)
@@ -1003,15 +1044,15 @@ def build(pdf_path):
             c.roundRect(x, y - 2, 36, 24, 4, stroke=1, fill=1)
             c.saveState()
             p = c.beginPath()
-            p.rect(x, y - 2, 36 * ai, 24)
+            p.rect(x, y - 2, 36 * ws, 24)
             c.clipPath(p, stroke=0, fill=0)
             c.setFillColor(WHITE)
             c.roundRect(x, y - 2, 36, 24, 4, stroke=0, fill=1)
             c.restoreState()
             c.setStrokeColor(WHITE)
             c.setLineWidth(2.2)
-            c.line(x + 36 * ai, y - 2, x + 36 * ai, y + 22)
-        elif ai:
+            c.line(x + 36 * ws, y - 2, x + 36 * ws, y + 22)
+        elif ws >= 0.999:
             c.setFillColor(WHITE)
             c.roundRect(x, y - 2, 36, 24, 4, stroke=0, fill=1)
         else:
