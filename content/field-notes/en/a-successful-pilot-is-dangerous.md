@@ -53,7 +53,7 @@ ever. Sometimes longer.
 
 <div class="pull">When a well-designed strategy fails in implementation, is it leadership, culture, or resistance to change?</div>
 
-<p class="caption">Chanthirith, in the questions.</p>
+<p class="caption">Chanthirith asked it during the questions.</p>
 
 The answer: strategy is just a theory. If execution is poor, you never find out
 whether the strategy was good or bad.
