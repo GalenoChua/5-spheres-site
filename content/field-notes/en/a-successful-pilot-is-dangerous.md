@@ -46,15 +46,14 @@ ever. Sometimes longer.
   <figcaption>Two stages went dark. The rest stayed yours, and the programme lands no sooner.</figcaption>
 </figure>
 
-## The question that stayed with me
-
 <figure>
   <img src="/images/field-notes/mptc-keynote-qa.jpg" alt="The question and answer section of the call, with the speaker and host on screen above a row of attendees">
   <figcaption>The questions were the best part.</figcaption>
 </figure>
 
-When a well-designed strategy fails in implementation, is it leadership, culture, or
-resistance to change?
+<div class="pull">When a well-designed strategy fails in implementation, is it leadership, culture, or resistance to change?</div>
+
+<p class="caption">Chanthirith, in the questions.</p>
 
 The answer: strategy is just a theory. If execution is poor, you never find out
 whether the strategy was good or bad.
