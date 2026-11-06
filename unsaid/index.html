@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Unsaid Protocol | The 5 Spheres of Empathy</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+<meta name="description" content="A Sphere 3 tool for facilitators. What it does, and the part it cannot do.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://5spheresofempathy.com/unsaid/">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* The Unsaid Protocol, facilitator briefing.
+
+     A training page, not the tool. The tool runs on the facilitating laptop
+     because it transcribes locally and the audio never leaves the room. This
+     page is what a co-facilitator reads beforehand, on any device.
+
+     The section order is G's lesson order: the goal and the point, then the
+     mechanism, then the tech, then the people skills, because the people
+     skills are the point.
+
+     Every claim about the framework is from the Field Guide, Sphere 3 and its
+     appendix. The screen example is a real reading from the 5 November test
+     against a synthetic transcript, so no delegate is quoted here.
+
+     noindex: a session tool, not a page to be found in search. */
+
+  .u-wrap { max-width: 760px; margin: 0 auto; padding: 0 22px 90px; }
+  .eyebrow { font-size: .76rem; font-weight: 700; letter-spacing: .15em;
+             text-transform: uppercase; color: #9e5615; margin-bottom: 10px; }
+  .u-wrap h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); max-width: 22ch; margin-bottom: 14px; }
+  .u-wrap h2 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink);
+               font-size: 1.4rem; margin: 54px 0 14px; max-width: none; }
+  .u-wrap h3 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--ink);
+               font-size: 1.05rem; margin: 30px 0 6px; }
+  .u-wrap p { max-width: 62ch; margin: 0 0 15px; }
+  .u-wrap ul { max-width: 62ch; padding-left: 20px; margin: 0 0 15px; }
+  .u-wrap li { margin: 0 0 9px; }
+  .lede { font-size: 1.18rem; color: var(--text); max-width: 56ch; margin-bottom: 30px; }
+  .num { display: inline-block; width: 26px; height: 26px; border-radius: 50%;
+         background: var(--ink); color: var(--paper); font-size: .8rem; font-weight: 700;
+         text-align: center; line-height: 26px; margin-right: 9px; }
+
+  table.u { border-collapse: collapse; width: 100%; margin: 0 0 18px; font-size: .96rem; }
+  table.u td, table.u th { padding: 10px 0; border-bottom: 1px solid var(--line);
+                           text-align: left; vertical-align: top; }
+  table.u th { font-size: .76rem; letter-spacing: .12em; text-transform: uppercase;
+               color: var(--muted); font-weight: 700; }
+  table.u td:first-child { width: 42%; padding-right: 18px; font-weight: 600;
+                           color: var(--ink); }
+
+  /* the screen, as a co-facilitator sees it */
+  .screen { border: 1px solid var(--line); border-radius: 14px; background: #fff;
+            padding: 22px 24px; margin: 0 0 16px; }
+  .screen .hd { font-size: .72rem; font-weight: 700; letter-spacing: .12em;
+                text-transform: uppercase; color: var(--muted); margin: 0 0 14px; }
+  .blk { padding: 15px 0 0; margin: 15px 0 0; border-top: 1px solid var(--line); }
+  .blk:first-of-type { padding-top: 0; margin-top: 0; border-top: 0; }
+  .blk h4 { font-size: .72rem; font-weight: 700; letter-spacing: .12em;
+            text-transform: uppercase; margin: 0 0 8px; font-family: inherit; }
+  .b1 h4 { color: #1d4ed8; }
+  .b2 h4 { color: var(--muted); }
+  .b3 h4 { color: #15803d; }
+  .blk p { margin: 0; }
+  .b1 .say { font-size: 1.12rem; line-height: 1.4; font-weight: 500; color: var(--ink-deep); }
+  .b2 .say { font-size: 1rem; }
+  .term { margin-top: 9px !important; font-size: .9rem; color: var(--text); }
+  .term b { color: var(--ink); }
+  .quote { margin-top: 10px !important; font-size: .9rem; background: var(--paper-warm);
+           padding: 10px 13px; border-radius: 8px; color: var(--text); }
+  .quote b { color: var(--muted); margin-right: 6px; }
+  .b3 ol { margin: 0; padding-left: 22px; }
+  .b3 li { font-size: 1rem; margin: 0 0 9px; }
+  .caption { font-size: .86rem; color: var(--muted); margin: 0 0 30px; max-width: 62ch; }
+
+  .pull { background: var(--paper-warm); border-left: 3px solid var(--ember);
+          padding: 16px 20px; border-radius: 0 10px 10px 0; margin: 0 0 14px;
+          max-width: 62ch; }
+  .pull p:last-child { margin-bottom: 0; }
+  .warnbox { background: #fdf0f1; border: 1px solid #f0c4c8; border-radius: 12px;
+             padding: 16px 20px; margin: 0 0 18px; max-width: 62ch; }
+  .warnbox .hd { font-size: .74rem; font-weight: 700; letter-spacing: .1em;
+                 text-transform: uppercase; color: #b02a37; margin: 0 0 9px; }
+  .warnbox p { color: #b02a37; margin-bottom: 0; }
+  .src { font-size: .85rem; color: var(--muted); border-top: 1px solid var(--line);
+         padding-top: 18px; margin-top: 48px; max-width: 62ch; }
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="mark" href="/">The 5 Spheres of Empathy<span>.</span></a>
+</div></nav>
+
+<div class="u-wrap">
+  <p class="eyebrow" style="margin-top:40px">Sphere 3 &middot; Facilitator briefing</p>
+  <h1>The Unsaid Protocol</h1>
+  <p class="lede">A machine listens to the whole room for the whole session and tells
+  you one thing nobody has said. That is all it does. Everything that makes it worth
+  having is yours.</p>
+
+  <h2>1. The goal, and the point</h2>
+  <p>A roundtable runs ninety minutes with up to twelve countries at the table. The
+  facilitator is managing turn-taking, watching the room, holding the thread and
+  deciding who speaks next. Under that load the one thing no person reliably catches
+  is an <b>absence</b>: the thing that should have come up and never did.</p>
+  <p>A table can spend ninety minutes on cross-border trade without one delegation
+  saying the word payment. You cannot notice that while you are running a room. A
+  transcript can.</p>
+  <p>The point is not a summary. There is no value in a machine reporting what was
+  just said. The value is in the gap.</p>
+
+  <h2>2. The mechanism</h2>
+  <p>Two wireless microphones travel to whoever is speaking. A laptop beside the
+  facilitator records, transcribes, and every minute writes a fresh reading from the
+  <b>whole session so far</b> rather than the last few minutes, because the things
+  worth surfacing live across a session instead of inside a window.</p>
+  <ul>
+    <li><span class="num">1</span>The co-facilitator reads it on their screen.</li>
+    <li><span class="num">2</span>They decide: send it to the facilitator, or pass it
+    over. <b>Nothing reaches the facilitator unless a person sends it.</b></li>
+    <li><span class="num">3</span>The facilitator puts it in their own words and
+    chooses whether to use it at all.</li>
+  </ul>
+  <p>Two people stand between the machine and the table. That is deliberate.</p>
+
+  <h2>3. The tech, briefly</h2>
+  <p>Transcription runs on the laptop itself. The audio goes to no company and does
+  not leave the room. The reading is written by a language model, and before anyone
+  sees it the claim is checked against the transcript as a plain string match: the
+  quote has to actually appear, and the absent word has to actually be absent. A
+  reading that fails that check is replaced by a warning.</p>
+
+  <h3>What one reading looks like</h3>
+  <div class="screen">
+    <p class="hd">Reading &middot; slot A3</p>
+    <div class="blk b1">
+      <h4>The unsaid</h4>
+      <p class="say">Nobody has named the route by which a decision owned outside this
+      room could be escalated.</p>
+      <p class="term"><b>nobody has said</b> "mutual recognition"</p>
+    </div>
+    <div class="blk b2">
+      <h4>What seems important, and to whom</h4>
+      <p class="say">The weight sits with those holding a mandate but not the authority
+      to decide.</p>
+      <p class="quote"><b>[1:21]</b> "We are all blocked on a decision somebody else
+      has to make"</p>
+    </div>
+    <div class="blk b3">
+      <h4>Questions you could ask</h4>
+      <ol>
+        <li>Several things named sit with a decision maker who is not here. Who would
+        each of you need in the room for that to change?</li>
+        <li>If the blockage is a decision rather than money, what route does that
+        decision normally travel, and where does it stop?</li>
+        <li>What would it take for a request from this table to reach the person who
+        can say yes?</li>
+      </ol>
+    </div>
+  </div>
+  <p class="caption">A real reading from the 5 November test, written against a
+  synthetic transcript. No delegate is quoted anywhere on this page.</p>
+
+  <div class="warnbox">
+    <p class="hd">And when the check fails</p>
+    <p>The reading is replaced by this warning and the questions are withheld. If you
+    see it, do not say it. Press "Fresh reading" and carry on with the table.</p>
+  </div>
+
+  <h2>4. The part that is actually the job</h2>
+  <p>This is a Sphere 3 tool and it reaches exactly as far as the words go. Sphere 3
+  has three levels, and the reading touches two of them.</p>
+
+  <table class="u">
+    <tr><th>On your screen</th><th>The level it serves</th></tr>
+    <tr><td>The unsaid</td><td>Level 3, Intuitive Curiosity. Sensing what is not being
+      said, across a whole session.</td></tr>
+    <tr><td>What seems important, and to whom</td><td>Level 2, choosing to believe
+      others as they experience it.</td></tr>
+    <tr><td>Questions you could ask</td><td>The Level 3 move, offered as an inquiry so
+      nobody has to lose face to answer it.</td></tr>
+  </table>
+
+  <h3>What it cannot see, and you can</h3>
+  <p>Almost every Heart Question in Sphere 3 is about the body and the room. A
+  transcript holds none of it.</p>
+  <ul>
+    <li>Is their castle wall up, and is any part of your presence putting it there?</li>
+    <li>In the pauses, what is the energy filling the space? Tension, exhaustion, or
+    hope?</li>
+    <li>When you mirror their posture, what does your body tell you that their words
+    are avoiding?</li>
+    <li>Are you giving them enough silence to find their words, even when there has
+    already been a pause?</li>
+    <li>Are you listening to win, preparing your rebuttal, or listening to believe?</li>
+  </ul>
+
+  <h3>The reading is the topsoil</h3>
+  <p>The Field Guide is explicit that most people stop two or three layers too early
+  and act on a surface feeling. Take what is on the screen as the first layer. Two
+  things let you keep digging: <b>space</b>, holding several things on the table at
+  once including ones that contradict each other, and <b>curiosity</b>, which is what
+  stops you grabbing the first answer.</p>
+
+  <h3>Two ways to put it to the table</h3>
+  <div class="pull">
+    <p>"I hear you telling me this is fine, but I have a feeling it isn't. Am I
+    reading that right?"</p>
+  </div>
+  <div class="pull">
+    <p>"As you said that, I noticed your hands tense up. Is this something that
+    matters more than you are letting on?"</p>
+  </div>
+  <p>Half the time you will be wrong, and that is fine. The other person corrects you,
+  and the conversation has still moved somewhere truer than it was.</p>
+
+  <h2>What passing one over is for</h2>
+  <p>Kahneman and Klein spent years on opposite sides of whether gut feeling can be
+  trusted, and agreed on two conditions. Enough time in an environment regular enough
+  to learn its patterns, and <b>enough honest feedback to know when you were right and
+  when you fooled yourself</b>.</p>
+  <p>A roundtable gives you the first condition. The second is harder, because an
+  ordinary roundtable ends without anyone finding out whether what you sensed was
+  real. Every time you send a reading or pass one over, you record a judgement
+  against evidence you can check afterwards. That is the feedback loop, and it is why
+  this belongs inside the framework rather than beside it.</p>
+
+  <h2>The three rules</h2>
+  <ul>
+    <li><b>Do not read it out as written</b>, because it is a clue about the table and
+    the table did not ask a tool a question. Put it into your own words before you say
+    any of it aloud.</li>
+    <li><b>Check the quote before you speak</b>, and if what you are about to say is
+    not supported by that quoted line then leave it alone and carry on.</li>
+    <li><b>Give it ninety seconds and then stop</b>, because explaining it to the
+    table dilutes whatever it was worth in the first place.</li>
+  </ul>
+
+  <p class="src">Framework content from <i>The 5 Spheres of Empathy: How to Build
+  Something That Outlives You</i>, Sphere 3 and its appendix. Built for the ASEAN
+  Startup Connect Summit roundtables, 17 and 18 November 2026.</p>
+</div>
+
+</body>
+</html>
