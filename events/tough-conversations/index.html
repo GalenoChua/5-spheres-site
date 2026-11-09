@@ -13,10 +13,10 @@
 <meta property="og:title" content="Tough Conversations: Giving Feedback, a live 110-minute session">
 <meta property="og:description" content="Most public speaking advice tells you to be confident. This is the handful of things that actually change how a room receives you, and you practise all of them.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://5spheresofempathy.com/og.png">
+<meta property="og:image" content="https://5spheresofempathy.com/images/field-notes/public-speaking-drill-room.jpg">
 <meta property="og:url" content="https://5spheresofempathy.com/events/tough-conversations/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://5spheresofempathy.com/og.png">
+<meta name="twitter:image" content="https://5spheresofempathy.com/images/field-notes/public-speaking-drill-room.jpg">
 <link rel="canonical" href="https://5spheresofempathy.com/events/tough-conversations/">
 <link rel="stylesheet" href="/fonts/fonts.css">
 <style>
@@ -106,7 +106,28 @@ a { color: var(--orange); }
 section { padding: 64px 0; }
 section + section { padding-top: 0; }
 
-.label {
+/* PICTURES AND PULL QUOTES.
+     This page is standalone: it links only fonts.css and carries its own <style>, so
+     nothing in styles.css reaches it. The body was written against .article-body figure
+     and .pull from the main sheet, which is why the page rendered with the text flush to
+     the left edge and no bands at all. Defined here, where this page can see them. */
+  .shot { margin: 34px 0 10px; }
+  .shot img {
+    display: block; width: 100%; height: auto;
+    border-radius: 10px; border: 1px solid var(--line);
+  }
+  .shot figcaption {
+    margin-top: 10px;
+    font-size: .92rem; line-height: 1.5; color: var(--muted);
+  }
+  .pull {
+    margin: 30px 0; padding: 4px 0 4px 22px;
+    border-left: 4px solid var(--orange);
+    font-family: Fraunces, Georgia, serif;
+    font-size: clamp(1.15rem, 2.6vw, 1.45rem); line-height: 1.4;
+    color: var(--navy);
+  }
+  .label {
   display: block;
   font-size: .74rem; font-weight: 700;
   letter-spacing: .15em; text-transform: uppercase;
@@ -342,9 +363,9 @@ footer a:hover { color: var(--orange-soft); }
 <body>
 
 <!-- ══════════ HERO ══════════ -->
-<header class="method-dark">
+<header class="hero">
   <div class="deco"></div>
-  <div class="wrap-narrow">
+  <div class="wrap">
     <span class="eyebrow">Human Intelligence &middot; Live on Google Meet</span>
     <h1>Tough Conversations: Giving Feedback</h1>
     <p class="subhead">Somebody has to be told something they do not want to hear. Most of us
@@ -370,45 +391,52 @@ footer a:hover { color: var(--orange-soft); }
 </header>
 
 <section>
-  <div class="wrap-narrow">
-    <div class="kicker">Why this one</div>
+  <div class="wrap">
+    <div class="label">Why this one</div>
     <h2>You carry a badly handled conversation for years</h2>
-    <p class="prose-body">I let people go during COVID. I was under-slept and running on
+    <p>I let people go during COVID. I was under-slept and running on
     empty, and I made it about me: my stress, my position, my guilt. I am still carrying
     that six years later, and so, I expect, are they.</p>
-    <p class="prose-body">That is the thing this drill is built around. The damage is rarely
+    <div class="pull">The damage is rarely the news itself. People can take hard news.</div>
+    <p>That is the thing this drill is built around. The damage is rarely
     the news itself. People can take hard news. The damage is a person walking out thinking
     <em>they only care about the business, not me</em>, and that thought surviving in them
     long after the decision has stopped mattering to anybody else.</p>
   </div>
 </section>
 
-<section class="method-dark">
-  <div class="wrap-narrow">
-    <div class="kicker">Who it is for</div>
+<section>
+  <div class="wrap">
+    <div class="label">Who it is for</div>
     <h2>Anyone who has to deliver something the other person will not enjoy</h2>
-    <p class="prose-body">Founders letting somebody go. Managers with an underperformer they
+    <p>Founders letting somebody go. Managers with an underperformer they
     have been avoiding for a month. Anyone who has rehearsed a conversation in the shower
     twelve times and still not had it.</p>
-    <p class="prose-body">You can bring a real situation you are carrying right now. You do
+    <p>You can bring a real situation you are carrying right now. You do
     not have to. There are scenarios, and they are there precisely so nobody has to put their
     own on the table in a room of people they have just met.</p>
   </div>
 </section>
 
 <section>
-  <div class="wrap-narrow">
-    <div class="kicker">How the time runs</div>
+  <div class="wrap">
+    <div class="label">How the time runs</div>
     <h2>Theory, then you deliver it to a real person who scores you</h2>
-    <p class="prose-body">It runs the same shape as the pitching and sensing drills: a short
+    <p>It runs the same shape as the pitching and sensing drills: a short
     piece of theory, and then everybody practises it. You are put in a pair, where one of you
     delivers the feedback and the other receives it, and then the two of you swap over.</p>
-    <p class="prose-body"><strong>Both of you score it, and the receiver's score is the one
+    <p><strong>Both of you score it, and the receiver's score is the one
     that counts most.</strong> The question this whole session turns on is whether the person
     on the other side left feeling respected, and there is exactly one person present who
     can answer that.</p>
-    <p class="prose-body">Three scenarios, and you pick or bring your own:</p>
-    <ul class="prose-list">
+    <figure class="shot">
+      <img src="/images/field-notes/public-speaking-drill-room.jpg"
+           alt="Eight people in a Google Meet grid during a live skill drill, all with cameras on">
+      <figcaption>A recent drill. Eight places, everybody practises, nobody watches from
+      the back.</figcaption>
+    </figure>
+    <p>Three scenarios, and you pick or bring your own:</p>
+    <ul>
       <li>Letting someone go.</li>
       <li>Someone is underperforming.</li>
       <li>Someone is underperforming, and is also dealing with something serious at home.</li>
@@ -416,14 +444,14 @@ footer a:hover { color: var(--orange-soft); }
   </div>
 </section>
 
-<section class="method-dark">
-  <div class="wrap-narrow">
-    <div class="kicker">What you are taught</div>
+<section>
+  <div class="wrap">
+    <div class="label">What you are taught</div>
     <h2>Five steps, and not one of them is a compliment sandwich</h2>
-    <p class="prose-body">The sandwich is a way of making yourself comfortable while the other
+    <p>The sandwich is a way of making yourself comfortable while the other
     person leaves confused about whether anything was actually said. This starts somewhere
     else, from what you both already agree on.</p>
-    <ol class="prose-list">
+    <ol>
       <li>Start from shared purpose and common ground.</li>
       <li>Name clearly what has gone wrong, and the impact it is having.</li>
       <li>State the decision, or the change needed, plainly.</li>
@@ -434,36 +462,43 @@ footer a:hover { color: var(--orange-soft); }
 </section>
 
 <section>
-  <div class="wrap-narrow">
-    <div class="kicker">Before you walk in</div>
+  <div class="wrap">
+    <div class="label">Before you walk in</div>
     <h2>Settle yourself first, or you make the conversation about you</h2>
-    <p class="prose-body">Physical, mental and emotional preparation, the same way the Sensing
+    <p>Physical, mental and emotional preparation, the same way the Sensing
     Drill handles it. You settle yourself, then you come back to why you are doing this at all,
     and only then do you open your mouth.</p>
-    <p class="prose-body">Skip it and you say the thing you will be apologising for in a year.
+    <p>Skip it and you say the thing you will be apologising for in a year.
     This is Sphere 2, the Conscious and Physical Self, and it is the half of a tough
     conversation that happens before anybody speaks.</p>
   </div>
 </section>
 
-<section class="method-dark">
-  <div class="wrap-narrow">
-    <div class="kicker">While you are in it</div>
+<section>
+  <div class="wrap">
+    <div class="label">While you are in it</div>
     <h2>Their body is telling you something, and so is yours</h2>
-    <p class="prose-body">Reading the other person is the obvious half. Watching what your own
+    <p>Reading the other person is the obvious half. Watching what your own
     shoulders, hands and jaw are doing to them is the half people miss. We take both apart and
     then you practise with somebody watching.</p>
   </div>
 </section>
 
 <section>
-  <div class="wrap-narrow">
-    <div class="kicker">What you leave with</div>
+  <div class="wrap">
+    <figure class="shot">
+      <img src="/images/field-notes/sensing-drill-room.jpg"
+           alt="A smaller Google Meet grid from an earlier drill, six people with cameras on">
+      <figcaption>The sensing drill, earlier this year. The same shape: a short piece of
+      theory, then you do it in front of someone.</figcaption>
+    </figure>
+
+    <div class="label">What you leave with</div>
     <h2>A structure you can use on Monday, and a reading of how you did</h2>
-    <p class="prose-body">Your own scores, the scores from the people watching, and the
+    <p>Your own scores, the scores from the people watching, and the
     scores from the person who actually received it. Where those three disagree is the part
     worth your attention.</p>
-    <p class="prose-body">If you want to keep working on a real situation, that is what the one
+    <p>If you want to keep working on a real situation, that is what the one
     to one is for: <a href="/coaching/">coaching</a>, five places, &euro;600 a month, no
     minimum term.</p>
   </div>
