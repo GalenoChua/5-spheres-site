@@ -190,7 +190,12 @@
 
   var API = '/.netlify/functions/';
   var params = new URLSearchParams(location.search);
-  var SESSION = (params.get('session') || 'ps-2026-10-22').toLowerCase();
+  /* NO DEFAULT SESSION. A hardcoded one put the room screen and the results page on
+     the 7 October session while everybody was on the 22nd, which is the bug recorded in
+     drill-create's own header. That function fixed how a session is born; this line is
+     where the same mistake survived. An id is issued, never typed, so arriving without
+     one is a broken link, not a session, and guessing is how you drive the wrong room. */
+  var SESSION = (params.get('session') || '').toLowerCase();
   var token = '';
   var speakers = [];
   var current = null;
@@ -200,7 +205,23 @@
   var released = false;
   var armed = false;
 
-  document.getElementById('sub').textContent = 'Session ' + SESSION;
+  document.getElementById('sub').textContent =
+    SESSION ? 'Session ' + SESSION : 'No session in this link';
+
+  /* The room half of this page cannot work without an id, but the maker card below can,
+     and it is the thing a coach standing here without a session actually needs. So the
+     gate goes away and the panel stays hidden, rather than refusing the whole page. */
+  if (!SESSION) {
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('tools').classList.add('hidden');
+    var warn = document.createElement('div');
+    warn.className = 'card';
+    warn.innerHTML = '<h2>This link carries no session</h2>'
+      + '<p class="hint">Open the room from the link you saved when the session was '
+      + 'created, or start a new one below. The id is issued with the session and cannot '
+      + 'be guessed or typed from memory.</p>';
+    document.getElementById('gate').parentNode.insertBefore(warn, document.getElementById('maker'));
+  }
 
   /* Every link absolute and carrying its session. The earlier version built
      two of these as bare paths and left the session off the results one
@@ -407,7 +428,8 @@
      mid-sentence. That is the same bug the verify path above exists to avoid. */
   function openSession(btn, isTest) {
     token = document.getElementById('token').value.trim();
-    if (!token) { say('gate-msg', 'err', 'The token, from the Netlify environment.'); return; }
+    if (!token) { say('gate-msg', 'err', 'This session’s facilitator token, or the site-wide '
+        + 'DRILL_TOKEN from the Netlify environment. Either opens the room.'); return; }
     say('gate-msg', '', '');
     var other = document.getElementById(btn.id === 'unlock' ? 'unlock-test' : 'unlock');
     btn.disabled = true; other.disabled = true;

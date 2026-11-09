@@ -259,9 +259,13 @@
   'use strict';
 
   var API = '/.netlify/functions/';
-  var DEFAULT_SESSION = 'ps-2026-10-22';
   var qs = new URLSearchParams(location.search);
-  var SESSION = (qs.get('session') || DEFAULT_SESSION).toLowerCase();
+  /* NO DEFAULT SESSION. A hardcoded one put the room screen and the results page on
+     the 7 October session while everybody was on the 22nd, which is the bug recorded in
+     drill-create's own header. That function fixed how a session is born; this line is
+     where the same mistake survived. An id is issued, never typed, so arriving without
+     one is a broken link, not a session, and guessing is how you drive the wrong room. */
+  var SESSION = (qs.get('session') || '').toLowerCase();
   var SESSION_GIVEN = Boolean(qs.get('session'));
   var KEY = 'drill:' + SESSION;
 
@@ -468,8 +472,17 @@
   counter('s-relay', 's-relay-count');
   counter('my-intent', 'my-intent-count');
 
-  document.getElementById('session-note').textContent =
-    SESSION_GIVEN ? 'Session ' + SESSION : 'Session ' + SESSION + ', the default.';
+  /* A stranger scanning a QR is the one person here who cannot diagnose this, so the
+     refusal is the loudest thing on the page and Join stops working. Scoring into last
+     month's room is worse than not scoring at all: it is silent and it corrupts a sheet. */
+  document.getElementById('session-note').textContent = SESSION_GIVEN
+    ? 'Session ' + SESSION
+    : 'This link is missing its session. Use the link or QR from your facilitator.';
+  if (!SESSION_GIVEN) {
+    var j = document.getElementById('join');
+    j.disabled = true;
+    j.textContent = 'Waiting for a session link';
+  }
 
   /* The same digest the server uses, so the page recognises itself in the
      roster without anybody's address coming back down. */
