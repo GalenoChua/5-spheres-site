@@ -20,6 +20,7 @@ import { getStore } from '@netlify/blobs';
 import { refFor } from './drill-roster.mjs';
 import { createHash } from 'node:crypto';
 import { SCALE, SCALE_MAX } from './_scale.mjs';
+import { roundKey, currentRound } from './_rounds.mjs';
 
 const MAX_BYTES = 24 * 1024;
 const ROLES = ['self', 'room'];
@@ -147,10 +148,30 @@ export default async (request) => {
   /* When somebody joined, kept separate from when they last saved. The roster is
      ordered by this, so rows never reshuffle under the facilitator's finger when
      a latecomer arrives. Saving your card again must not move you. */
+  /* WHICH ROUND THIS CARD BELONGS TO, DECIDED HERE AND NOWHERE ELSE.
+   *
+   * Read once, from the stage, so the round used to build the key is the same round used
+   * to decide the before/after half further down. Reading it twice invites the two to
+   * disagree if the facilitator moves the floor between them, and a card written under one
+   * round with a half chosen under another is exactly the silent corruption this whole
+   * change exists to end.
+   *
+   * max(1, ...) because currentRound returns 0 for somebody who has never taken the floor.
+   * A join record is written before anybody speaks and belongs to round 1, which is also
+   * the bare key, so a store written before rounds existed keeps resolving. */
+  let stageRec = null;
+  try {
+    stageRec = await store.get(`${session}/_stage`, { type: 'json' });
+  } catch {
+    stageRec = null;
+  }
+  const speakerRef = refFor(session, speaker);
+  const round = Math.max(1, currentRound(stageRec, speakerRef));
+
   let prior = null;
   if (role === 'self') {
     try {
-      prior = await store.get(`${session}/${refFor(session, speaker)}/${refFor(session, speaker)}`,
+      prior = await store.get(`${session}/${speakerRef}/${roundKey(speakerRef, round)}`,
                               { type: 'json' });
     } catch {
       prior = null;
@@ -218,9 +239,13 @@ export default async (request) => {
      * been taken, whatever the client sends. */
     let takenTheFloor = false;
     try {
-      const stage = await store.get(`${session}/_stage`, { type: 'json' });
+      const stage = stageRec;
       const sizes = (stage && stage.sizes && typeof stage.sizes === 'object') ? stage.sizes : {};
-      takenTheFloor = Boolean(sizes[refFor(session, speaker)]);
+      /* The size recorded for THIS round. Asking for the bare ref would return round
+         one's size for the rest of the session, so from round two onwards every speaker
+         would read as having already taken the floor before the facilitator put them up,
+         and their genuine `before` would be promoted to `after` on arrival. */
+      takenTheFloor = Boolean(sizes[roundKey(speakerRef, round)]);
     } catch {
       /* A stage that cannot be read must not block a card. Falling back to the
          client's own `when` is the behaviour this had for its whole life. */
@@ -277,7 +302,11 @@ export default async (request) => {
      store encodes the key again, so a written "%40" lists back as "%2540" and
      the record can never be read. Found by running it rather than by reading
      it, because a stubbed store happily returns whatever key it was given. */
-  const key = `${session}/${refFor(session, speaker)}/${refFor(session, scorer)}`;
+  /* THE ROUND LIVES ON THE SCORER SEGMENT, not the speaker's.
+     Keeping the speaker segment bare is what lets every round of one person still group
+     under one ref in drill-results and drill-roster, which is the difference between one
+     sheet showing three rounds and three sheets that can never be joined. */
+  const key = `${session}/${speakerRef}/${roundKey(refFor(session, scorer), round)}`;
 
   try {
     await store.setJSON(key, record);

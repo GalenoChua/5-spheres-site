@@ -11,6 +11,7 @@
  */
 import { getStore } from '@netlify/blobs';
 import { mayDrive, globalOk, globalConfigured } from './_session.mjs';
+import { roundKey, isSelf } from './_rounds.mjs';
 
 const json = (status, body) =>
   new Response(JSON.stringify(body), {
@@ -27,7 +28,10 @@ async function roomSize(store, session) {
   let n = 0;
   for (const b of listed.blobs || []) {
     const parts = b.key.split('/');
-    if (parts.length === 3 && parts[1] === parts[2]) n += 1;
+    /* isSelf, not a raw ===: a round-two self record is `ref/ref~2`, which a raw compare
+       reads as a peer card and leaves out of the room size, making a round-two speaker look
+       as though they are being scored by a room one person larger than it actually is. */
+    if (parts.length === 3 && isSelf(parts[1], parts[2])) n += 1;
   }
   return n;
 }
@@ -127,13 +131,35 @@ export default async (request) => {
     const store = getStore({ name: 'drill-scores', consistency: 'strong' });
     const prior = (await store.get(`${session}/_stage`, { type: 'json' })) || {};
     const sizes = prior.sizes && typeof prior.sizes === 'object' ? prior.sizes : {};
+    const rounds = prior.rounds && typeof prior.rounds === 'object' ? prior.rounds : {};
+
+    /* A ROUND BEGINS HERE, AND ONLY HERE.
+     *
+     * Incremented when the floor moves TO somebody, which is the one moment that means
+     * "this person is about to speak". Guarded on prior.current so the repeated calls a
+     * live panel makes, unlocking, reloading, declaring a rehearsal, refreshing, cannot
+     * advance the round under a speaker who has not moved. That would send every card
+     * still arriving for round one into round two and split one performance across both.
+     *
+     * Absent before today, so a session already in flight reads every speaker as round 1,
+     * which is what they are. */
+    if (current && prior.current !== current) {
+      rounds[current] = (Number(rounds[current]) || 0) + 1;
+    }
+    const round = Number(rounds[current]) || 1;
 
     /* Freeze how big the room was when this speaker went up. Counting against
        the live roster instead means a speaker who was scored by everybody goes
        back to looking incomplete the moment somebody arrives late, and can
-       never read as finished again. */
-    if (current && !sizes[current]) {
-      sizes[current] = await roomSize(store, session);
+       never read as finished again.
+
+       Keyed by ROUND now. A second round in front of a room that has grown or shrunk is a
+       different denominator, and reusing round one's would make round two read as finished
+       early or never finish at all. roundKey() returns the bare ref for round one, so every
+       size already in the store keeps pointing at the round it was written for. */
+    if (current) {
+      const sk = roundKey(current, round);
+      if (!sizes[sk]) sizes[sk] = await roomSize(store, session);
     }
 
     /* Computed once so the response cannot disagree with what was written. */
@@ -146,7 +172,8 @@ export default async (request) => {
          rehearsal back into an unknown, because every call after the first one says
          nothing: the facilitator declares at the top and then only moves the floor. */
       test: isTest === null ? (typeof prior.test === 'boolean' ? prior.test : null) : isTest,
-      sizes
+      sizes,
+      rounds
     });
   } catch {
     return json(502, { error: 'store unavailable' });

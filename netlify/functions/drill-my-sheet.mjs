@@ -12,6 +12,7 @@
 import { getStore } from '@netlify/blobs';
 import { createHash } from 'node:crypto';
 import { pctOf, scaleOf } from './_scale.mjs';
+import { roundKey, roundOf, isSelf, currentRound } from './_rounds.mjs';
 
 const OUTCOME = ['confident', 'clear', 'believed'];
 const FIVE = ['pause', 'pace', 'volume', 'emotion', 'tonality'];
@@ -99,10 +100,32 @@ export default async (request) => {
     return json(502, { error: 'store unavailable' });
   }
 
+  /* WHICH ROUND THIS SHEET IS FOR.
+     The round the person last spoke in. A sheet that blended two rounds would average a
+     second attempt into the first and hide the improvement, which is the only reason to
+     stand up twice. */
+  const myRound = Math.max(1, currentRound(stage, ref));
+
+  /* The round's own self record, so before and after belong to the performance being
+     shown. Falls back to the join record, which is where they live for round one. */
+  let selfForRound = self;
+  if (myRound > 1) {
+    try {
+      const r = await store.get(`${session}/${ref}/${roundKey(ref, myRound)}`, { type: 'json' });
+      if (r && r.role === 'self') selfForRound = { ...self, before: r.before, after: r.after,
+                                                   intent: r.intent || self.intent };
+    } catch { /* round one's record is a reasonable fallback */ }
+  }
+
   const cards = [];
   for (const b of blobs) {
     const parts = b.key.split('/');
-    if (parts.length !== 3 || parts[2] === ref) continue;
+    if (parts.length !== 3) continue;
+    /* isSelf, not `parts[2] === ref`. That test only ever excluded the BARE self record,
+       so a round-two self record at `ref/ref~2` walked straight past it and was counted as
+       a card from somebody else: the speaker's own scores folded into the room's mean. */
+    if (isSelf(parts[1], parts[2])) continue;
+    if (roundOf(parts[2]) !== myRound) continue;
     try {
       const rec = await store.get(b.key, { type: 'json' });
       if (rec) cards.push(rec);
@@ -120,12 +143,12 @@ export default async (request) => {
     const vs = OUTCOME.map((k) => half.outcome[k]).filter((v) => v != null);
     return vs.length ? pct(mean(vs), self) : null;
   };
-  const assumedBefore = halfPct(self.before);
-  const assumedAfter = halfPct(self.after);
+  const assumedBefore = halfPct(selfForRound.before);
+  const assumedAfter = halfPct(selfForRound.after);
   const gapAfter = (assumedAfter != null && appeared != null) ? assumedAfter - appeared : null;
   const gapBefore = (assumedBefore != null && appeared != null) ? assumedBefore - appeared : null;
 
-  const intent = self.intent || '';
+  const intent = selfForRound.intent || '';
   const relay = cards.filter((c) => c.relay).map((c) => ({
     wrote: c.relay,
     match: overlap(intent, c.relay)
@@ -136,7 +159,8 @@ export default async (request) => {
   FIVE.forEach((k) => {
     const vs = cards.map((c) => c.five && c.five[k]).filter((v) => v != null);
     five[k] = {
-      self: (self.after && self.after.five && self.after.five[k] != null) ? self.after.five[k] : null,
+      self: (selfForRound.after && selfForRound.after.five && selfForRound.after.five[k] != null)
+        ? selfForRound.after.five[k] : null,
       room: vs.length ? r1(mean(vs)) : null
     };
   });
@@ -147,6 +171,9 @@ export default async (request) => {
     /* The fives go out unscaled, so the sheet has to say what they are out of. */
     scale: scaleOf(self, 'drill'),
     name: self.scorerName || '',
+    /* Which performance this sheet describes. One means the only one, so a page that
+       never shows it is still telling the truth. */
+    round: myRound,
     scorers: perScorer.length,
     appeared,
     assumedBefore,

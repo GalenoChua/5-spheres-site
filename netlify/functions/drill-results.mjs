@@ -11,6 +11,7 @@ import { getStore } from '@netlify/blobs';
 import { mayDrive, globalConfigured } from './_session.mjs';
 import { refFor } from './drill-roster.mjs';
 import { pctOf, scaleOf } from './_scale.mjs';
+import { baseRef, roundOf, isSelf } from './_rounds.mjs';
 
 const OUTCOME = ['confident', 'clear', 'believed'];
 const FIVE = ['pause', 'pace', 'volume', 'emotion', 'tonality'];
@@ -50,6 +51,36 @@ function overlap(a, b) {
   const A = words(a); const B = words(b);
   if (!A.length || !B.length) return null;
   return Math.round(A.filter((w) => B.includes(w)).length / Math.max(A.length, B.length) * 100);
+}
+
+/* SPLIT A SESSION'S RECORDS INTO PEOPLE AND THEIR ROUNDS.
+ *
+ * Pure, and exported, because the thing worth testing here is exactly this: that a second
+ * round lands beside the first rather than on top of it. Leaving it inside the handler
+ * meant the only way to exercise it was to run a live drill, which is how the overwrite
+ * survived unnoticed until a room of seven people hit it. */
+export function collate(entries) {
+  const selves = new Map();      // ref -> round -> self record
+  const bySpeaker = new Map();   // ref -> round -> peer cards
+  const put = (map, ref, fn) => {
+    if (!map.has(ref)) map.set(ref, new Map());
+    fn(map.get(ref));
+  };
+  for (const { key, rec } of entries) {
+    const parts = key.split('/');
+    if (parts.length !== 3 || !rec) continue;
+    const ref = baseRef(parts[1]);
+    const round = roundOf(parts[2]);
+    if (rec.role === 'self' && isSelf(parts[1], parts[2])) {
+      put(selves, ref, (m) => m.set(round, rec));
+    } else {
+      put(bySpeaker, ref, (m) => {
+        if (!m.has(round)) m.set(round, []);
+        m.get(round).push(rec);
+      });
+    }
+  }
+  return { selves, bySpeaker };
 }
 
 function sheetFor(self, cards) {
@@ -173,30 +204,45 @@ export default async (request) => {
     return json(502, { error: 'store unavailable' });
   }
 
-  const selves = new Map();
-  const bySpeaker = new Map();
+  /* GROUPED BY PERSON, THEN SPLIT BY ROUND.
+   *
+   * The speaker segment stays bare whatever the round, so everything one person did still
+   * collects under one ref: one sheet, with their rounds inside it. Blending the rounds
+   * into a single mean instead would quietly reward a second attempt by averaging it with
+   * the first, and the whole point of speaking again is to see the two apart. */
+  const entries = [];
   for (const b of blobs) {
-    const parts = b.key.split('/');
-    if (parts.length !== 3) continue;
+    if (b.key.split('/').length !== 3) continue;
     let rec;
     try {
       rec = await store.get(b.key, { type: 'json' });
     } catch {
       continue;
     }
-    if (!rec) continue;
-    if (rec.role === 'self' && parts[1] === parts[2]) {
-      selves.set(parts[1], rec);
-    } else {
-      if (!bySpeaker.has(parts[1])) bySpeaker.set(parts[1], []);
-      bySpeaker.get(parts[1]).push(rec);
-    }
+    if (rec) entries.push({ key: b.key, rec });
   }
+  const { selves, bySpeaker } = collate(entries);
 
   const people = [];
-  for (const [ref, self] of selves) {
-    const cards = bySpeaker.get(ref) || [];
-    const sheet = sheetFor(self, cards);
+  for (const [ref, byRound] of selves) {
+    const cardRounds = bySpeaker.get(ref) || new Map();
+    const nums = [...new Set([...byRound.keys(), ...cardRounds.keys()])].sort((a, b) => a - b);
+
+    const rounds = nums.map((n) => {
+      const self = byRound.get(n) || byRound.get(1) || null;
+      const cards = cardRounds.get(n) || [];
+      return { round: n, ...sheetFor(self, cards) };
+    });
+
+    /* The LAST round a person actually spoke in is what the top level carries, so every
+       reader written before rounds existed keeps working and keeps showing something
+       true. In a session where nobody spoke twice that is round one, which is exactly
+       what those readers returned before. */
+    const spokenIn = rounds.filter((r) => r.scorers > 0);
+    const head = spokenIn.length ? spokenIn[spokenIn.length - 1] : rounds[0];
+    const latestSelf = byRound.get(head ? head.round : 1) || byRound.get(1);
+    const self = latestSelf || [...byRound.values()][0];
+
     people.push({
       ref,
       name: self.scorerName || 'Unnamed',
@@ -206,16 +252,20 @@ export default async (request) => {
       scoredSelfBefore: Boolean(self.before),
       scoredSelfAfter: Boolean(self.after),
       cardsGiven: 0,
-      ...sheet
+      roundsSpoken: spokenIn.length,
+      rounds,
+      ...(head || {})
     });
   }
   /* How many cards each person gave to others, which is what tells a facilitator
      who is participating as a scorer rather than only as a speaker. */
   const given = new Map();
-  for (const cards of bySpeaker.values()) {
-    for (const c of cards) {
-      const k = refFor(session, c.scorer);
-      given.set(k, (given.get(k) || 0) + 1);
+  for (const byRound of bySpeaker.values()) {
+    for (const cards of byRound.values()) {
+      for (const c of cards) {
+        const k = refFor(session, c.scorer);
+        given.set(k, (given.get(k) || 0) + 1);
+      }
     }
   }
   people.forEach((p) => { p.cardsGiven = given.get(p.ref) || 0; });
@@ -279,3 +329,10 @@ export default async (request) => {
   }
   return json(200, { ...anonymous, people });
 };
+
+/* NAMED EXPORTS FOR OFFLINE USE. The default export is the handler and stays the
+   only thing Netlify calls. These exist so the sheet maths can be run against an
+   export of the store without reimplementing it: on 9 November the charts sent to
+   participants had to agree with sheets the room had already received, and a second
+   implementation of sheetFor is a second set of numbers waiting to disagree. */
+export { sheetFor, OUTCOME, FIVE, WHAT, overlap };

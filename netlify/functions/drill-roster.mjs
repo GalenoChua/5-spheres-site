@@ -12,6 +12,7 @@
  */
 import { getStore } from '@netlify/blobs';
 import { createHash } from 'node:crypto';
+import { roundKey, baseRef, roundOf, isSelf, currentRound } from './_rounds.mjs';
 
 const json = (status, body) =>
   new Response(JSON.stringify(body), {
@@ -84,11 +85,32 @@ export default async (request) => {
   /* One pass over the session. Self records become the roster; everything else
      is counted against the speaker it scores, which is what tells the
      facilitator whether the room has finished and it is safe to move on. */
+  /* The stage is read first now. It carries `rounds`, and the card count the facilitator
+     watches has to be the count for the round the speaker is CURRENTLY on: carrying round
+     one's cards into round two would show the room as already finished before anybody had
+     scored the second attempt, and the facilitator would move on. */
+  let current = null;
+  let sizes = {};
+  let released = false;
+  let stage = null;
+  try {
+    stage = await store.get(`${session}/_stage`, { type: 'json' });
+    if (stage && stage.current) current = stage.current;
+    if (stage && stage.sizes) sizes = stage.sizes;
+    if (stage && stage.released === true) released = true;
+  } catch {
+    /* A missing stage is a session that has not started, not a failure. */
+  }
+
   const speakers = [];
-  const scored = new Map();
+  const scored = new Map();            // "ref|round" -> cards in for that round
   for (const [key, rec] of fetched) {
     const parts = key.split('/');
     if (!rec) continue;
+    /* The bare self record is the person's identity row: it is written on join, before
+       any round exists, and there is exactly one of it however many times they speak. A
+       round-two self record carries that round's before/after and must not add a second
+       row to the facilitator's table. */
     if (rec.role === 'self' && parts[1] === parts[2]) {
       speakers.push({
         ref: parts[1],
@@ -103,11 +125,21 @@ export default async (request) => {
         savedAfter: Boolean(rec.after),
         joinedAt: rec.joinedAt || rec.submittedAt || ''
       });
-    } else {
-      scored.set(parts[1], (scored.get(parts[1]) || 0) + 1);
+    } else if (!(rec.role === 'self' && isSelf(parts[1], parts[2]))) {
+      /* Peer cards only, counted against the round they were written for. The isSelf guard
+         keeps a round-two SELF record out of the room's card count, which a plain else
+         would have added as though a stranger had scored them. */
+      const k = `${baseRef(parts[1])}|${roundOf(parts[2])}`;
+      scored.set(k, (scored.get(k) || 0) + 1);
     }
   }
-  speakers.forEach((s) => { s.scores = scored.get(s.ref) || 0; });
+  speakers.forEach((s) => {
+    s.round = Math.max(1, currentRound(stage, s.ref));
+    s.scores = scored.get(`${s.ref}|${s.round}`) || 0;
+    /* Rounds already finished, so the panel can say "second time up" rather than making
+       the facilitator remember who has been up and how often. */
+    s.roundsDone = Math.max(0, currentRound(stage, s.ref) - 0);
+  });
 
   /* Ordered by arrival. A name sort is the same on every device too, but it
      reshuffles: a latecomer called Aaron lands at row zero and pushes every
@@ -117,23 +149,11 @@ export default async (request) => {
 
   /* Who the room is scoring right now. The facilitator sets it; everybody else
      follows it, so nobody has to be told which card to open. */
-  let current = null;
-  let sizes = {};
-  let released = false;
-  try {
-    const stage = await store.get(`${session}/_stage`, { type: 'json' });
-    if (stage && stage.current) current = stage.current;
-    if (stage && stage.sizes) sizes = stage.sizes;
-    if (stage && stage.released === true) released = true;
-  } catch {
-    /* A missing stage is a session that has not started, not a failure. */
-  }
-
   /* How many cards this speaker should expect: the room as it was when they
      went up, less themselves. A speaker who has not been up yet is measured
      against the room as it stands. */
   speakers.forEach((s) => {
-    const frozen = sizes[s.ref];
+    const frozen = sizes[roundKey(s.ref, s.round)];
     const base = Math.max((frozen || speakers.length) - 1, 0);
     /* Never below the cards already received. The frozen figure is read from a
        listing, and listings here are eventually consistent: a speaker put up
