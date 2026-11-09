@@ -166,7 +166,7 @@ export default async (request) => {
   let store;
   let blobs;
   try {
-    store = getStore('drill-scores');
+    store = getStore({ name: 'drill-scores', consistency: 'strong' });
     const listed = await store.list({ prefix: `${session}/` });
     blobs = listed.blobs || [];
   } catch {

@@ -124,7 +124,7 @@ export default async (request) => {
 
   let nextCurrent = null;
   try {
-    const store = getStore('drill-scores');
+    const store = getStore({ name: 'drill-scores', consistency: 'strong' });
     const prior = (await store.get(`${session}/_stage`, { type: 'json' })) || {};
     const sizes = prior.sizes && typeof prior.sizes === 'object' ? prior.sizes : {};
 

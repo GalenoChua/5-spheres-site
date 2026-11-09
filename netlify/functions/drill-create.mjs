@@ -60,7 +60,7 @@ export default async (request) => {
      never ambiguous even if the facilitator panel is never opened. */
   const test = body.test === true;
 
-  const store = getStore(SESSIONS);
+  const store = getStore({ name: SESSIONS, consistency: 'strong' });
 
   /* ROTATION. A coach who lost their token gets a new one for their own room, and only
      the owner may ask: otherwise anybody holding the coach token could take over a room
@@ -102,7 +102,7 @@ export default async (request) => {
    * panel: drill-stage treats `test` as sticky once set. A failure here is not worth losing the
    * room over, so it is caught and the panel's own declaration remains the backstop. */
   try {
-    const scores = getStore('drill-scores');
+    const scores = getStore({ name: 'drill-scores', consistency: 'strong' });
     const prior = (await scores.get(`${session}/_stage`, { type: 'json' })) || {};
     await scores.setJSON(`${session}/_stage`, {
       current: prior.current ?? null,

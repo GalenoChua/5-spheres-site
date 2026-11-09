@@ -33,7 +33,15 @@ export default async (request) => {
 
   let store;
   try {
-    store = getStore('drill-scores');
+    /* STRONG, NOT EVENTUAL. Netlify Blobs defaults to eventual consistency, where a
+       write can take up to about a minute to be visible to a read. On 9 November that
+       put a one to two minute lag between a participant submitting a card and the
+       facilitator seeing it, and with six speakers it cost roughly ten minutes of the
+       session. The facilitator was reduced to asking the room for thumbs up to find out
+       whether cards had landed. Polling faster does not help: the facilitator already
+       polled every four seconds and simply re-read a stale store. subscribe.mjs has used
+       strong reads for exactly this reason since it was written. */
+    store = getStore({ name: 'drill-scores', consistency: 'strong' });
   } catch {
     return json(502, { error: 'store unavailable' });
   }

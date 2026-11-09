@@ -60,7 +60,7 @@ export function globalOk(given, envValue) {
 
 export async function readSession(session) {
   try {
-    return await getStore(SESSIONS).get(session, { type: 'json' });
+    return await getStore({ name: SESSIONS, consistency: 'strong' }).get(session, { type: 'json' });
   } catch {
     return null;
   }

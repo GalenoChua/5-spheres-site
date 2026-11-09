@@ -188,7 +188,11 @@
       $('gate').classList.add('hidden');
       $('out').classList.remove('hidden');
       draw(j);
-      if (!timer) { timer = setInterval(poll, 15000); }
+      /* FIVE SECONDS, NOT FIFTEEN. This is on a screen the whole room watches, so
+         fifteen seconds of staleness reads as the drill having stalled. The store is
+         read strongly now, so a shorter poll returns something actually current
+         rather than returning stale data more often. */
+      if (!timer) { timer = setInterval(poll, 5000); }
     })['catch'](function (e) {
       $('msg').innerHTML = '<div class="err">' + esc(e.message) + '</div>';
     });

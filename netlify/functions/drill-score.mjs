@@ -92,7 +92,7 @@ export default async (request) => {
      not configured, which is why every use sits inside a try. */
   let store;
   try {
-    store = getStore('drill-scores');
+    store = getStore({ name: 'drill-scores', consistency: 'strong' });
   } catch {
     return json(502, { error: 'store unavailable' });
   }

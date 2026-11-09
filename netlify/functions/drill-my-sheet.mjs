@@ -64,7 +64,7 @@ export default async (request) => {
 
   let store;
   try {
-    store = getStore('drill-scores');
+    store = getStore({ name: 'drill-scores', consistency: 'strong' });
   } catch {
     return json(502, { error: 'store unavailable' });
   }
