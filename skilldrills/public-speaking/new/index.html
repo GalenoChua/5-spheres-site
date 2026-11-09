@@ -88,6 +88,22 @@
       </div>
     </fieldset>
 
+    <!-- THE TOKEN HUNT IS THE THING THAT GOES WRONG.
+         On 9 November the drill started 25 minutes late, and most of that was finding the
+         coach token: it lives in a Netlify variable, so setting up a room meant leaving the
+         site, opening a dashboard or a terminal, and coming back. Opt-in, because this is a
+         real secret and the person using a shared machine has to be able to say no. It is
+         the COACH token only, which creates empty rooms and reads none of them: the master
+         DRILL_TOKEN, which reads every roster and every score on the site, is deliberately
+         not offered here. -->
+    <label class="choice" style="display:flex;align-items:center;gap:10px;margin:4px 0 14px">
+      <input type="checkbox" id="remember">
+      <span>Remember the token and my email on this device</span>
+    </label>
+    <div class="note hidden" id="forget-row" style="margin:-8px 0 14px">
+      Saved on this device. <a href="#" id="forget">Forget it</a>
+    </div>
+
     <button id="make">Set up the session</button>
     <div id="form-msg"></div>
   </div>
@@ -166,7 +182,7 @@
     made = j;
     $('tok').textContent = j.token;
     $('sid').textContent = j.session;
-    $('kindnote').textContent = kind === 'test' ? ' — rehearsal, this room is not counted' : '';
+    $('kindnote').textContent = kind === 'test' ? ', rehearsal, this room is not counted' : '';
     $('l-participant').textContent = j.links.participant;
     $('l-room').textContent = j.links.room;
     $('l-facilitator').textContent = j.links.facilitator;
@@ -175,6 +191,38 @@
     $('out').classList.remove('hidden');
     window.scrollTo(0, 0);
   }
+
+  /* localStorage, not sessionStorage: the whole point is that it is still there next
+     month. The facilitator panel keeps its per-session token in sessionStorage for the
+     opposite reason, that it should not outlive the tab. */
+  var STORE_T = 'drill-coach-token', STORE_O = 'drill-coach-owner';
+  function loadSaved() {
+    var t = '', o = '';
+    try { t = localStorage.getItem(STORE_T) || ''; o = localStorage.getItem(STORE_O) || ''; }
+    catch (e) { return; }
+    if (t) { $('coach').value = t; $('remember').checked = true; }
+    if (o) { $('owner').value = o; }
+    $('forget-row').classList.toggle('hidden', !t);
+  }
+  function saveOrClear() {
+    try {
+      if ($('remember').checked) {
+        localStorage.setItem(STORE_T, $('coach').value.trim());
+        localStorage.setItem(STORE_O, $('owner').value.trim());
+      } else {
+        localStorage.removeItem(STORE_T); localStorage.removeItem(STORE_O);
+      }
+    } catch (e) { /* a browser refusing storage is not a reason to fail the session */ }
+    $('forget-row').classList.toggle('hidden', !$('remember').checked);
+  }
+  $('forget').onclick = function (e) {
+    e.preventDefault();
+    try { localStorage.removeItem(STORE_T); localStorage.removeItem(STORE_O); } catch (err) {}
+    $('coach').value = ''; $('remember').checked = false;
+    $('forget-row').classList.add('hidden');
+    say('form-msg', '', '');
+  };
+  loadSaved();
 
   $('make').onclick = function () {
     var coach = $('coach').value.trim();
@@ -189,6 +237,9 @@
       token: coach, owner: owner, label: $('label').value.trim(),
       test: picked.value === 'test'
     }).then(function (j) {
+      /* Saved only once the server has accepted it. Storing on submit would persist a typo
+         and turn one bad evening into every evening after it. */
+      saveOrClear();
       show(j, picked.value);
     })['catch'](function (e) {
       btn.disabled = false;

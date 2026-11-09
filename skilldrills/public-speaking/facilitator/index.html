@@ -226,7 +226,12 @@
     warn.innerHTML = '<h2>This link carries no session</h2>'
       + '<p class="hint">Open the room from the link you saved when the session was '
       + 'created, or start a new one below. The id is issued with the session and cannot '
-      + 'be guessed or typed from memory.</p>';
+      + 'be guessed or typed from memory.</p>'
+      /* The full form was only ever linked from inside #panel, which needs a session to
+         reveal, so the page that creates your FIRST session could only be reached from
+         inside one you already had. */
+      + '<p class="hint">The full form, which can also remember your coach token on '
+      + 'this device, is at <a href="../new/">Set up a drill</a>.</p>';
     /* Inserted relative to #maker's OWN parent. The first version asked #gate's parent to
        insert before a node that was not its child, which throws NotFoundError and took the
        whole IIFE with it: no handlers bound, nothing on the page but the heading. */
