@@ -151,36 +151,43 @@
       <div id="toolrows"></div>
     </div>
 
-    <div class="card" id="maker">
-      <h2>Start another session</h2>
-      <p class="hint">
-        Issues a new session and its facilitator token. The token is shown
-        once and stored only as a hash, so save it when it appears. Needs the
-        coach token, which is not the one you used to open this room.
-      </p>
-      <div class="field">
-        <label for="coach">Coach token</label>
-        <input type="password" id="coach" autocomplete="off">
-      </div>
-      <div class="field">
-        <label for="owner">Your email</label>
-        <input type="email" id="owner" autocomplete="off" placeholder="you@example.org">
-      </div>
-      <div class="field">
-        <label for="label">What to call it</label>
-        <input type="text" id="label" autocomplete="off" placeholder="Phnom Penh cohort, 14 November">
-      </div>
-      <button id="make">Create the session</button>
-      <button id="make-test" class="ghost">Create a rehearsal</button>
-      <div id="make-msg"></div>
-      <div id="made" class="hidden"></div>
-    </div>
-
     <p class="foot">
       The card everyone sees follows whoever is on the floor, so nobody picks a
       name. Cards in counts the room as it was when that person went up. Close
       the floor between speakers so the room stops being asked for cards.
     </p>
+  </div>
+
+  <!-- OUTSIDE THE PANEL, DELIBERATELY.
+       This card used to sit inside #panel, which only reveals after a session is
+       unlocked. So creating your FIRST session required already being in one, and the
+       only thing that hid the contradiction was a hardcoded default session that a
+       coach could always unlock. Removing that default exposed the lockout rather than
+       causing it. It belongs out here: it makes a DIFFERENT session and is gated by a
+       DIFFERENT secret, which the server checks regardless of what this page shows. -->
+  <div class="card" id="maker">
+    <h2>Start another session</h2>
+    <p class="hint">
+      Issues a new session and its facilitator token. The token is shown
+      once and stored only as a hash, so save it when it appears. Needs the
+      coach token, which is not the one you used to open this room.
+    </p>
+    <div class="field">
+      <label for="coach">Coach token</label>
+      <input type="password" id="coach" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="owner">Your email</label>
+      <input type="email" id="owner" autocomplete="off" placeholder="you@example.org">
+    </div>
+    <div class="field">
+      <label for="label">What to call it</label>
+      <input type="text" id="label" autocomplete="off" placeholder="Phnom Penh cohort, 14 November">
+    </div>
+    <button id="make">Create the session</button>
+    <button id="make-test" class="ghost">Create a rehearsal</button>
+    <div id="make-msg"></div>
+    <div id="made" class="hidden"></div>
   </div>
 </div>
 
@@ -213,14 +220,17 @@
      gate goes away and the panel stays hidden, rather than refusing the whole page. */
   if (!SESSION) {
     document.getElementById('gate').classList.add('hidden');
-    document.getElementById('tools').classList.add('hidden');
     var warn = document.createElement('div');
     warn.className = 'card';
     warn.innerHTML = '<h2>This link carries no session</h2>'
       + '<p class="hint">Open the room from the link you saved when the session was '
       + 'created, or start a new one below. The id is issued with the session and cannot '
       + 'be guessed or typed from memory.</p>';
-    document.getElementById('gate').parentNode.insertBefore(warn, document.getElementById('maker'));
+    /* Inserted relative to #maker's OWN parent. The first version asked #gate's parent to
+       insert before a node that was not its child, which throws NotFoundError and took the
+       whole IIFE with it: no handlers bound, nothing on the page but the heading. */
+    var mk = document.getElementById('maker');
+    mk.parentNode.insertBefore(warn, mk);
   }
 
   /* Every link absolute and carrying its session. The earlier version built
@@ -527,7 +537,8 @@
   document.getElementById('make').onclick = function () { makeSession(this, false); };
   document.getElementById('make-test').onclick = function () { makeSession(this, true); };
 
-  initTools();
+  /* Only with an id. Otherwise this draws four links to a session nobody created. */
+  if (SESSION) { initTools(); }
 
   document.getElementById('unlock').onclick = function () { openSession(this, false); };
   document.getElementById('unlock-test').onclick = function () { openSession(this, true); };
