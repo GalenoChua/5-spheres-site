@@ -54,7 +54,13 @@ const FORMS = {
   'public-speaking': '200050059381835246',
   /* Added 29 October, with the form on the page. The page had been selling the
      session with nothing to submit, so this list name had never been needed. */
+  /* Both names point at the same MailerLite group. The page moved from
+     /events/tough-conversations/ to /events/letting-someone-go/ on 10 November, and
+     this binds by string: dropping the old key would 500 every enquiry arriving from a
+     cached page in the window between this deploying and that one. Keeping both costs
+     a line and removes the window. */
   'tough-conversations': '202661305651299601',
+  'letting-someone-go': '202661305651299601',
   /* Added 26 October. These four forms posted straight to MailerLite with no
      honeypot and no validation of any kind, on the homepage, the application
      page and the sphere one audit. They were never in the no-cors trap because

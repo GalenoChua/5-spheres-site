@@ -4,7 +4,7 @@ PRODID:-//The 5 Spheres of Empathy//Letting Someone Go//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:tough-conversations-2026-11-30@5spheresofempathy.com
+UID:letting-someone-go-2026-11-30@5spheresofempathy.com
 DTSTAMP:20261130T110000Z
 DTSTART:20261130T110000Z
 DTEND:20261130T125000Z
@@ -13,9 +13,9 @@ DESCRIPTION:A 110-minute live session on delivering hard news so the othe
  r person still leaves feeling respected.\n\nYou deliver\, somebody recei
  ves it\, and both of you score it. Bring a real conversation you are avo
  iding\, or use one of ours.\n\nDetails: https://5spheresofempathy.com/ev
- ents/tough-conversations/
+ ents/letting-someone-go/
 LOCATION:Google Meet
-URL:https://5spheresofempathy.com/events/tough-conversations/
+URL:https://5spheresofempathy.com/events/letting-someone-go/
 STATUS:CONFIRMED
 BEGIN:VALARM
 TRIGGER:-PT1H
