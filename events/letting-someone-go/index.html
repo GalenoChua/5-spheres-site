@@ -84,13 +84,26 @@ a { color: var(--orange); }
 /* A SHORT LINE BETWEEN TWO LONG ONES. The hero read as two slabs because every
    paragraph was the same width and weight; the fix is rhythm, not more spacing. */
 .hero-beat {
-  font-size: clamp(1.22rem, 3vw, 1.5rem);
-  color: rgba(245,232,214,.98);
-  max-width: 24ch;
-  margin-top: 22px;
+  /* THE LOUDEST LINE IN THE HERO. It was set a tenth of a rem above the paragraphs
+     around it, which at 390 is no difference at all, so the admission the whole page
+     rests on arrived at the same volume as the circumstances leading up to it. */
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.62rem, 5.4vw, 2.2rem);
+  line-height: 1.22;
+  color: var(--offwhite);
+  max-width: 18ch;
+  margin-top: 26px;
 }
 /* Says there is more below. The hero ends on a promise and then stops, which is
    where a reader decides whether the page is finished. */
+/* The register changes here, from what happened to me to what you get. Without a
+   visible hinge the line reads as part of the confession and then surprises you by
+   being a product. */
+.hero-offer {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(245,232,214,.22);
+}
 .hero-cue { margin-top: 26px; }
 .hero-cue a {
   font-size: .95rem; letter-spacing: .04em; text-transform: uppercase;
@@ -399,17 +412,17 @@ footer a:hover { color: var(--orange-soft); }
     <span class="eyebrow">Human Intelligence &middot; Live on Google Meet</span>
     <h1>Letting Someone Go</h1>
 
-    <p class="subhead subhead-lead">Six years ago I had to let someone go. I had done it
-    before, so you would think I knew how to do it properly. I was broke, exhausted and
-    scared about money, and I carried every bit of that into the meeting. I made a mess
-    of it.</p>
+    <p class="subhead subhead-lead">I had done it before, so you would think I knew how.</p>
+
+    <p class="subhead">Six years ago I was broke, exhausted and scared about money, and I
+    carried every bit of that into the meeting.</p>
+
+    <p class="subhead hero-beat">I made a mess of it.</p>
 
     <p class="subhead">I still think about it. I don&rsquo;t think they do. But I do.</p>
 
-    <p class="subhead hero-beat">The conversation does not end when you leave the room.</p>
-
-    <p class="subhead">110 minutes on saying the hard thing, so the person across from you
-    walks out still respected, and still in your corner.</p>
+    <p class="subhead hero-offer">110 minutes on saying the hard thing, so the person across
+    from you walks out still respected, and still in your corner.</p>
 
     <p class="hero-cue"><a href="#whats-involved">What the 110 minutes covers</a></p>
 
@@ -448,8 +461,9 @@ footer a:hover { color: var(--orange-soft); }
     <p>It isn&rsquo;t wrong, and done well it is humane, because dragging it out is its own
     cruelty.</p>
 
-    <div class="pull">The band-aid works best when you are delivering someone
-    else&rsquo;s decision.</div>
+    <div class="pull">The conversation does not end when you leave the room.</div>
+
+    <p>The band-aid works best when you are delivering someone else&rsquo;s decision.</p>
 
     <p>When it is yours, your call, your company, your values in the room, sometimes clean and
     fast doesn&rsquo;t feel right. You have to work out what to say, and how, from what you
