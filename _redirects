@@ -28,9 +28,6 @@
 # back rather than deleted. The bang forces the redirect to win over the static file
 # that is still in the repo; without it Netlify serves the file and ignores this.
 # Remove these three lines to put it back. 29 October 2026.
-# HELD. Letting Someone Go is written and not yet approved to publish.
-/events/letting-someone-go/*    /events/  302!
-/events/letting-someone-go      /events/  302!
 # The old slug, for links shared before 10 November. 301, because the move is permanent.
 /events/tough-conversations/*   /events/letting-someone-go/:splat  301
 /events/tough-conversations     /events/letting-someone-go  301

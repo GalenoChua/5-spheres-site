@@ -25,7 +25,8 @@
     "9 November 2026: the public speaking drill moves to Wednesday 2 December. The 9 November session ran and the page was still advertising that date afterwards, so anyone landing on it was being offered a drill that had already happened. The 11:00 UTC slot is unchanged, which is 18:00 in Phnom Penh and 12:00 in Warsaw.",
     "",
     "10 November 2026: 'Tough Conversations: Giving Feedback' is renamed 'Letting Someone Go'. G rewrote the page around the one scenario rather than the category, and all three practice scenarios are now variants of it. The URL stays /events/tough-conversations/ because the slug is in _redirects, the ics path and every link already shared.",
-    "The URL moved with it, to /events/letting-someone-go/. The old slug 301s to the new one. subscribe.mjs answers to both names so an enquiry from a cached page cannot 500 during the deploy."
+    "The URL moved with it, to /events/letting-someone-go/. The old slug 301s to the new one. subscribe.mjs answers to both names so an enquiry from a cached page cannot 500 during the deploy.",
+    "10 November 2026: published. The 302! hold is lifted, the drills board links to it and the events index names it. alsoOn covers both, so the date cannot go stale on a surface the checker never looked at, which is how the 7 October drift happened."
   ],
   "_howToCheck": "python scripts/check_event_facts.py  (the page)\npython scripts/build_ics.py --check   (the calendar file)",
   "events": {
@@ -86,7 +87,8 @@
       "icsPath": "events/letting-someone-go/letting-someone-go.ics",
       "icsDescription": "A 110-minute live session on delivering hard news so the other person still leaves feeling respected.\n\nYou deliver, somebody receives it, and both of you score it. Bring a real conversation you are avoiding, or use one of ours.\n\nDetails: https://5spheresofempathy.com/events/letting-someone-go/",
       "alsoOn": [
-        "skilldrills/index.html"
+        "skilldrills/index.html",
+        "events/index.html"
       ]
     }
   }
