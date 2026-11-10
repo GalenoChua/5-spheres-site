@@ -81,6 +81,26 @@ a { color: var(--orange); }
    adjacent rule the hero paragraphs butt straight against each other, and the rewrite
    opens with seven of them: it rendered as one unbroken slab of serif. */
 .subhead + .subhead { margin-top: 15px; }
+/* A SHORT LINE BETWEEN TWO LONG ONES. The hero read as two slabs because every
+   paragraph was the same width and weight; the fix is rhythm, not more spacing. */
+.hero-beat {
+  font-size: clamp(1.22rem, 3vw, 1.5rem);
+  color: rgba(245,232,214,.98);
+  max-width: 24ch;
+  margin-top: 22px;
+}
+/* Says there is more below. The hero ends on a promise and then stops, which is
+   where a reader decides whether the page is finished. */
+.hero-cue { margin-top: 26px; }
+.hero-cue a {
+  font-size: .95rem; letter-spacing: .04em; text-transform: uppercase;
+  font-weight: 700; color: var(--orange); text-decoration: none;
+  border-bottom: 2px solid rgba(255,73,0,.45); padding-bottom: 3px;
+}
+.hero-cue a::after { content: " ↓"; }
+.hero-cue a:hover { border-bottom-color: var(--orange); }
+/* One per line, so three zones read as three facts rather than one sentence. */
+.zone { display: block; }
 .subhead-lead {
   font-size: clamp(1.26rem, 3vw, 1.58rem);
   line-height: 1.38;
@@ -378,20 +398,29 @@ footer a:hover { color: var(--orange-soft); }
   <div class="wrap">
     <span class="eyebrow">Human Intelligence &middot; Live on Google Meet</span>
     <h1>Letting Someone Go</h1>
-    <p class="subhead subhead-lead">Six years ago I had to let someone go. I&rsquo;d done it
-    before and thought I knew how to do it properly. I was broke, exhausted, and scared about
-    money, and I carried all of that into the room with me.</p>
+
+    <p class="subhead subhead-lead">Six years ago I had to let someone go. I had done it
+    before, so you would think I knew how to do it properly. I was broke, exhausted and
+    scared about money, and I carried every bit of that into the meeting. I made a mess
+    of it.</p>
+
     <p class="subhead">I still think about it. I don&rsquo;t think they do. But I do.</p>
-    <p class="subhead">That is the part nobody warns you about. The conversation does not end
-    when you leave the room. It lives on in whoever you had it with. Or, if you are the type
-    that cares how you show up, in you too.</p>
+
+    <p class="subhead hero-beat">The conversation does not end when you leave the room.</p>
+
     <p class="subhead">110 minutes on saying the hard thing, so the person across from you
     walks out still respected, and still in your corner.</p>
+
+    <p class="hero-cue"><a href="#whats-involved">What the 110 minutes covers</a></p>
 
     <div class="details">
       <dl>
         <div><dt>Date</dt><dd>Monday 30 November</dd></div>
-        <div><dt>Time</dt><dd>18:00 ICT, which is 12:00 in Warsaw and 19:00 in Kuala Lumpur</dd></div>
+        <div><dt>Time</dt><dd>
+          <span class="zone">12:00 Warsaw</span>
+          <span class="zone">18:00 ICT Phnom Penh</span>
+          <span class="zone">19:00 Kuala Lumpur and Singapore</span>
+        </dd></div>
         <div><dt>Length</dt><dd>110 minutes</dd></div>
         <div><dt>Where</dt><dd>Google Meet</dd></div>
         <div><dt>Cost</dt><dd>&euro;50, eight places</dd></div>
@@ -405,7 +434,7 @@ footer a:hover { color: var(--orange-soft); }
   </div>
 </header>
 
-<section>
+<section id="whats-involved">
   <div class="wrap">
     <span class="label">Before the drill itself</span>
     <h2>Most of us never practise this</h2>
@@ -433,8 +462,8 @@ footer a:hover { color: var(--orange-soft); }
 <section>
   <div class="wrap">
     <span class="label">What is at stake</span>
-    <h2>It isn&rsquo;t the news. It is whether you lose an ally.</h2>
-    <p>People can take hard news. What they can&rsquo;t take, what they carry for years, is
+    <h2>What it costs you if you get it wrong</h2>
+    <p>The news is rarely the risk. People can take hard news. What they can&rsquo;t take, what they carry for years, is
     walking out thinking <em>that company never really cared about me</em>. And then telling
     that story to everyone they meet.</p>
 
