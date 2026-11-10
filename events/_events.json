@@ -22,7 +22,9 @@
     "set per event. The pages had said ten while the sign-up fineprint said two were left",
     "of a room of twelve, so one page carried three different capacities. G's ruling.",
     "",
-    "9 November 2026: the public speaking drill moves to Wednesday 2 December. The 9 November session ran and the page was still advertising that date afterwards, so anyone landing on it was being offered a drill that had already happened. The 11:00 UTC slot is unchanged, which is 18:00 in Phnom Penh and 12:00 in Warsaw."
+    "9 November 2026: the public speaking drill moves to Wednesday 2 December. The 9 November session ran and the page was still advertising that date afterwards, so anyone landing on it was being offered a drill that had already happened. The 11:00 UTC slot is unchanged, which is 18:00 in Phnom Penh and 12:00 in Warsaw.",
+    "",
+    "10 November 2026: 'Tough Conversations: Giving Feedback' is renamed 'Letting Someone Go'. G rewrote the page around the one scenario rather than the category, and all three practice scenarios are now variants of it. The URL stays /events/tough-conversations/ because the slug is in _redirects, the ics path and every link already shared."
   ],
   "_howToCheck": "python scripts/check_event_facts.py  (the page)\npython scripts/build_ics.py --check   (the calendar file)",
   "events": {
@@ -58,7 +60,7 @@
       ]
     },
     "tough-conversations": {
-      "name": "Tough Conversations: Giving Feedback",
+      "name": "Letting Someone Go",
       "page": "events/tough-conversations/index.html",
       "startsUtc": "2026-11-30T11:00:00Z",
       "endsUtc": "2026-11-30T12:50:00Z",

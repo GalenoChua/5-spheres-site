@@ -1,6 +1,6 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//The 5 Spheres of Empathy//Tough Conversations: Giving Feedback//EN
+PRODID:-//The 5 Spheres of Empathy//Letting Someone Go//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
@@ -8,7 +8,7 @@ UID:tough-conversations-2026-11-30@5spheresofempathy.com
 DTSTAMP:20261130T110000Z
 DTSTART:20261130T110000Z
 DTEND:20261130T125000Z
-SUMMARY:Tough Conversations: Giving Feedback
+SUMMARY:Letting Someone Go
 DESCRIPTION:A 110-minute live session on delivering hard news so the othe
  r person still leaves feeling respected.\n\nYou deliver\, somebody recei
  ves it\, and both of you score it. Bring a real conversation you are avo
@@ -20,7 +20,7 @@ STATUS:CONFIRMED
 BEGIN:VALARM
 TRIGGER:-PT1H
 ACTION:DISPLAY
-DESCRIPTION:Tough Conversations: Giving Feedback starts in an hour
+DESCRIPTION:Letting Someone Go starts in an hour
 END:VALARM
 END:VEVENT
 END:VCALENDAR
