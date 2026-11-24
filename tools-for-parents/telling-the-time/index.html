@@ -659,6 +659,12 @@
         });
         choices.appendChild(b);
       });
+    } else {
+      /* Levels 1 to 3 get "Got it" and "Missed" at the same moment as the
+         clock face. Gating them behind "Show answer" meant a parent working
+         through a question out loud had to tap a button they did not want,
+         just to record what the child had already said. */
+      showMark();
     }
   }
 
@@ -676,12 +682,18 @@
     if(level!==4){
       $("tt-feedback").textContent = phrase(cur.h,cur.m) + (py ? "  ·  "+py : "");
       $("tt-feedback").className="tt-feedback";
-      showMark();
+      /* The marking buttons are already on the page from render(). Rebuilding
+         them here wiped which one the parent had tapped, and left two buttons
+         that looked live and were not, because the done flag lives on the
+         container and survived the rebuild. */
     }
   }
 
   /* Levels 1 to 3 have no machine-markable answer, so the score moves on a
-     parent's say-so. Without these two buttons the score never moved at all. */
+     parent's say-so. Without these two buttons the score never moved at all.
+     Called from render(), so they appear with the question and a reveal is
+     optional. A new question calls render() again, which clears the done flag
+     and rebuilds them unmarked. */
   function showMark(){
     var t=T[lang], c=$("tt-choices");
     c.innerHTML="";
