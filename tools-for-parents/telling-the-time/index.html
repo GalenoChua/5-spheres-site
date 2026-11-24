@@ -9,9 +9,9 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-<meta name="description" content="A free clock app for learning to tell the time. Four levels, draggable hands, English, Polish and Mandarin with pinyin, and a history card for every hour.">
+<meta name="description" content="A free clock app for learning to tell the time. Four levels, draggable hands, five languages with pinyin you can switch off, and a history card for every hour.">
 <meta property="og:title" content="Telling the Time | The 5 Spheres of Empathy">
-<meta property="og:description" content="A free clock app for learning to tell the time. Four levels, draggable hands, English, Polish and Mandarin with pinyin, and a history card for every hour.">
+<meta property="og:description" content="A free clock app for learning to tell the time. Four levels, draggable hands, five languages with pinyin you can switch off, and a history card for every hour.">
 <meta property="og:image" content="https://5spheresofempathy.com/og.png">
 <meta property="og:url" content="https://5spheresofempathy.com/tools-for-parents/telling-the-time/">
 <meta property="og:type" content="website">
@@ -60,6 +60,12 @@
   .tt-apptitle { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700;
                  color: var(--tt-ink); margin: 0; }
 
+  /* Five language pills, not three, as of 24 November 2026, and this rule is
+     unchanged on purpose. Measured in a browser at 320, 360 and 390px: all
+     five fit on one row with nothing clipped and no sideways scroll, because
+     .tt-head already wraps and drops the whole group onto its own line under
+     the title. A wrap and a narrower pill were added here and then taken back
+     out, because neither changed a single measurement. */
   .tt-langs { display: flex; gap: 6px; }
   .tt-langs button {
     border: 1.5px solid var(--tt-line); background: var(--tt-card); color: var(--tt-muted);
@@ -239,6 +245,8 @@
         <button type="button" data-tt-lang="en" aria-pressed="true">EN</button>
         <button type="button" data-tt-lang="pl" aria-pressed="false">PL</button>
         <button type="button" data-tt-lang="zh" aria-pressed="false">中文</button>
+        <button type="button" data-tt-lang="id" aria-pressed="false">ID</button>
+        <button type="button" data-tt-lang="fr" aria-pressed="false">FR</button>
       </div>
     </div>
 
@@ -312,7 +320,7 @@
   <div class="wrap-narrow">
     <div class="label">How this works</div>
     <h2>Nothing is collected</h2>
-    <p>No accounts, no adverts, no third party trackers and no analytics on this page. Nothing you or your child does here is sent anywhere. The app remembers three things in your own browser on your own device, the level, the app language and the trivia language, and it keeps them nowhere else. Clear your browser data and they are gone.</p>
+    <p>No accounts, no adverts, no third party trackers and no analytics on this page. Nothing you or your child does here is sent anywhere. The app remembers four things in your own browser on your own device, the level, the app language, the trivia language and whether pinyin is showing, and it keeps them nowhere else. Clear your browser data and they are gone.</p>
     <p><a href="/tools-for-parents/">Back to Tools for Parents</a></p>
   </div>
 </section>
@@ -416,11 +424,66 @@
       score:function(c,t){return "答对 (dáduì)："+c+" / "+t;},
       levels:[["热身 (rèshēn)","整点和半点 (zhěngdiǎn hé bàndiǎn)"],["数五 (shǔ wǔ)","数分钟 (shǔ fēnzhōng)"],["一刻 (yí kè)","几点一刻 / 差一刻 (jǐ diǎn yí kè / chà yī kè)"],["配对 (pèiduì)","选时间 (xuǎn shíjiān)"]],
       note:"一起学习。拖动橙色指针来出题。(yìqǐ xuéxí. tuōdòng chéngsè zhǐzhēn lái chūtí.)"
+    },
+    /* Bahasa Indonesia and French, added 24 November 2026 to match reference
+       version 12. Both sets are machine translations and have not been read by
+       a native speaker. They are flagged as such in the review note and should
+       not go live unreviewed. */
+    id:{
+      title:"Belajar Membaca Jam",
+      oclock:function(h){return "pukul "+h;},
+      half:function(h){return "pukul "+h+" tiga puluh";},
+      qpast:function(h){return "pukul "+h+" lewat seperempat";},
+      qto:function(h){return "pukul "+nextH(h)+" kurang seperempat";},
+      minpast:function(m,h){return "pukul "+h+" lewat "+m;},
+      minto:function(m,h){return "pukul "+nextH(h)+" kurang "+m;},
+      newq:"Soal baru", reveal:"Tampilkan jawaban", gotIt:"Benar ✓", missed:"Salah ✗",
+      good:["Ya! Bagus sekali.","Benar!","Sempurna.","Tepat sekali!"],
+      try:["Belum tepat, coba lagi.","Hampir! Coba sekali lagi.","Lihat jarum panjangnya."],
+      prompt1:"Pukul berapa sekarang?",
+      prompt2:"Hitung lima-lima. Pukul berapa sekarang?",
+      prompt3:"Pukul berapa sekarang?",
+      prompt4:"Jam digital mana yang cocok dengan jam ini?",
+      hint1:"Jarum pendek menunjukkan jam. Jarum panjang ke 12 untuk tepat, ke 6 untuk setengah.",
+      hint2:"Setiap angka bernilai 5 menit. Hitung 5, 10, 15 mengelilingi jam dari angka 12.",
+      hint3:"Seperempat itu 15 menit. Kurang seperempat itu 15 menit sebelum jam berikutnya.",
+      hint4:"Baca jamnya, lalu ketuk waktu digital yang cocok.",
+      score:function(c,t){return "Benar: "+c+" dari "+t;},
+      levels:[["Pemanasan","tepat & setengah"],["Lima-lima","hitung menitnya"],["Seperempat","lewat / kurang seperempat"],["Cocokkan","pilih waktunya"]],
+      note:"Untuk dikerjakan bersama. Seret jarum oranye untuk membuat soal sendiri."
+    },
+    fr:{
+      title:"Lire l'heure",
+      oclock:function(h){return frH(h);},
+      half:function(h){return frH(h)+" et demie";},
+      qpast:function(h){return frH(h)+" et quart";},
+      qto:function(h){return frH(nextH(h))+" moins le quart";},
+      minpast:function(m,h){return frH(h)+" "+m;},
+      minto:function(m,h){return frH(nextH(h))+" moins "+m;},
+      newq:"Nouvelle question", reveal:"Montrer la réponse", gotIt:"Réussi ✓", missed:"Manqué ✗",
+      good:["Oui ! Bravo.","C'est juste !","Parfait.","Exactement !"],
+      try:["Pas tout à fait, réessaie.","Presque ! Encore une fois.","Regarde la grande aiguille."],
+      prompt1:"Quelle heure est-il ?",
+      prompt2:"Compte de cinq en cinq. Quelle heure est-il ?",
+      prompt3:"Quelle heure est-il ?",
+      prompt4:"Quelle heure numérique correspond à l'horloge ?",
+      hint1:"La petite aiguille donne l'heure. La grande pointe le 12 pour l'heure juste, et le 6 pour la demie.",
+      hint2:"Chaque chiffre vaut 5 minutes. Compte 5, 10, 15 autour de l'horloge depuis le 12.",
+      hint3:"Et quart, c'est 15 minutes. Moins le quart, c'est 15 minutes avant l'heure suivante.",
+      hint4:"Lis l'horloge, puis touche l'heure numérique qui correspond.",
+      score:function(c,t){return "Réussi : "+c+" sur "+t;},
+      levels:[["Échauffement","heure juste et demie"],["Les cinq","compte les minutes"],["Les quarts","et quart / moins le quart"],["Associe","choisis l'heure"]],
+      note:"À faire ensemble. Fais glisser l'aiguille orange pour créer tes propres questions."
     }
   };
 
   function nextH(h){ return h===12?1:h+1; }
   function nextZh(h){ return h===12?1:h+1; }
+
+  /* French: one hour is "une heure", the rest take the plural. Twelve stays
+     "douze heures" rather than "midi", because the clock face cannot tell a
+     parent whether it is noon or midnight and the app must not guess. */
+  function frH(h){ return h===1 ? "une heure" : h+" heures"; }
 
   /* Polish: feminine ordinal, nominative. Nine o'clock is dziewiata, never godzina 9. */
   function plNom(h){
@@ -430,6 +493,15 @@
   /* Polish: feminine ordinal, genitive, used after po and wpol do. */
   function plGen(h){
     var o=["","pierwszej","drugiej","trzeciej","czwartej","piątej","szóstej","siódmej","ósmej","dziewiątej","dziesiątej","jedenastej","dwunastej"];
+    return o[h];
+  }
+  /* Polish: the afternoon and evening name for the same clock position, which
+     is what a Polish child hears outside school hours. The face shows 6 and
+     the answer at six in the evening is osiemnasta, not szosta, so a reveal
+     that only ever says szosta teaches half the language. Twelve is handled by
+     the caller, because dwunasta covers both midday and midnight. */
+  function plNom24(h){
+    var o=["","trzynasta","czternasta","piętnasta","szesnasta","siedemnasta","osiemnasta","dziewiętnasta","dwudziesta","dwudziesta pierwsza","dwudziesta druga","dwudziesta trzecia"];
     return o[h];
   }
   function plMin(m){
@@ -675,12 +747,25 @@
     f.className="tt-feedback "+(ok?"tt-is-good":"tt-is-try");
   }
 
+  /* Polish only: the morning and the evening name for the hour the answer is
+     about, e.g. "szósta / osiemnasta". Which hour that is depends on the
+     phrasing: wpół do, za kwadrans and za X all name the NEXT hour, so pairing
+     the hour under the hand would print the wrong word in those three cases. */
+  function plHourPair(h,m){
+    var usesNext = (m===30 || m===45 || m>30);
+    var hh = usesNext ? nextH(h) : h;
+    /* Twelve has no second name here: dwunasta is both midday and midnight. */
+    return plNom(hh) + (hh===12 ? "" : " / " + plNom24(hh));
+  }
+
   function reveal(){
     var py=pinyin(cur.h,cur.m);
     var pyBit = py ? ' <small>&nbsp;('+py+')</small>' : '';
-    $("tt-digital").innerHTML = digital(cur.h,cur.m)+' <small>&nbsp;'+phrase(cur.h,cur.m)+'</small>'+pyBit;
+    var pl24 = (lang==="pl") ? ' <small>&nbsp;('+plHourPair(cur.h,cur.m)+')</small>' : '';
+    $("tt-digital").innerHTML = digital(cur.h,cur.m)+' <small>&nbsp;'+phrase(cur.h,cur.m)+'</small>'+pl24+pyBit;
     if(level!==4){
-      $("tt-feedback").textContent = phrase(cur.h,cur.m) + (py ? "  ·  "+py : "");
+      var plBit = (lang==="pl") ? "  ("+plHourPair(cur.h,cur.m)+")" : "";
+      $("tt-feedback").textContent = phrase(cur.h,cur.m) + plBit + (py ? "  ·  "+py : "");
       $("tt-feedback").className="tt-feedback";
       /* The marking buttons are already on the page from render(). Rebuilding
          them here wiped which one the parent had tapped, and left two buttons
