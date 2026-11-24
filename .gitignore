@@ -9,6 +9,13 @@
 .vscode/
 .idea/
 
+# Bytecode from the scripts in /scripts/. Running check_site.py or
+# build_blog.py drops it, so it turns up on any machine that runs the checks.
+# It matters more here than in most repositories: the publish directory is the
+# repository root, so a committed .pyc is downloadable from the live site.
+__pycache__/
+*.py[cod]
+
 # OS and shell cruft
 .DS_Store
 Thumbs.db
