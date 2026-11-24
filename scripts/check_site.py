@@ -186,6 +186,22 @@ BEACON_HOST = "static.cloudflareinsights.com"
 REPORT_HOST = "cloudflareinsights.com"
 
 
+# Pages that deliberately carry NO analytics beacon, each with the reason.
+# Every other page must have it, and a page added without it is a page nobody
+# can see the traffic for, which is what this list has to stay short enough to
+# keep catching.
+#
+# The Tools for Parents pages tell a parent, in their own copy, that there are
+# no trackers and no analytics on them. A beacon here would make the page say
+# something untrue, which is worse than the missing measurement. Ruled from
+# G's brief of 24 November 2026: no analytics, no ads, no third-party
+# trackers, no accounts, local storage only, stated plainly on the page.
+NO_BEACON = {
+    "tools-for-parents/index.html": "the page promises no trackers",
+    "tools-for-parents/telling-the-time/index.html": "the page promises no trackers",
+}
+
+
 def check_analytics():
     """Every page carries the beacon, and the CSP lets it through.
 
@@ -208,10 +224,22 @@ def check_analytics():
     """
     missing = []
     for path in pages():
+        if rel(path) in NO_BEACON:
+            continue
         if BEACON_HOST not in io.open(path, encoding="utf-8").read():
             missing.append(rel(path))
     check(not missing, "%d page(s) carry no analytics beacon" % len(missing),
           ", ".join(sorted(missing)[:5]))
+
+    # An excluded page that quietly grew a beacon back is the other half of
+    # this check. The promise on the page is the thing being protected, and a
+    # beacon added by a later copy-paste would break it without failing
+    # anything.
+    gained = [p for p in sorted(NO_BEACON)
+              if os.path.exists(os.path.join(ROOT, p))
+              and BEACON_HOST in io.open(os.path.join(ROOT, p), encoding="utf-8").read()]
+    check(not gained, "%d page(s) promise no analytics and carry a beacon" % len(gained),
+          ", ".join(gained))
 
     headers = io.open(os.path.join(ROOT, "_headers"), encoding="utf-8").read()
     csp = ""

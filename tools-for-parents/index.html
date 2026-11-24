@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tools for Parents | The 5 Spheres of Empathy</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+<meta name="description" content="Free web tools for teaching a child something small and concrete. Built for my own kids, shared with other parents. No accounts, no ads, nothing collected.">
+<meta property="og:title" content="Tools for Parents | The 5 Spheres of Empathy">
+<meta property="og:description" content="Free web tools for teaching a child something small and concrete. Built for my own kids, shared with other parents. No accounts, no ads, nothing collected.">
+<meta property="og:image" content="https://5spheresofempathy.com/og.png">
+<meta property="og:url" content="https://5spheresofempathy.com/tools-for-parents/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://5spheresofempathy.com/tools-for-parents/">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* The shared .grid is three fixed columns, which leaves a single tool
+     stranded at a third of the width and reading as a layout fault rather
+     than as a section with one entry in it. Sizing to content means adding
+     the second and third tools changes nothing here. */
+  .tfp-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 340px)); }
+
+  /* The site has no generic rule for a link in body copy, so one falls back
+     to browser blue and underline. The styled convention elsewhere on the
+     site is ember and semibold; scoped here rather than added globally,
+     because changing every bare link on the site is not this build's call. */
+  .tfp-copy a { color: var(--ember); font-weight: 600; text-decoration: none; }
+  .tfp-copy a:hover { text-decoration: underline; }
+  /* styles.css zeroes every margin, and these sections are the first on
+     the site to carry two paragraphs in a row, so the second ran straight
+     on under the first with no gap. */
+  .tfp-copy p + p { margin-top: 14px; }
+</style>
+</head>
+<body class="resource-page">
+
+<nav>
+  <div class="wrap">
+    <a class="mark" href="/">The 5 Spheres<span>.</span></a>
+    <div class="nav-links">
+      <a class="cta" href="/the-method/">The Method</a>
+      <a class="cta" href="/coaching/">Coaching</a>
+      <div class="nav-group">
+        <a class="cta" href="/community/">Community</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/skilldrills/">Skill Drills<span>Ninety minutes on one skill</span></a>
+            <a href="/agree-to-disagree/">Agree to Disagree<span>The live leadership roundtable</span></a>
+            <a href="/sustainability-tours/">Sustainability Tours<span>Behind the scenes, in person and virtual</span></a>
+            <a href="/events/">Events<span>Live sessions on the method</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta" href="/field-notes/">Field Notes</a>
+      <div class="nav-group">
+        <a class="cta" href="/resources/">Resources</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/resources/">Tools and downloads<span>Worksheets, checklists and reference sheets</span></a>
+            <a href="/bsfp-accelerator/">Business Sustainability<span>Free eighteen lesson course</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta" href="https://app.5spheresofempathy.com/start">Log in</a>
+      <a class="cta nav-primary" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">The Field Guide</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero-dark">
+  <div class="deco"></div>
+  <div class="wrap-narrow">
+    <div class="kicker">Tools for Parents</div>
+    <h1>Small tools, built for my own kids.</h1>
+    <p>Teaching a seven-year-old to read a clock face takes more patience than either of you expects, and the apps that promise to help mostly want an account and an advert break. So I built one. It worked, so it is here, free, for anyone else sitting at a kitchen table with the same problem. More will follow as my children hand me the next thing they cannot do yet.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap-narrow">
+    <div class="label">Available now</div>
+    <h2>The tools</h2>
+    <div class="grid tfp-grid">
+      <div class="rcard">
+        <h3>Telling the Time</h3>
+        <p>Four levels, from o'clock and half past through to matching an analogue face against a digital one. The hands drag, so you can set your own questions by hand. English, Polish and Mandarin, with pinyin you can switch off, and a history card for every hour on the clock in five languages.</p>
+        <a href="/tools-for-parents/telling-the-time/">Open the app</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="more tfp-copy">
+  <div class="wrap-narrow">
+    <div class="label">How these work</div>
+    <h2>Nothing is collected</h2>
+    <p>There are no accounts, no adverts, no third party trackers and no analytics on these pages. Nothing you or your child does here is sent anywhere or seen by me. Each tool remembers two things, the level and the language you last used, and it keeps them in your own browser on your own device. Clear your browser data and they are gone. That is the whole of it.</p>
+    <p>If something is broken or wrong, or if there is a tool your child needs that is not here, <a href="mailto:hello@5spheresofempathy.com">tell me</a> and I will look at it.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
+    <div><a href="/">Home</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@5spheresofempathy.com">Get in touch</a> &nbsp;&middot;&nbsp; <a href="/privacy/">Privacy</a></div>
+  </div>
+</footer>
+
+</body>
+</html>
