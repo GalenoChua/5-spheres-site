@@ -199,6 +199,7 @@ REPORT_HOST = "cloudflareinsights.com"
 NO_BEACON = {
     "tools-for-parents/index.html": "the page promises no trackers",
     "tools-for-parents/telling-the-time/index.html": "the page promises no trackers",
+    "tools-for-parents/feedback/index.html": "the page promises no trackers",
 }
 
 
@@ -264,6 +265,93 @@ def check_analytics():
 
 
 # ------------------------------------------------------------------ blog ---
+def check_parent_feedback():
+    """The feedback form and the function that stores it agree on the words.
+
+    The page posts four field names and a fixed set of values for three of
+    them. The function allowlists exactly those, and answers 400 to anything
+    else. Nothing connects the two but the strings, so renaming a value in
+    either file turns every submission into a silent 400 that the parent sees
+    as "that did not send" and nobody sees as a bug.
+
+    Checked by reading both files, because the alternative is a deploy.
+    """
+    page_path = os.path.join(ROOT, "tools-for-parents", "feedback", "index.html")
+    mod_path = os.path.join(ROOT, "netlify", "functions", "_parent_feedback.mjs")
+    for path in (page_path, mod_path):
+        if not os.path.exists(path):
+            check(False, "the parent feedback form is missing a half", rel(path))
+            return
+    page = io.open(page_path, encoding="utf-8").read()
+    mod = io.open(mod_path, encoding="utf-8").read()
+
+    # The values the function will accept, read out of the module rather than
+    # repeated here, so this check cannot drift from it either.
+    def arr(name):
+        m = re.search(r"export const " + name + r" = \[([^\]]*)\]", mod)
+        if not m:
+            return None
+        return [v.strip().strip("'\"") for v in m.group(1).split(",") if v.strip()]
+
+    for name, field in (("HELPED", "helped"), ("MINUTES", "minutes")):
+        allowed = arr(name)
+        if allowed is None:
+            check(False, "%s is not readable in _parent_feedback.mjs" % name)
+            continue
+        offered = re.findall(
+            r'<input type="radio" name="' + field + r'"[^>]*value="([^"]+)"', page)
+        check(offered, "the form offers no %s option" % field)
+        extra = [v for v in offered if v not in allowed]
+        check(not extra, "the form offers a %s value the function rejects" % field,
+              ", ".join(extra))
+        unoffered = [v for v in allowed if v not in offered]
+        check(not unoffered, "the function allows a %s value the form never offers" % field,
+              ", ".join(unoffered))
+
+    tools = arr("TOOLS") or []
+    sent = re.findall(r'id="pf-tool" value="([^"]+)"', page)
+    check(sent, "the form names no tool")
+    check(all(t in tools for t in sent),
+          "the form names a tool the function rejects", ", ".join(sent))
+
+    # The endpoint the page posts to has to be the file that is deployed.
+    for name in re.findall(r'fetch\("/\.netlify/functions/([a-z-]+)"', page):
+        check(os.path.exists(os.path.join(ROOT, "netlify", "functions", name + ".mjs")),
+              "the form posts to a function that does not exist", name)
+
+    # The text limit is in three places: the textarea, the counter and the
+    # module. All three have to say the same number or the parent is told one
+    # thing and the server does another.
+    limit = re.search(r"export const MAX_LEARNED = (\d+)", mod)
+    check(limit, "MAX_LEARNED is not readable in _parent_feedback.mjs")
+    if limit:
+        n = limit.group(1)
+        check('maxlength="%s"' % n in page,
+              "the textarea does not stop at MAX_LEARNED", n)
+        check("var LIMIT=%s;" % n in page,
+              "the character counter does not count down from MAX_LEARNED", n)
+
+    # The reader is the only way to see the answers and it must stay closed
+    # until the token is set. An unset variable failing open would publish
+    # every answer at a URL in the repository.
+    reader = os.path.join(ROOT, "netlify", "functions", "parent-feedback-read.mjs")
+    if os.path.exists(reader):
+        r = io.open(reader, encoding="utf-8").read()
+        check("process.env.PARENT_FEEDBACK_TOKEN" in r,
+              "the feedback reader does not read its token from the environment")
+        check("PARENT_FEEDBACK_TOKEN" not in page,
+              "the token name should not be in a page")
+        check(not re.search(r"PARENT_FEEDBACK_TOKEN\s*\|\|", r),
+              "the feedback reader falls back to a default token")
+
+    # And the writer must not be able to read.
+    writer = os.path.join(ROOT, "netlify", "functions", "parent-feedback.mjs")
+    if os.path.exists(writer):
+        w = io.open(writer, encoding="utf-8").read()
+        check(".get(" not in w and ".list(" not in w,
+              "the feedback writer can read the store")
+
+
 def check_blog():
     """The rendered site has to match the markdown and the pages on disk.
 
@@ -488,6 +576,7 @@ def main():
     check_forms()
     check_lists()
     check_analytics()
+    check_parent_feedback()
     check_blog()
     check_links()
     check_calendar()
