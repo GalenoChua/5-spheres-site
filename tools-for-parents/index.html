@@ -9,9 +9,9 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-<meta name="description" content="Free web tools for teaching a child something small and concrete, and a reason to sit down with them while you do. No accounts, no ads, nothing collected.">
+<meta name="description" content="Free web tools for teaching a child something small and concrete, and a reason to sit down with them while you do. No accounts, no adverts, no trackers.">
 <meta property="og:title" content="Tools for Parents | The 5 Spheres of Empathy">
-<meta property="og:description" content="Free web tools for teaching a child something small and concrete, and a reason to sit down with them while you do. No accounts, no ads, nothing collected.">
+<meta property="og:description" content="Free web tools for teaching a child something small and concrete, and a reason to sit down with them while you do. No accounts, no adverts, no trackers.">
 <meta property="og:image" content="https://5spheresofempathy.com/og.png">
 <meta property="og:url" content="https://5spheresofempathy.com/tools-for-parents/">
 <meta property="og:type" content="website">
@@ -35,6 +35,81 @@
      the site to carry two paragraphs in a row, so the second ran straight
      on under the first with no gap. */
   .tfp-copy p + p { margin-top: 14px; }
+
+  /* FREE TOOLS ON ONE SIDE, A THING TO BACK ON THE OTHER.
+     Two kinds of offer on one page, and a parent has to be able to tell at a
+     glance which is which: the tools cost nothing and ask for nothing, and
+     Frog Rock asks for an address and eventually for money. Side by side with
+     different surfaces is how that reads without a sentence explaining it.
+     This section uses .wrap rather than .wrap-narrow, because 820px split in
+     two gives each column 380px and the form inside one of them needs more. */
+  .tfp-split { display: grid; gap: 30px; align-items: start; }
+  @media (min-width: 900px) { .tfp-split { grid-template-columns: 1fr 1fr; } }
+  .tfp-side h2 { font-size: 1.5rem; margin-bottom: 4px; }
+  .tfp-side > p { color: var(--muted); font-size: .95rem; margin-bottom: 18px; max-width: 46ch; }
+
+  /* The backing panel. Warm paper and an ember edge, which is the idiom the
+     rest of the site already uses for "this one is different". */
+  .fr-panel {
+    background: var(--paper-warm); border: 1.5px solid var(--line);
+    border-left: 3px solid var(--ember); border-radius: 14px; padding: 24px;
+  }
+  .fr-panel h3 { font-size: 1.2rem; }
+  .fr-panel p { font-size: .95rem; margin-top: 12px; }
+  .fr-panel p:first-of-type { margin-top: 10px; }
+  .fr-panel a { color: var(--ember); font-weight: 600; text-decoration: none; }
+  .fr-panel a:hover { text-decoration: underline; }
+
+  /* The three open questions, marked as open on the page rather than resolved
+     quietly in copy. G has not decided what the next installment contains,
+     what a hundred counts, or what one costs, and a page that printed a guess
+     would be making a promise to a backer on his behalf. */
+  .fr-pending {
+    margin-top: 18px; border: 1.5px dashed var(--line); border-radius: 12px;
+    padding: 14px 16px; background: var(--paper);
+  }
+  .fr-pending .fr-tag {
+    font-size: .72rem; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ember);
+  }
+  .fr-pending p { font-size: .9rem; margin-top: 6px; }
+
+  /* The counter. A number, a bar and a target. */
+  .fr-count { margin-top: 20px; }
+  .fr-num { font-family: 'Fraunces', serif; font-weight: 700; font-size: 2.1rem;
+            color: var(--ink); line-height: 1.1; }
+  .fr-of { font-size: .95rem; color: var(--muted); }
+  .fr-bar {
+    margin-top: 10px; height: 12px; border-radius: 999px;
+    background: var(--paper); border: 1.5px solid var(--line); overflow: hidden;
+  }
+  .fr-fill { height: 100%; width: 0; background: var(--ember); border-radius: 999px; }
+  .fr-note { font-size: .85rem; color: var(--muted); margin-top: 8px; }
+
+  /* The form. Same pill-and-field language as the feedback form, so the two
+     read as one section rather than two builds. */
+  .fr-form { margin-top: 22px; }
+  .fr-field { margin-top: 14px; }
+  .fr-field label { display: block; font-weight: 600; font-size: .95rem; color: var(--ink); }
+  .fr-field .fr-aside { font-size: .85rem; color: var(--muted); }
+  .fr-field input {
+    width: 100%; margin-top: 6px; border: 1.5px solid var(--line); border-radius: 12px;
+    background: var(--paper); color: var(--text); font: inherit; font-size: 1rem;
+    padding: 12px 14px;
+  }
+  .fr-field input:focus-visible { outline: 3px solid var(--ember); outline-offset: 1px; }
+  .fr-send {
+    margin-top: 20px; border: 0; background: var(--ember); color: #2a1a06;
+    border-radius: 12px; padding: 14px 26px; font: inherit; font-size: 1rem;
+    font-weight: 700; cursor: pointer;
+  }
+  .fr-send[disabled] { opacity: .55; cursor: default; }
+  .fr-say { margin-top: 14px; font-size: .95rem; font-weight: 600; min-height: 1.4em; }
+  .fr-say.fr-bad { color: #9c3a28; }
+  .fr-thanks { display: none; }
+  .fr-thanks.fr-show { display: block; }
+  .fr-done .fr-form { display: none; }
+  .fr-small { font-size: .85rem; color: var(--muted); margin-top: 18px; }
 </style>
 </head>
 <body class="resource-page">
@@ -77,20 +152,90 @@
   <div class="wrap-narrow">
     <div class="kicker">Tools for Parents</div>
     <h1>Small tools, built for my own kids.</h1>
-    <p>Teaching a seven-year-old to read a clock face takes more patience than either of you expects, and the apps that promise to help mostly want an account and an advert break. So I built one. It worked, so it is here, free, for anyone else sitting at a kitchen table with the same problem. More will follow as my children hand me the next thing they cannot do yet.</p>
+    <p>Teaching a seven-year-old to read a clock face takes more patience than either of you expects, and the apps that promise to help mostly want an account and an advert break. So I built one. It worked, so it is here, free, for anyone else sitting at a kitchen table with the same problem. More will follow as my children hand me the next thing they cannot do yet. There is also Frog Rock, which is mine and which is not a tool, and a way to help me make the next part of it.</p>
   </div>
 </header>
 
 <section>
-  <div class="wrap-narrow">
-    <div class="label">Available now</div>
-    <h2>The tools</h2>
-    <div class="grid tfp-grid">
-      <div class="rcard">
-        <h3>Telling the Time</h3>
-        <p>Four levels, from o'clock and half past through to matching an analogue face against a digital one. The hands drag, so you can set your own questions by hand. English, Polish, Mandarin, Bahasa Indonesia and French, with pinyin you can switch off, and a history card for every hour on the clock.</p>
-        <a href="/tools-for-parents/telling-the-time/">Open the app</a>
+  <div class="wrap">
+    <div class="tfp-split">
+
+      <div class="tfp-side">
+        <div class="label">Free tools</div>
+        <h2>Open one, use it, close it</h2>
+        <p>Nothing to sign up for, nothing to pay and nothing collected. Built because one of my children could not do the thing yet.</p>
+        <div class="grid tfp-grid">
+          <div class="rcard">
+            <h3>Telling the Time</h3>
+            <p>Four levels, from o'clock and half past through to matching an analogue face against a digital one. The hands drag, so you can set your own questions by hand. English, Polish, Mandarin, Bahasa Indonesia and French, with pinyin you can switch off, and a history card for every hour on the clock.</p>
+            <a href="/tools-for-parents/telling-the-time/">Open the app</a>
+          </div>
+        </div>
       </div>
+
+      <div class="tfp-side">
+        <div class="label">Something to back</div>
+        <h2>Frog Rock</h2>
+        <p>Not a tool and not free. A thing of mine that is unfinished, and a hundred people are what it takes to finish the next part.</p>
+
+        <div class="fr-panel">
+          <h3>I will make the next installment once a hundred people have backed it</h3>
+          <p>Frog Rock is mine and it is not finished. Pre-payment is what lets me put real hours against it instead of the hours left over at the end of a week, and most of what comes in goes to my illustrator, who I would rather pay properly than ask for a favour.</p>
+
+          <div class="fr-pending">
+            <div class="fr-tag">Not settled yet</div>
+            <p>Three things are open, and I would rather say so than print a number that moves. What the next installment contains. Whether a hundred means a hundred orders or a hundred in money. What one costs. Until I have answered those, this is not a sale, no money is taken and nothing is reserved.</p>
+          </div>
+
+          <div class="fr-count">
+            <div class="fr-num" id="fr-num" role="status" aria-live="polite">&middot;&middot;&middot;</div>
+            <div class="fr-of" id="fr-of">of 100</div>
+            <div class="fr-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                 aria-valuenow="0" aria-label="People who have backed Frog Rock, out of 100" id="fr-bar">
+              <div class="fr-fill" id="fr-fill"></div>
+            </div>
+            <p class="fr-note" id="fr-note">Counting.</p>
+          </div>
+
+          <form class="fr-form" id="fr-form" novalidate>
+            <div class="fr-field">
+              <label for="fr-email">Your email address</label>
+              <span class="fr-aside">So I can come back to you with the price and what you get.</span>
+              <input type="email" id="fr-email" name="email" autocomplete="email"
+                     inputmode="email" maxlength="254" placeholder="you@example.com">
+            </div>
+
+            <div class="fr-field">
+              <label for="fr-name">First name, if you like</label>
+              <input type="text" id="fr-name" name="name" autocomplete="given-name" maxlength="80">
+            </div>
+
+            <div class="fr-field">
+              <label for="fr-message">Anything you want me to know</label>
+              <span class="fr-aside">One line. Optional.</span>
+              <input type="text" id="fr-message" name="message" maxlength="300">
+            </div>
+
+            <!-- The honeypot. Pinned off screen on the element itself and not by a
+                 class, because a stylesheet rule does not reach every page and this
+                 field rendered full size on two of them once. A bot that fills it
+                 gets a success and nothing is stored. -->
+            <input type="text" name="website" id="fr-website" tabindex="-1" autocomplete="off"
+                   aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+
+            <button type="submit" class="fr-send" id="fr-send">Put me on the list</button>
+            <p class="fr-say" id="fr-say" role="status" aria-live="polite"></p>
+          </form>
+
+          <div class="fr-thanks" id="fr-thanks">
+            <h3>You are on the list.</h3>
+            <p>Nothing has been charged and nothing is owed. I will write to you once I know what the next installment is and what it costs, and you are free to say no then.</p>
+          </div>
+
+          <p class="fr-small">What happens to your address: it is used for Frog Rock and for nothing else. It does not join a mailing list and it is not passed to anybody. One line to <a href="mailto:hello@5spheresofempathy.com">hello@5spheresofempathy.com</a> takes you off again.</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -98,10 +243,12 @@
 <section class="tfp-copy">
   <div class="wrap-narrow">
     <div class="label">Why these are here</div>
-    <h2>Empathy is built or blocked at home, long before anyone calls it a skill</h2>
-    <p>I work with leaders on reading a room, sitting with disagreement and staying present under pressure. Almost none of it starts at work. It starts with whether a child was listened to while they were getting something wrong, and whether the adult beside them stayed.</p>
-    <p>That is hard to do with nothing in your hands. Sitting down to teach a seven-year-old the clock gives you a reason to be there, a thing to look at together, and twenty minutes where you are both working on the same problem. The learning is real, and it is also the cover story. What the child remembers is that you sat down.</p>
-    <p>So these tools are small on purpose. One thing a child cannot do yet, in a form you can open and close in one sitting, with no account and nothing to buy. The tool is the structure. The time is the point.</p>
+    <h2>I think parenting is the single biggest block on making the world better, and that is why I am doing this</h2>
+    <p>That is a larger sentence than a clock app deserves and I know it. I work with leaders on reading a room, sitting with disagreement and staying present when leaving would be easier. Almost none of it starts at work. It starts with whether a child was listened to while they were getting something wrong, and whether the adult beside them stayed in the room.</p>
+    <p>What I am after is holding space. A child who has been held while they were confused learns that being confused is survivable, and most of what I teach adults is built on that ground or is trying to lay it late. Listening well is the thing a chief executive is paid for, and we mostly learn it or fail to learn it at about six.</p>
+    <p>The other half of it is what I would call human intelligence. Being deeply curious about another person. Noticing what they have not said. Carrying yourself in a way a child can copy. None of that arrives by being told. A child picks it up from sitting near somebody who does it, which is why I keep coming back to modelling rather than instructing. Mine have learned more from watching how I handle being wrong than from anything I have ever explained to them.</p>
+    <p>All of which is hard to do with nothing in your hands. Sitting down to teach a seven-year-old the clock gives you a reason to be there, a thing to look at together, and twenty minutes where you are both working on the same problem. The learning is real, and it is also the cover story. What the child remembers is that you sat down. So each tool here does two jobs: it helps your child with one concrete thing, and it buys you the time.</p>
+    <p>The last part is the part I cannot do alone. If you tell me roughly how long you sat together, and you only do that if you want to, I can start to see whether any of this holds. I am not claiming it yet. I need enough answers to build a study on, about what that time does to the children, to the parents, and to the human intelligence of both.</p>
     <p>If you use one, <a href="/tools-for-parents/feedback/">tell me how it went</a>. Three questions, no names, and the answers decide what I build next.</p>
   </div>
 </section>
@@ -109,8 +256,9 @@
 <section class="more tfp-copy">
   <div class="wrap-narrow">
     <div class="label">How these work</div>
-    <h2>Nothing is collected</h2>
-    <p>There are no accounts, no adverts, no third party trackers and no analytics on these pages. Nothing you or your child does here is sent anywhere or seen by me. Each tool remembers two things, the level and the language you last used, and it keeps them in your own browser on your own device. Clear your browser data and they are gone. That is the whole of it.</p>
+    <h2>What is held, which is almost nothing</h2>
+    <p>The tools themselves collect nothing. No accounts, no adverts, no third party trackers and no analytics on any of these pages. Nothing you or your child does in the clock app is sent anywhere or seen by me. It remembers two things, the level and the language you last used, and it keeps them in your own browser on your own device. Clear your browser data and they are gone.</p>
+    <p>Two forms on this page do store something, and both are ones you choose to fill in. The <a href="/tools-for-parents/feedback/">three question form</a> stores the three answers and the time they arrived, with no name, no address and no identifier of any kind, which also means there is no way to connect two answers to the same parent. The Frog Rock list stores the email address you type, a first name if you give one, and one line if you write one. No card details are asked for anywhere on this site and none are held.</p>
     <p>If something is broken or wrong, or if there is a tool your child needs that is not here, <a href="mailto:hello@5spheresofempathy.com">tell me</a> and I will look at it. If you have used one with your child, the <a href="/tools-for-parents/feedback/">three question form</a> is the most useful thing you can send me.</p>
   </div>
 </section>
@@ -121,6 +269,103 @@
     <div><a href="/">Home</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@5spheresofempathy.com">Get in touch</a> &nbsp;&middot;&nbsp; <a href="/privacy/">Privacy</a></div>
   </div>
 </footer>
+
+<script>
+(function(){
+  "use strict";
+  var form=document.getElementById("fr-form");
+  if(!form) return;
+  var email=document.getElementById("fr-email");
+  var say=document.getElementById("fr-say");
+  var send=document.getElementById("fr-send");
+  var num=document.getElementById("fr-num");
+  var of=document.getElementById("fr-of");
+  var bar=document.getElementById("fr-bar");
+  var fill=document.getElementById("fr-fill");
+  var note=document.getElementById("fr-note");
+
+  /* ---------------------------------------------------------------- counter */
+  /* The count comes from the function, not from the page, so the number is the
+     one in the store rather than one somebody edited into the markup. If the
+     call fails the page says the count is not loading, because a counter
+     showing a confident zero when it knows nothing is worse than no counter. */
+  function paint(d){
+    var n=(d && typeof d.count==="number")?d.count:null;
+    var goal=(d && typeof d.goal==="number")?d.goal:100;
+    if(n===null){ unknown(); return; }
+    num.textContent=String(n);
+    of.textContent="of "+goal;
+    var pct=Math.max(0,Math.min(100,Math.round((n/goal)*100)));
+    fill.style.width=pct+"%";
+    bar.setAttribute("aria-valuenow",String(pct));
+    if(n===0){
+      note.textContent="Nobody yet. Be the first.";
+    }else if(d.reached){
+      note.textContent="The hundred is there. I owe everybody an answer on the price, and it is coming.";
+    }else{
+      note.textContent=n===1?"One person so far.":n+" people so far.";
+    }
+  }
+  function unknown(){
+    num.textContent="–";
+    of.textContent="of 100";
+    note.textContent="The count is not loading right now. The form still works.";
+    bar.setAttribute("aria-valuenow","0");
+  }
+  fetch("/.netlify/functions/frogrock-count",{headers:{"accept":"application/json"}})
+    .then(function(r){ if(!r.ok) throw new Error("http "+r.status); return r.json(); })
+    .then(paint).catch(unknown);
+
+  /* ------------------------------------------------------------------- form */
+  /* Checked here as well as in the function, so a typo is caught before a
+     round trip. The function is the one that decides. */
+  var EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  form.addEventListener("submit",function(ev){
+    ev.preventDefault();
+    say.className="fr-say";
+    var addr=(email.value||"").trim();
+    if(!addr){ say.className="fr-say fr-bad"; say.textContent="I need an email address to come back to you on."; email.focus(); return; }
+    if(!EMAIL.test(addr)){ say.className="fr-say fr-bad"; say.textContent="That address does not look right. Have another look at it."; email.focus(); return; }
+
+    send.disabled=true;
+    say.textContent="Sending.";
+
+    fetch("/.netlify/functions/frogrock-pledge",{
+      method:"POST",
+      headers:{"content-type":"application/json"},
+      body:JSON.stringify({
+        email:addr,
+        name:document.getElementById("fr-name").value,
+        message:document.getElementById("fr-message").value,
+        website:document.getElementById("fr-website").value
+      })
+    }).then(function(r){
+      if(!r.ok) throw new Error("http "+r.status);
+      return r.json();
+    }).then(function(d){
+      if(!d || d.ok!==true) throw new Error("not ok");
+      document.body.classList.add("fr-done");
+      var t=document.getElementById("fr-thanks");
+      t.className="fr-thanks fr-show";
+      t.scrollIntoView({block:"center"});
+      /* Refetch rather than adding one locally: a second pledge from the same
+         address overwrites the first in the store, so the count does not
+         always move and a page that incremented it would be lying. */
+      fetch("/.netlify/functions/frogrock-count",{cache:"no-store",headers:{"accept":"application/json"}})
+        .then(function(r){ return r.ok?r.json():null; }).then(function(x){ if(x) paint(x); })
+        .catch(function(){});
+    }).catch(function(){
+      /* Say what actually happened. A form that thanks somebody for a pledge
+         that never arrived is the failure the sign-up forms on this site spent
+         a month hiding. */
+      send.disabled=false;
+      say.className="fr-say fr-bad";
+      say.textContent="That did not send. Try again, or email hello@5spheresofempathy.com and I will put you on the list by hand.";
+    });
+  });
+})();
+</script>
 
 </body>
 </html>

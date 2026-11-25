@@ -352,6 +352,135 @@ def check_parent_feedback():
               "the feedback writer can read the store")
 
 
+def check_frogrock_pledge():
+    """The pledge panel and the functions behind it agree, and no money appears.
+
+    The page posts four field names to one function and reads a count from
+    another. Nothing connects the three files but the strings, so renaming a
+    field in any of them turns every pledge into a silent 400 that the person
+    sees as "that did not send" and nobody sees as a bug. That is the same trap
+    the feedback form is checked for above.
+
+    The second half is specific to this one. The build was told to stand up the
+    mechanic and the counter and to touch no money at all: no card data, no
+    amount, no processor, because G connects that himself once he has decided
+    what a pledge buys. A payment field added later by a copy-paste from another
+    form would look entirely ordinary in a diff. It fails here instead.
+    """
+    page_path = os.path.join(ROOT, "tools-for-parents", "index.html")
+    mod_path = os.path.join(ROOT, "netlify", "functions", "_frogrock_pledge.mjs")
+    for path in (page_path, mod_path):
+        if not os.path.exists(path):
+            check(False, "the Frog Rock pledge is missing a half", rel(path))
+            return
+    page = io.open(page_path, encoding="utf-8").read()
+    mod = io.open(mod_path, encoding="utf-8").read()
+    bare = strip_comments(page)
+
+    # The endpoints the page talks to have to be files that are deployed.
+    called = set(re.findall(r'fetch\("/\.netlify/functions/([a-z-]+)"', bare))
+    check("frogrock-pledge" in called, "the page does not post to the pledge function")
+    check("frogrock-count" in called, "the page does not read the counter function")
+    for name in called:
+        check(os.path.exists(os.path.join(ROOT, "netlify", "functions", name + ".mjs")),
+              "the page calls a function that does not exist", name)
+
+    # The target is one number in one place. Printed in the markup as well as
+    # drawn by script, because a page with script off still shows "of 100", and
+    # two places that can disagree is the whole reason this is checked.
+    goal = re.search(r"export const GOAL = (\d+)", mod)
+    check(goal, "GOAL is not readable in _frogrock_pledge.mjs")
+    if goal:
+        check("of %s" % goal.group(1) in bare,
+              "the page does not print GOAL as the target", goal.group(1))
+
+    # The unit is pending G's answer, so the module holds null and no page may
+    # print one. A unit in the copy would be a promise made on his behalf.
+    check(re.search(r"export const UNIT = null", mod),
+          "UNIT is no longer null in _frogrock_pledge.mjs",
+          "a unit was chosen somewhere without a ruling; check the page copy too")
+
+    # NO MONEY. Not a field on the page, and not a processor script either.
+    fields = re.findall(r"<(?:input|select)\b[^>]*>", bare)
+    for tag in fields:
+        check(not re.search(r"card|cvc|cvv|iban|amount|price|quantity|payment", tag, re.I),
+              "the pledge page carries a payment field", tag[:90])
+    for host in ("js.stripe.com", "paypal.com", "checkout.", "przelewy24", "payu"):
+        check(host not in bare, "the pledge page loads a payment script", host)
+    # Comments stripped first, for the reason strip_comments() exists: the note
+    # at the top of the module explains that a hundred might mean a hundred of a
+    # currency, and the first version of this check failed on its own rationale.
+    bare_mod = strip_comments(mod)
+    for word in ("amount", "currency", "card", "price", "quantity", "payment"):
+        check(word not in bare_mod.lower(),
+              "the pledge record has grown a money field", word
+              + ": this build takes no payment; see the note at the top of the module")
+
+    # The honeypot, hidden ON THE ELEMENT. A class is not enough: this site has
+    # pages that do not load styles.css and the field rendered full size on two
+    # of them.
+    pots = re.findall(r'<input[^>]*name="website"[^>]*>', bare)
+    check(len(pots) == 1, "the pledge form has %d honeypot(s), expected 1" % len(pots))
+    for tag in pots:
+        check("left:-9999px" in tag.replace(" ", ""),
+              "the pledge honeypot is not pinned off screen on the element")
+    writer = os.path.join(ROOT, "netlify", "functions", "frogrock-pledge.mjs")
+    if os.path.exists(writer):
+        w = io.open(writer, encoding="utf-8").read()
+        check("body.website" in w,
+              "the pledge writer ignores the honeypot the page sends")
+        # And the writer must not be able to read. One address overwrites
+        # itself by key, so it never needs to.
+        check(".get(" not in w and ".list(" not in w,
+              "the pledge writer can read the store")
+
+    # The reader is the only way to see the addresses and it must stay closed
+    # until the token is set. An unset variable failing open would publish a
+    # mailing list at a URL that is in this repository.
+    reader = os.path.join(ROOT, "netlify", "functions", "frogrock-pledge-read.mjs")
+    if os.path.exists(reader):
+        r = io.open(reader, encoding="utf-8").read()
+        check("process.env.FROGROCK_PLEDGE_TOKEN" in r,
+              "the pledge reader does not read its token from the environment")
+        check("FROGROCK_PLEDGE_TOKEN" not in page,
+              "the token name should not be in a page")
+        check(not re.search(r"FROGROCK_PLEDGE_TOKEN\s*\|\|", r),
+              "the pledge reader falls back to a default token")
+
+    # The public counter is public, so it must never load a record.
+    counter = os.path.join(ROOT, "netlify", "functions", "frogrock-count.mjs")
+    if os.path.exists(counter):
+        c = io.open(counter, encoding="utf-8").read()
+        check(".get(" not in c, "the public counter reads records, not just the count",
+              "a key is a hash of an email address and stays inside the function")
+        check("FROGROCK_PLEDGE_TOKEN" not in c,
+              "the public counter should need no token and expose no records")
+
+    # The pledges must not land in the store that promises no addresses.
+    fb = os.path.join(ROOT, "netlify", "functions", "_parent_feedback.mjs")
+    if os.path.exists(fb):
+        f = io.open(fb, encoding="utf-8").read()
+        def store_of(text):
+            m = re.search(r"export const STORE = '([^']+)'", text)
+            return m.group(1) if m else None
+        check(store_of(mod) and store_of(mod) != store_of(f),
+              "the pledges and the feedback share one blob store",
+              "the feedback store promises a parent that no address is in it")
+
+    # The page collects an address now, so the privacy page has to say so.
+    # A form that holds an email with no entry in the policy is the gap this
+    # catches, and it was already open for the feedback form before today.
+    priv = os.path.join(ROOT, "privacy", "index.html")
+    if os.path.exists(priv):
+        pv = io.open(priv, encoding="utf-8").read()
+        check("Tools for Parents" in pv,
+              "the privacy page does not mention Tools for Parents",
+              "the page stores an email address and three form answers")
+        check("Frog Rock" in pv,
+              "the privacy page does not mention the Frog Rock list",
+              "it holds an email address")
+
+
 def check_blog():
     """The rendered site has to match the markdown and the pages on disk.
 
@@ -577,6 +706,7 @@ def main():
     check_lists()
     check_analytics()
     check_parent_feedback()
+    check_frogrock_pledge()
     check_blog()
     check_links()
     check_calendar()
