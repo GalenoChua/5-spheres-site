@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Letting Someone Go, paper score sheet</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+<style>
+  /* THE NIGHT THE TOOL WILL NOT LOAD.
+   *
+   * One sheet per person, and it holds the whole session: both rounds, their own read and
+   * the read of whoever delivered to them. Four cards on one page rather than four pages,
+   * because a facilitator printing nine people by four is printing thirty-six sheets and
+   * will not do it.
+   *
+   * The questions, the five steps and the scale are the same as the tool's. If they drift
+   * apart the paper backup stops being a backup, so they are written here in the same
+   * order and with the same words, taken from /events/letting-someone-go/.
+   *
+   * No JavaScript, deliberately. The reason to print this is that something on the night
+   * did not work. */
+  :root{ --ink:#1d2a52; --line:#b9ad98; --muted:#6b6557; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#faf6ef;color:var(--ink);line-height:1.4;
+    font-family:"Source Sans 3",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .sheet{max-width:760px;margin:0 auto;padding:22px 20px 40px}
+  h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:1.3rem;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:.84rem;margin:0 0 14px}
+  .hint{font-size:.8rem;color:var(--muted);margin:0 0 12px}
+  .who{display:flex;gap:14px;flex-wrap:wrap;font-size:.86rem;margin-bottom:12px}
+  .who span{border-bottom:1px solid var(--line);min-width:150px;padding-bottom:2px}
+  table{width:100%;border-collapse:collapse;font-size:.84rem;margin-bottom:10px}
+  th,td{border:1px solid var(--line);padding:5px 6px;text-align:left}
+  th{font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  th.n,td.n{width:52px;text-align:center}
+  td.q{line-height:1.25}
+  tr.head td{background:#f0e8da;font-weight:700;font-size:.78rem;text-transform:uppercase;
+    letter-spacing:.05em;color:var(--muted)}
+  .line{border-bottom:1px solid var(--line);height:19px;margin:3px 0}
+  .foot{font-size:.78rem;color:var(--muted);margin-top:12px}
+  .noprint a{color:#b4541f}
+  @media print{
+    body{background:#fff}
+    .sheet{max-width:none;padding:0}
+    .noprint{display:none}
+    @page{margin:14mm}
+    table{font-size:.78rem}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <h1>Letting Someone Go</h1>
+  <p class="sub">Paper score sheet. One per person, and it covers the whole session.</p>
+
+  <p class="hint">Score each line from 1, not at all, to 10, completely. Fill the column for
+    your own delivery and the column for the delivery you received. Leave a line blank rather
+    than guessing at it. Hand the sheet back at the end.</p>
+
+  <div class="who">
+    <span>Your name</span>
+    <span>Round 1, you delivered to</span>
+    <span>Round 2, you delivered to</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>&nbsp;</th>
+        <th class="n">R1<br>your own</th>
+        <th class="n">R1<br>you received</th>
+        <th class="n">R2<br>your own</th>
+        <th class="n">R2<br>you received</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="head"><td colspan="5">What it cost, or did not</td></tr>
+      <tr><td class="q">They left feeling respected</td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td></tr>
+      <tr><td class="q">They knew exactly what had been decided</td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td></tr>
+      <tr><td class="q">They would still speak well of the company</td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td></tr>
+      <tr class="head"><td colspan="5">The five steps</td></tr>
+      <tr><td class="q">Started from shared purpose and common ground</td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td></tr>
+      <tr><td class="q">Named what had gone wrong, and what it was costing</td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td></tr>
+      <tr><td class="q">Stated the decision plainly</td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td></tr>
+      <tr><td class="q">Offered a way forward, support, and what happens next</td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td></tr>
+      <tr><td class="q">Thanked them for their time and their contribution</td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td></tr>
+      <tr class="head"><td colspan="5">Which one did you use? Write B for the band-aid, V for built from your values</td></tr>
+      <tr><td class="q">Your approach</td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td></tr>
+    </tbody>
+  </table>
+
+  <p class="hint" style="margin-bottom:2px">Round 1. The one thing that would have changed how
+    the delivery you received landed.</p>
+  <div class="line"></div>
+  <p class="hint" style="margin-bottom:2px">Round 1. The one thing you would do differently in
+    your own.</p>
+  <div class="line"></div>
+  <p class="hint" style="margin-bottom:2px">Round 2. The one thing that would have changed how
+    the delivery you received landed.</p>
+  <div class="line"></div>
+  <p class="hint" style="margin-bottom:2px">Round 2. The one thing you would do differently in
+    your own.</p>
+  <div class="line"></div>
+
+  <p class="foot">The score from the person who received it is the one that counts. They are
+    the only person in the room who can answer whether they left feeling respected.</p>
+
+  <p class="foot noprint">Print this page, or save it as a PDF, before the session. The live
+    tool is at <a href="/skilldrills/letting-someone-go/">the session link</a>.</p>
+</div>
+  <!-- Cloudflare Web Analytics. Cookieless, so no consent banner. The CSP in /_headers must allow static.cloudflareinsights.com and cloudflareinsights.com or this is blocked silently. -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "b4f0c82f4b4447798717e8cefda1dc07"}'></script>
+</body>
+</html>

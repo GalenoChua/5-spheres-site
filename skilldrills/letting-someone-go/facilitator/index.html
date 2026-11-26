@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Letting Someone Go, facilitator panel</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+<style>
+  :root{
+    --ink:#1d2a52; --paper:#faf6ef; --paper-warm:#f3ecdf; --ember:#e8862e;
+    --line:#d9cfbe; --muted:#6b6557; --good:#2f7a52; --warn:#b4541f;
+    --sans:"Source Sans 3",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:Fraunces,Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5}
+  .wrap{max-width:880px;margin:0 auto;padding:18px 16px 80px}
+  h1{font-family:var(--serif);font-weight:600;font-size:1.4rem;margin:0 0 3px}
+  h2{font-family:var(--serif);font-weight:600;font-size:1.05rem;margin:0 0 10px}
+  h3{font-size:.95rem;margin:0 0 6px}
+  p{margin:0 0 12px}
+  .sub{color:var(--muted);font-size:.86rem;margin:0 0 16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+  .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
+  label{display:block;margin-bottom:12px}
+  label>span{display:block;font-size:.9rem;margin-bottom:5px}
+  input[type=password],input[type=text]{width:100%;font:inherit;padding:11px;border:1px solid var(--line);
+    border-radius:8px;background:var(--paper);color:var(--ink)}
+  button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--ink);
+    background:var(--ink);color:#fff;padding:11px 15px;font-weight:600}
+  button.ghost{background:transparent;color:var(--ink);font-weight:400}
+  button.small{padding:8px 12px;font-size:.88rem}
+  button[disabled]{opacity:.45;cursor:default}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  .msg{border-radius:8px;padding:10px 12px;margin:10px 0;font-size:.9rem}
+  .msg.err{background:#fdecec;border:1px solid #e9bcbc;color:#8d2b2b}
+  .msg.warn{background:#fdf3e6;border:1px solid #e8cfa6;color:#8a5516}
+  .msg.good{background:#eaf5ee;border:1px solid #bcdcc8;color:#1f5c3c}
+  .hidden{display:none}
+  /* THE CONSOLE SKIN OWNS THIS BLOCK'S GROUND, SO IT MUST NOT OWN ITS TYPE.
+     console.css paints .now as rgba(255,255,255,.05) over the dark ground and loads after
+     this file, so a background declared here loses and a colour declared here wins. An
+     earlier version inverted the block for the cream palette, which left navy type on a
+     navy ground at about 1:1: present in the markup, readable by nothing. Measured in the
+     browser rather than read off the CSS, which is the only way that shows. */
+  .now{background:var(--paper-warm);border:1px solid var(--line);border-left:3px solid var(--ember);
+    color:var(--ink);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+  .now .k{color:var(--muted)}
+  .now .step{font-family:var(--serif);font-size:1.2rem;font-weight:600}
+  .clock{font-variant-numeric:tabular-nums;font-size:1.9rem;font-weight:700;margin-top:4px}
+  .clock.out{color:#ffb3a0}
+  ol.seq{margin:0;padding-left:20px;font-size:.9rem;color:var(--muted)}
+  ol.seq li{margin-bottom:3px}
+  ol.seq li.at{color:var(--ink);font-weight:700}
+  ol.seq li.done{opacity:.55}
+  .grp{border:1px solid var(--line);border-radius:9px;padding:11px 13px;margin-bottom:9px;background:var(--paper)}
+  .grp .names{font-family:var(--serif);font-size:1.02rem;font-weight:600;margin-bottom:3px}
+  .tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    border-radius:999px;padding:3px 9px;margin-right:6px}
+  /* THE CHIPS CARRY THEIR OWN COLOURS, NOT THE PALETTE'S, and that is deliberate.
+     --ember and --good are tuned for the ground they sit on, and this page is read on two:
+     the cream one here and the dark console ground when the same chip is shown in the
+     panel. White on either palette's accent measured between 2.2 and 2.7 to one in the
+     browser, which is text that is present and not readable. These two values clear 4.5
+     on both grounds. Measured, not estimated. */
+  .tag.self{background:#c2410c;color:#fff}
+  .tag.receiver{background:#1f7a52;color:#fff}
+  .tag.observer{background:var(--paper-warm);color:var(--muted);border:1px solid var(--line)}
+  .cards{font-size:.86rem;color:var(--muted);margin-top:5px}
+  .cards b{color:var(--ink)}
+  .people{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:4px}
+  .chip{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:.88rem}
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+  td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .neg{color:var(--warn);font-weight:700}
+  .pos{color:var(--good);font-weight:700}
+  .quote{font-size:.9rem;color:var(--muted);margin-top:4px}
+  .quote b{color:var(--ink)}
+  @media (max-width:560px){ .wrap{padding:14px 12px 70px} }
+</style>
+<!-- The console skin, AFTER this page's own style so it wins on source order rather than
+     on a specificity fight. See /skilldrills/console.css: the operator's tools are on the
+     dark ground and the participant card is not. -->
+<link rel="stylesheet" href="/skilldrills/console.css">
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Letting Someone Go</h1>
+  <p class="sub" id="sub">Facilitator panel.</p>
+
+  <div class="card" id="gate">
+    <h2>Unlock this session</h2>
+    <label><span>Session</span><input type="text" id="sess" placeholder="lsg-2026-11-30-ab12cd"></label>
+    <label><span>Facilitator token</span><input type="password" id="tok" autocomplete="off"></label>
+    <div class="row"><button id="unlock">Unlock</button></div>
+    <div id="gate-msg"></div>
+    <p class="sub" style="margin:8px 0 0">The token is the one issued when the session was set
+      up. It opens this room and no other. If it is lost, issue a new one from
+      <a href="/skilldrills/letting-someone-go/new/">the set-up page</a>.</p>
+  </div>
+
+  <div id="panel" class="hidden"></div>
+
+  <div class="card hidden" id="summary-card">
+    <h2>The follow-up summary</h2>
+    <p class="sub">One block per person. The receiver's read, the observers' and their own are
+      never averaged together, because the gap between them is the finding.</p>
+    <div class="row"><button class="small" id="load-sum">Load the summary</button></div>
+    <div id="summary"></div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var API = '/.netlify/functions/';
+  var POLL_MS = 4000;
+
+  var qs = new URLSearchParams(location.search);
+  var session = (qs.get('session') || '').trim().toLowerCase();
+  var token = '';
+  var state = null;
+  var skew = 0;
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function say(kind, text) { return text ? '<div class="msg ' + kind + '">' + text + '</div>' : ''; }
+
+  /* sessionStorage, not localStorage, and that is deliberate: the token should not outlive
+     the tab. The set-up page keeps the COACH token in localStorage for the opposite reason,
+     that it is still wanted next month. */
+  var TK = 'lsg-fac-token';
+  try {
+    token = sessionStorage.getItem(TK) || '';
+    if (token) { $('tok').value = token; }
+  } catch (e) {}
+  if (session) { $('sess').value = session; }
+
+  function post(path, body) {
+    return fetch(API + path, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (!r.ok) {
+          /* A missing site variable and a wrong value are otherwise the same refusal, and
+             the session does not start either way. */
+          if (j.error === 'no') {
+            throw new Error(j.configured === false
+              ? 'No token is configured on the site yet. That is a Netlify variable, not something you typed wrong.'
+              : 'That token does not open this session.');
+          }
+          throw new Error(j.error || 'Something went wrong.');
+        }
+        return j;
+      });
+    });
+  }
+
+  function drive(body) {
+    return post('pair-stage', Object.assign({ session: session, token: token }, body))
+      .then(function (j) { state = j; render(); return j; });
+  }
+
+  function groupRoles(group, turn) {
+    var g = (group || []).filter(Boolean);
+    var t = Number(turn);
+    if (g.length < 2 || !(t >= 1) || t > g.length) { return null; }
+    var subject = g[t - 1];
+    var receiver = g[t % g.length];
+    return { subject: subject, receiver: receiver,
+      observers: g.filter(function (p) { return p !== subject && p !== receiver; }) };
+  }
+  function nameOf(pid) {
+    var list = (state && state.people) || [];
+    for (var i = 0; i < list.length; i += 1) { if (list[i].pid === pid) { return list[i].name; } }
+    return 'unknown';
+  }
+
+  function render() {
+    if (!state) { return; }
+    var st = state.stage;
+    $('sub').textContent = 'Session ' + state.session
+      + (st.test === true ? ', rehearsal, this room is not counted'
+         : st.test === false ? ', a real session' : ', not yet declared');
+
+    var html = '<div class="now"><div class="k">Now, step ' + (st.step + 1) + ' of '
+      + state.sequence.length + '</div><div class="step">' + esc(st.stepLabel)
+      + '</div><div class="clock" id="clock"></div></div>';
+
+    /* ── moving the room ── */
+    html += '<div class="card"><h2>The floor</h2><div class="row">'
+      + '<button class="small ghost" id="back"' + (st.step === 0 ? ' disabled' : '') + '>Back a step</button>'
+      + '<button class="small" id="next"' + (st.step >= state.sequence.length - 1 ? ' disabled' : '')
+      + '>Next step, start the clock</button>'
+      + '<button class="small ghost" id="restart">Restart this step’s clock</button>'
+      + '<button class="small ghost" id="stopclock">Stop the clock</button>'
+      + '</div>'
+      + '<div class="row">'
+      + '<button class="small ghost" id="make">Draw the groups for round ' + (st.round || '—') + '</button>'
+      + '<button class="small ghost" id="release">'
+      + (st.released ? 'Results are released' : 'Release the results') + '</button>'
+      + '</div>'
+      + (st.test === null
+        ? '<div class="row"><span class="k" style="margin:0 6px 0 0">Does this room count?</span>'
+          + '<button class="small ghost" id="real">A real session</button>'
+          + '<button class="small ghost" id="rehearse">A rehearsal</button></div>'
+          + say('warn', 'Say whether this room counts before the first delivery. There is deliberately no default.')
+        : '')
+      + '<div id="drive-msg"></div>'
+      + '<div class="k" style="margin-top:12px">The 110 minutes</div><ol class="seq">';
+    state.sequence.forEach(function (s, i) {
+      html += '<li class="' + (i === st.step ? 'at' : (i < st.step ? 'done' : '')) + '">'
+        + esc(s.label) + ' <span>(' + s.mins + ' min)</span></li>';
+    });
+    html += '</ol><p class="sub" style="margin:10px 0 0">'
+      + state.sequenceMins + ' minutes in total, which is the length the page sells. Sit on a '
+      + 'step or skip one as the room needs: the clock follows the step.</p></div>';
+
+    /* ── who is here ── */
+    html += '<div class="card"><h2>In the room, ' + state.people.length + '</h2><div class="people">';
+    state.people.forEach(function (p) { html += '<span class="chip">' + esc(p.name) + '</span>'; });
+    html += '</div>'
+      + (state.people.length === 0
+        ? '<p class="sub">Nobody yet. The participant link is the one ending in this session name.</p>'
+        : '')
+      + '</div>';
+
+    /* ── the groups, and whether the cards have landed ── */
+    html += '<div class="card"><h2>Round ' + (st.round || '—') + ', turn ' + (st.turn || '—') + '</h2>';
+    if (!st.groups.length) {
+      html += '<p class="sub">No groups drawn for this round yet.</p>';
+    } else {
+      st.groups.forEach(function (g) {
+        var r = groupRoles(g, st.turn);
+        html += '<div class="grp"><div class="names">'
+          + esc(g.map(nameOf).join(', ')) + (g.length === 3 ? ' <span class="k" style="display:inline">triad</span>' : '')
+          + '</div>';
+        if (!r) {
+          html += '<div class="cards">Idle this turn.</div>';
+        } else {
+          html += '<div><span class="tag self">delivers</span>' + esc(nameOf(r.subject)) + '</div>'
+            + '<div><span class="tag receiver">receives</span>' + esc(nameOf(r.receiver)) + '</div>'
+            + (r.observers.length
+              ? '<div><span class="tag observer">observes</span>' + esc(r.observers.map(nameOf).join(', ')) + '</div>'
+              : '');
+          var got = state.cards[st.round + '.' + st.turn + '.' + r.subject] || 0;
+          html += '<div class="cards">Cards in: <b>' + got + '</b> of ' + g.length
+            + (got >= g.length ? ', this group has finished' : '') + '</div>';
+        }
+        html += '</div>';
+      });
+    }
+    html += '</div>';
+
+    $('panel').innerHTML = html;
+    $('panel').classList.remove('hidden');
+    $('summary-card').classList.remove('hidden');
+    wire();
+    paintClock();
+  }
+
+  function wire() {
+    var st = state.stage;
+    function guard(fn) {
+      return function () {
+        var b = this; b.disabled = true;
+        $('drive-msg').innerHTML = '';
+        fn().then(function () {})['catch'](function (e) {
+          b.disabled = false;
+          $('drive-msg').innerHTML = say('err', e.message);
+        });
+      };
+    }
+    $('next').onclick = guard(function () { return drive({ step: st.step + 1, timer: true }); });
+    $('back').onclick = guard(function () { return drive({ step: Math.max(0, st.step - 1), timer: false }); });
+    $('restart').onclick = guard(function () { return drive({ timer: true }); });
+    $('stopclock').onclick = guard(function () { return drive({ timer: false }); });
+    $('make').onclick = guard(function () { return drive({ groups: 'make' }); });
+    $('release').onclick = guard(function () { return drive({ release: !st.released }); });
+    if ($('real')) { $('real').onclick = guard(function () { return drive({ test: false }); }); }
+    if ($('rehearse')) { $('rehearse').onclick = guard(function () { return drive({ test: true }); }); }
+  }
+
+  function paintClock() {
+    var el = $('clock');
+    if (!el || !state) { return; }
+    var ends = state.stage.timerEndsAt;
+    if (!ends) { el.textContent = 'no clock running'; el.classList.remove('out'); return; }
+    var left = Math.round((new Date(ends).getTime() - (Date.now() + skew)) / 1000);
+    var s = Math.abs(left);
+    el.textContent = (left < 0 ? '+' : '') + Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+    el.classList.toggle('out', left < 0);
+  }
+  setInterval(paintClock, 1000);
+
+  function poll() {
+    if (!session) { return; }
+    fetch(API + 'pair-stage?session=' + encodeURIComponent(session))
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || !j.ok) { return; }
+        skew = new Date(j.now).getTime() - Date.now();
+        state = j;
+        render();
+      })
+      ['catch'](function () { /* a dropped poll fixes itself on the next one */ });
+  }
+
+  $('unlock').onclick = function () {
+    session = $('sess').value.trim().toLowerCase();
+    token = $('tok').value.trim();
+    if (!session) { $('gate-msg').innerHTML = say('err', 'The session name first.'); return; }
+    if (!token) { $('gate-msg').innerHTML = say('err', 'The facilitator token.'); return; }
+    var b = this; b.disabled = true;
+    /* Verify writes nothing. Proving a token by writing the state the panel thinks it has
+       is how the public speaking panel used to knock a speaker off the floor on reload. */
+    post('pair-stage', { session: session, token: token, verify: true })
+      .then(function () {
+        try { sessionStorage.setItem(TK, token); } catch (e) {}
+        $('gate').classList.add('hidden');
+        if (history.replaceState) {
+          history.replaceState(null, '', '?session=' + encodeURIComponent(session));
+        }
+        poll();
+        setInterval(poll, POLL_MS);
+      })['catch'](function (e) {
+        b.disabled = false;
+        $('gate-msg').innerHTML = say('err', e.message);
+      });
+  };
+  $('tok').addEventListener('keydown', function (e) { if (e.key === 'Enter') { $('unlock').click(); } });
+
+  /* ── the summary ── */
+  function pct(v) { return v === null || v === undefined ? '—' : v.toFixed(1); }
+  $('load-sum').onclick = function () {
+    var b = this; b.disabled = true;
+    $('summary').innerHTML = '';
+    post('pair-results', { session: session, token: token })
+      .then(function (j) {
+        b.disabled = false;
+        var html = '<p class="sub">' + j.counts.people + ' in the room, ' + j.counts.cards
+          + ' cards, ' + j.counts.deliveries + ' deliveries.</p>'
+          + say('warn', j.note);
+        j.participants.forEach(function (p) {
+          html += '<div class="card" style="margin-top:12px"><h3>' + esc(p.name || 'unnamed') + '</h3>';
+          if (!p.rounds.length) {
+            html += '<p class="sub">No delivery recorded.</p></div>';
+            return;
+          }
+          html += '<table><thead><tr><th>Round</th><th>Their own</th><th>Receiver</th>'
+            + '<th>Observers</th><th>Gap</th><th>Approach</th></tr></thead><tbody>';
+          p.rounds.forEach(function (r) {
+            html += '<tr><td class="n">' + r.round + '</td>'
+              + '<td class="n">' + pct(r.self) + '</td>'
+              + '<td class="n">' + pct(r.receiver)
+              + (r.receiverName ? ' <span class="k" style="display:inline">' + esc(r.receiverName) + '</span>' : '')
+              + '</td>'
+              + '<td class="n">' + pct(r.observers) + ' <span class="k" style="display:inline">'
+              + r.observerCards + ' card' + (r.observerCards === 1 ? '' : 's') + '</span></td>'
+              + '<td class="n ' + (r.gap === null ? '' : (r.gap < 0 ? 'neg' : 'pos')) + '">'
+              + (r.gap === null ? '—' : (r.gap > 0 ? '+' : '') + r.gap) + '</td>'
+              + '<td>' + esc(r.approach || '—') + '</td></tr>';
+          });
+          html += '</tbody></table>';
+          p.rounds.forEach(function (r) {
+            r.notes.forEach(function (n) {
+              html += '<p class="quote"><b>Round ' + r.round + ', '
+                + esc(n.from === 'self' ? 'their own note'
+                     : n.from === 'receiver' ? (n.name || 'the receiver') + ', who received it'
+                     : (n.name || 'an observer') + ', watching')
+                + ':</b> ' + esc(n.text) + '</p>';
+            });
+          });
+          /* The item that is low inside a decent mean is the finding, so the receiver's
+             lowest answer is named rather than left in the average. */
+          p.rounds.forEach(function (r) {
+            var low = null;
+            r.items.outcome.concat(r.items.steps).forEach(function (it) {
+              if (it.receiver !== null && (low === null || it.receiver < low.receiver)) { low = it; }
+            });
+            if (low) {
+              html += '<p class="quote"><b>Round ' + r.round + ', lowest from the receiver:</b> '
+                + esc(low.label) + ', ' + low.receiver + '</p>';
+            }
+          });
+          html += '</div>';
+        });
+        $('summary').innerHTML = html;
+      })['catch'](function (e) {
+        b.disabled = false;
+        $('summary').innerHTML = say('err', e.message);
+      });
+  };
+
+  /* A session in the link and a token already in the tab: open straight into the panel,
+     because a facilitator reloading mid-session should not have to type anything. */
+  if (session && token) { $('unlock').click(); }
+})();
+</script>
+  <!-- Cloudflare Web Analytics. Cookieless, so no consent banner. The CSP in /_headers must allow static.cloudflareinsights.com and cloudflareinsights.com or this is blocked silently. -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "b4f0c82f4b4447798717e8cefda1dc07"}'></script>
+</body>
+</html>

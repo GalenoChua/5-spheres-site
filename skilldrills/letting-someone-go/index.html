@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Letting Someone Go, the drill</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+<style>
+  /* The participant card, on the brand's cream. It is deliberately NOT on the console
+     skin: /skilldrills/console.css explains why, which is that the console is the
+     operator's tool and this is the session. The variables are the site's own, from
+     styles.css, repeated here because this page loads no stylesheet of its own.
+
+     PHONE FIRST, AND BESIDE GOOGLE MEET. G's instruction is that this has to work in a
+     second tab and on a phone screen next to the call, not only on a full desktop. So one
+     column, large tap targets, nothing that needs hover, and no layout that assumes the
+     window is wide. */
+  :root{
+    --ink:#1d2a52; --paper:#faf6ef; --paper-warm:#f3ecdf; --ember:#e8862e;
+    --line:#d9cfbe; --muted:#6b6557; --good:#2f7a52; --warn:#b4541f;
+    --sans:"Source Sans 3",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:Fraunces,Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5}
+  .wrap{max-width:620px;margin:0 auto;padding:18px 16px 90px}
+  h1{font-family:var(--serif);font-weight:600;font-size:1.35rem;margin:0 0 4px}
+  h2{font-family:var(--serif);font-weight:600;font-size:1.05rem;margin:0 0 10px}
+  p{margin:0 0 12px}
+  .sub{color:var(--muted);font-size:.88rem;margin:0 0 16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+  .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
+  label{display:block;margin-bottom:14px}
+  label>span{display:block;font-size:.92rem;margin-bottom:5px}
+  input[type=text]{width:100%;font:inherit;padding:12px;border:1px solid var(--line);
+    border-radius:8px;background:var(--paper);color:var(--ink)}
+  textarea{width:100%;font:inherit;padding:12px;border:1px solid var(--line);border-radius:8px;
+    background:var(--paper);color:var(--ink);min-height:84px;resize:vertical}
+  button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--ink);
+    background:var(--ink);color:#fff;padding:13px 18px;font-weight:600;width:100%}
+  button.ghost{background:transparent;color:var(--ink);font-weight:400;width:auto;padding:9px 14px}
+  button[disabled]{opacity:.45;cursor:default}
+  .msg{border-radius:8px;padding:11px 13px;margin:10px 0;font-size:.92rem}
+  .msg.err{background:#fdecec;border:1px solid #e9bcbc;color:#8d2b2b}
+  .msg.warn{background:#fdf3e6;border:1px solid #e8cfa6;color:#8a5516}
+  .msg.good{background:#eaf5ee;border:1px solid #bcdcc8;color:#1f5c3c}
+  .hidden{display:none}
+  /* The step and the clock. The clock is the loudest thing on the page because in a live
+     room the question is always how long is left. */
+  .now{background:var(--ink);color:var(--paper);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+  .now .k{color:rgba(250,246,239,.72)}
+  .now .step{font-family:var(--serif);font-size:1.12rem;font-weight:600}
+  .clock{font-variant-numeric:tabular-nums;font-size:2rem;font-weight:700;letter-spacing:-.02em;margin-top:6px}
+  .clock.out{color:#ffb3a0}
+  .role{display:inline-block;font-size:.74rem;font-weight:700;letter-spacing:.07em;
+    text-transform:uppercase;border-radius:999px;padding:4px 10px;margin-bottom:8px}
+  /* THE CHIPS CARRY THEIR OWN COLOURS, NOT THE PALETTE'S, and that is deliberate.
+     --ember and --good are tuned for the ground they sit on, and this page is read on two:
+     the cream one here and the dark console ground when the same chip is shown in the
+     panel. White on either palette's accent measured between 2.2 and 2.7 to one in the
+     browser, which is text that is present and not readable. These two values clear 4.5
+     on both grounds. Measured, not estimated. */
+  .role.self{background:#c2410c;color:#fff}
+  .role.receiver{background:#1f7a52;color:#fff}
+  .role.observer{background:var(--paper-warm);color:var(--muted);border:1px solid var(--line)}
+  .who{font-family:var(--serif);font-size:1.25rem;font-weight:600;margin-bottom:4px}
+  ol.steps{margin:0 0 4px;padding-left:22px}
+  ol.steps li{margin-bottom:6px}
+  /* The scale. Ten buttons wrap on a narrow screen rather than shrinking to a size no
+     thumb can hit. */
+  .q{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+  .q:first-of-type{border-top:0;padding-top:0;margin-top:0}
+  .q .lab{font-size:.95rem;margin-bottom:7px}
+  .scale{display:flex;flex-wrap:wrap;gap:6px}
+  .scale button{width:auto;flex:1 1 42px;min-width:42px;padding:11px 0;font-weight:600;
+    background:var(--paper);color:var(--ink);border:1px solid var(--line)}
+  .scale button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .ends{display:flex;justify-content:space-between;font-size:.76rem;color:var(--muted);margin-top:5px}
+  .pick{display:flex;gap:8px;flex-wrap:wrap}
+  .pick button{width:auto;flex:1 1 140px;background:var(--paper);color:var(--ink);border:1px solid var(--line);font-weight:600}
+  .pick button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .foot{font-size:.84rem;color:var(--muted);margin-top:18px}
+  /* --ember on this cream reads 2.5 to one at this size. A link that small needs a darker
+     tint of the same accent, which is the same correction console.css makes in the other
+     direction on the dark ground. */
+  .foot a{color:#b4541f}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="shell">
+    <h1>Letting Someone Go</h1>
+    <p class="sub" id="sub">Finding the session.</p>
+  </div>
+
+  <div id="main"></div>
+
+  <p class="foot">If this page stops keeping up, reload it. Nothing you have already saved
+    is lost. If the tool fails altogether, the paper sheet at
+    <a href="/skilldrills/letting-someone-go/print/">the printable backup</a> asks the same
+    questions.</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── WHAT THIS PAGE DECIDES, AND WHAT IT DOES NOT ──────────────────────────────────
+   *
+   * It decides nothing. The step, the groups and the turn come from the server on every
+   * poll, and the role is worked out from the groups and the turn by the same rule the
+   * server uses. A page that decides its own role is a page that can be wrong about it,
+   * and the receiver's card is the one the whole session turns on.
+   *
+   * It keeps exactly two things of its own: the participant id, so a reload does not make
+   * a second person, and whatever is typed into the open card, so a reload mid-answer
+   * does not lose it. */
+
+  var API = '/.netlify/functions/';
+  var POLL_MS = 4000;
+
+  var qs = new URLSearchParams(location.search);
+  var session = (qs.get('session') || '').trim().toLowerCase();
+
+  var me = null;              /* { pid, name } */
+  var state = null;           /* the last good poll */
+  var draft = {};             /* what is typed into the open card, by card id */
+  var saved = {};             /* card ids already accepted by the server */
+  var busy = false;
+  var tick = null;
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function say(kind, text) {
+    return text ? '<div class="msg ' + kind + '">' + text + '</div>' : '';
+  }
+
+  /* localStorage per session, so somebody who attends two drills is two participants and
+     neither link resurrects the other. A browser that refuses storage is not a reason to
+     fail: the page still works, it just forgets on reload. */
+  var KEY = 'lsg:' + session;
+  function remember() {
+    try { localStorage.setItem(KEY, JSON.stringify(me)); } catch (e) {}
+  }
+  function recall() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      var v = raw ? JSON.parse(raw) : null;
+      if (v && /^[0-9a-f]{12}$/.test(v.pid || '')) { me = v; }
+    } catch (e) {}
+  }
+  var DKEY = KEY + ':draft';
+  function saveDraft() { try { localStorage.setItem(DKEY, JSON.stringify(draft)); } catch (e) {} }
+  function loadDraft() {
+    try { draft = JSON.parse(localStorage.getItem(DKEY) || '{}') || {}; } catch (e) { draft = {}; }
+  }
+
+  function post(path, body) {
+    return fetch(API + path, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (!r.ok) { throw new Error(j.error || 'Something went wrong.'); }
+        return j;
+      });
+    });
+  }
+
+  /* ── the same derivation the server uses ── */
+  function groupOf(groups, pid) {
+    for (var i = 0; i < (groups || []).length; i += 1) {
+      if ((groups[i] || []).indexOf(pid) !== -1) { return groups[i]; }
+    }
+    return null;
+  }
+  function rolesFor(group, turn) {
+    var g = (group || []).filter(Boolean);
+    var t = Number(turn);
+    if (g.length < 2 || !(t >= 1) || t > g.length) { return null; }
+    var subject = g[t - 1];
+    var receiver = g[t % g.length];
+    return {
+      subject: subject, receiver: receiver,
+      observers: g.filter(function (p) { return p !== subject && p !== receiver; })
+    };
+  }
+  function nameOf(pid) {
+    var list = (state && state.people) || [];
+    for (var i = 0; i < list.length; i += 1) {
+      if (list[i].pid === pid) { return list[i].name; }
+    }
+    return 'Somebody';
+  }
+
+  /* ── joining ── */
+  function renderJoin(err) {
+    $('sub').textContent = 'A first name is all this asks for. No account, nothing to set up.';
+    $('main').innerHTML =
+      '<div class="card">'
+      + '<h2>Join the session</h2>'
+      + '<label><span>Your first name</span><input type="text" id="nm" autocomplete="given-name" '
+      + 'value="' + esc(me ? me.name : '') + '"></label>'
+      + '<button id="go">Join</button>'
+      + say('err', err)
+      + '</div>';
+    $('nm').addEventListener('keydown', function (e) { if (e.key === 'Enter') { $('go').click(); } });
+    $('go').onclick = function () {
+      var name = $('nm').value.trim();
+      if (!name) { renderJoin('Your first name, so the room knows who you are.'); return; }
+      this.disabled = true;
+      post('pair-join', { session: session, name: name, pid: me ? me.pid : undefined })
+        .then(function (j) { me = { pid: j.pid, name: j.name }; remember(); poll(true); })
+        ['catch'](function (e) { renderJoin(e.message); });
+    };
+  }
+
+  /* ── the card ── */
+  function cardId(round, turn, subject) { return round + '.' + turn + '.' + subject; }
+
+  function scaleRow(id, key, label, value) {
+    var out = '<div class="q"><div class="lab">' + esc(label) + '</div><div class="scale" '
+      + 'data-card="' + id + '" data-key="' + key + '">';
+    for (var v = 1; v <= (state.scaleMax || 10); v += 1) {
+      out += '<button type="button" data-v="' + v + '" aria-pressed="'
+        + (value === v ? 'true' : 'false') + '">' + v + '</button>';
+    }
+    return out + '</div><div class="ends"><span>1, not at all</span><span>'
+      + (state.scaleMax || 10) + ', completely</span></div></div>';
+  }
+
+  function renderCard(role, round, turn, subject) {
+    var id = cardId(round, turn, subject);
+    var d = draft[id] || (draft[id] = { outcome: {}, steps: {}, approach: null, fix: '' });
+    var who = role === 'self' ? 'your own delivery' : esc(nameOf(subject)) + "'s delivery";
+    var head = role === 'self'
+      ? 'Score your own attempt'
+      : (role === 'receiver' ? 'You received it. Your card is the one that counts.'
+                             : 'You watched it. Score what you saw.');
+
+    var html = '<div class="card">'
+      + '<span class="role ' + role + '">' + (role === 'self' ? 'Your delivery'
+          : role === 'receiver' ? 'You received it' : 'You observed') + '</span>'
+      + '<h2>' + esc(head) + '</h2>'
+      + '<p class="sub">Round ' + round + ', scoring ' + who + '.</p>';
+
+    var qs2 = (state.questions && state.questions.outcome) || [];
+    qs2.forEach(function (q) { html += scaleRow(id, 'o:' + q.key, q.label, d.outcome[q.key]); });
+
+    html += '<div class="q"><div class="lab">The five steps</div></div>';
+    ((state.questions && state.questions.steps) || []).forEach(function (q) {
+      html += scaleRow(id, 's:' + q.key, q.label, d.steps[q.key]);
+    });
+
+    if (role === 'self') {
+      html += '<div class="q"><div class="lab">Which one did you use?</div><div class="pick" '
+        + 'data-card="' + id + '" data-key="approach">'
+        + '<button type="button" data-v="band-aid" aria-pressed="' + (d.approach === 'band-aid') + '">The band-aid</button>'
+        + '<button type="button" data-v="values" aria-pressed="' + (d.approach === 'values') + '">Built from your values</button>'
+        + '</div></div>';
+    }
+
+    html += '<div class="q"><div class="lab">'
+      + (role === 'self' ? 'The one thing you would do differently'
+         : 'The one thing that would have changed how this landed')
+      + '</div><textarea id="fix-' + id + '" maxlength="600">' + esc(d.fix) + '</textarea></div>'
+      + '<button id="send-' + id + '">' + (saved[id] ? 'Save again' : 'Save my card') + '</button>'
+      + '<div id="m-' + id + '">' + (saved[id] ? say('good', 'Saved. You can change it and save again.') : '') + '</div>'
+      + '</div>';
+
+    return html;
+  }
+
+  function wireCard(id) {
+    var d = draft[id];
+    Array.prototype.forEach.call(document.querySelectorAll('[data-card="' + id + '"]'), function (box) {
+      box.addEventListener('click', function (e) {
+        var btn = e.target.closest('button');
+        if (!btn) { return; }
+        var key = box.getAttribute('data-key');
+        var v = btn.getAttribute('data-v');
+        if (key === 'approach') { d.approach = d.approach === v ? null : v; }
+        else {
+          var parts = key.split(':');
+          var bag = parts[0] === 'o' ? d.outcome : d.steps;
+          bag[parts[1]] = bag[parts[1]] === Number(v) ? null : Number(v);
+        }
+        Array.prototype.forEach.call(box.querySelectorAll('button'), function (b) {
+          var mine = b.getAttribute('data-v');
+          var on = key === 'approach'
+            ? d.approach === mine
+            : (key.split(':')[0] === 'o' ? d.outcome : d.steps)[key.split(':')[1]] === Number(mine);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        saveDraft();
+      });
+    });
+    var ta = $('fix-' + id);
+    if (ta) { ta.addEventListener('input', function () { d.fix = ta.value; saveDraft(); }); }
+    var send = $('send-' + id);
+    if (send) {
+      send.onclick = function () {
+        if (busy) { return; }
+        busy = true; send.disabled = true;
+        var bits = id.split('.');
+        post('pair-score', {
+          session: session, pid: me.pid, subject: bits[2],
+          round: Number(bits[0]), turn: Number(bits[1]),
+          outcome: d.outcome, steps: d.steps, approach: d.approach, fix: d.fix
+        }).then(function (j) {
+          saved[id] = true;
+          busy = false; send.disabled = false; send.textContent = 'Save again';
+          $('m-' + id).innerHTML = say('good', j.late
+            ? 'Saved against that delivery, which the room has already moved past.'
+            : 'Saved. You can change it and save again.');
+        })['catch'](function (e) {
+          busy = false; send.disabled = false;
+          $('m-' + id).innerHTML = say('err', e.message);
+        });
+      };
+    }
+  }
+
+  /* ── what to show when no card is open ── */
+  function waiting(group, turn) {
+    var roles = rolesFor(group, turn);
+    var mine = roles
+      ? (roles.subject === me.pid ? 'self'
+         : roles.receiver === me.pid ? 'receiver'
+         : roles.observers.indexOf(me.pid) !== -1 ? 'observer' : null)
+      : null;
+
+    var html = '<div class="card">';
+    if (!group) {
+      html += '<h2>Waiting for your group</h2><p>The facilitator will put the groups up. '
+        + 'Nothing to do until then.</p>';
+    } else {
+      var others = group.filter(function (p) { return p !== me.pid; }).map(nameOf);
+      html += '<div class="k">Your group</div><div class="who">'
+        + esc(others.join(' and ')) + '</div>';
+      if (mine === 'self') {
+        html += '<span class="role self">You deliver</span>'
+          + '<p>Deliver it to ' + esc(nameOf(roles.receiver)) + '. Take the five steps in order '
+          + 'if you are building it from your values.</p>';
+      } else if (mine === 'receiver') {
+        html += '<span class="role receiver">You receive</span>'
+          + '<p>' + esc(nameOf(roles.subject)) + ' is delivering it to you. Stay in it. Notice what '
+          + 'you are left not knowing, and whether you would still speak well of the company.</p>';
+      } else if (mine === 'observer') {
+        html += '<span class="role observer">You observe</span>'
+          + '<p>' + esc(nameOf(roles.subject)) + ' is delivering it to '
+          + esc(nameOf(roles.receiver)) + '. Watch the five steps.</p>';
+      } else {
+        html += '<p>Your group is not delivering on this turn. Wait for the swap.</p>';
+      }
+      html += '<div class="q"><div class="lab">The five steps</div><ol class="steps">';
+      ((state.questions && state.questions.steps) || []).forEach(function (q) {
+        html += '<li>' + esc(q.label) + '</li>';
+      });
+      html += '</ol></div>';
+    }
+    return html + '</div>';
+  }
+
+  function render() {
+    if (!state) { return; }
+    var st = state.stage;
+    $('sub').textContent = me ? (me.name + ', in this room') : '';
+
+    var head = '<div class="now"><div class="k">Now</div>'
+      + '<div class="step">' + esc(st.stepLabel) + '</div>'
+      + '<div class="clock" id="clock"></div></div>';
+
+    var body = '';
+    var group = groupOf(st.groups, me.pid);
+    var roles = rolesFor(group, st.turn);
+    var mine = roles
+      ? (roles.subject === me.pid ? 'self'
+         : roles.receiver === me.pid ? 'receiver'
+         : roles.observers.indexOf(me.pid) !== -1 ? 'observer' : null)
+      : null;
+
+    if (st.scoring && mine) {
+      body = renderCard(mine, st.round, st.turn, roles.subject);
+    } else {
+      body = waiting(group, st.turn);
+    }
+
+    $('main').innerHTML = head + body;
+    if (st.scoring && mine) { wireCard(cardId(st.round, st.turn, roles.subject)); }
+    paintClock();
+  }
+
+  /* THE CLOCK IS A DEADLINE FROM THE SERVER, counted down locally. A phone whose own clock
+     is an hour out would otherwise read the step as long finished, so the offset between
+     this device and the server is measured on every poll and taken off. */
+  var skew = 0;
+  function paintClock() {
+    var el = $('clock');
+    if (!el || !state) { return; }
+    var ends = state.stage.timerEndsAt;
+    if (!ends) { el.textContent = 'no clock running'; el.classList.remove('out'); return; }
+    var left = Math.round((new Date(ends).getTime() - (Date.now() + skew)) / 1000);
+    var over = left < 0;
+    var s = Math.abs(left);
+    el.textContent = (over ? '+' : '') + Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+    el.classList.toggle('out', over);
+  }
+  setInterval(paintClock, 1000);
+
+  function poll(force) {
+    if (!session) { return; }
+    return fetch(API + 'pair-stage?session=' + encodeURIComponent(session))
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || !j.ok) { throw new Error(j && j.error ? j.error : 'no state'); }
+        if (j.now) { skew = new Date(j.now).getTime() - Date.now(); }
+        var before = state ? (state.stage.stepKey + '|' + JSON.stringify(state.stage.groups)
+          + '|' + state.people.length) : '';
+        var after = j.stage.stepKey + '|' + JSON.stringify(j.stage.groups) + '|' + j.people.length;
+        state = j;
+        /* Re-render only when something a person can see has changed. Rebuilding the card
+           on every poll would wipe a half-typed answer every four seconds. */
+        if (force || before !== after || !document.querySelector('#main .card')) { render(); }
+      })
+      ['catch'](function () {
+        /* A dropped poll is swallowed on purpose. A live room does not need a red box
+           every time a phone's connection blinks, and the next poll fixes it. */
+      });
+  }
+
+  /* ── start ── */
+  if (!session) {
+    $('sub').textContent = '';
+    $('main').innerHTML = say('err', 'This link is missing its session. Use the link the '
+      + 'facilitator sent, which ends in a session name.');
+  } else {
+    loadDraft();
+    recall();
+    if (me) { poll(true); } else { renderJoin(''); }
+    tick = setInterval(function () { if (me) { poll(false); } }, POLL_MS);
+  }
+})();
+</script>
+  <!-- Cloudflare Web Analytics. Cookieless, so no consent banner. The CSP in /_headers must allow static.cloudflareinsights.com and cloudflareinsights.com or this is blocked silently. -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "b4f0c82f4b4447798717e8cefda1dc07"}'></script>
+</body>
+</html>

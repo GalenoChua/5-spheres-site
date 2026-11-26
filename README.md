@@ -8,6 +8,25 @@ One-page capture site. No framework, no build step. Plain HTML, CSS and JS so it
 - `styles.css` — design system. Colours and fonts are CSS variables at the top (`:root`).
 - `script.js` — scroll-reveal animations only.
 
+## Session tools, and where each one lives
+
+The drill tools are session pages, not marketing pages. Every one of them is `noindex`, none
+is in the sitemap, and none is linked from a public page: the only way in is the link the
+facilitator sends. They are listed here because an address nobody has written down is an
+address that gets rebuilt.
+
+| Address | What it is |
+|---|---|
+| `/skilldrills/public-speaking/` | The public speaking drill. One person on the floor, the room scores them. `new/`, `facilitator/`, `room/`, `results/` |
+| `/skilldrills/letting-someone-go/` | Letting Someone Go. Pairs and one triad, everybody busy at once, and the receiver's card is the one that counts. `new/`, `facilitator/`, `print/` |
+| `/quad/` | The Sensing Quad |
+
+The two drills share `netlify/functions/_scale.mjs`, which is the 1 to 10 scale, and
+`_session.mjs`, which decides who may drive a room. They do not share a question set and
+they are not the same shape. `_pair.mjs` is the engine behind the second one and is written
+to carry the sensing and pitching drills later: a new drill of that shape is a new question
+set in that file, not a new engine.
+
 ## Run locally
 
 Open `index.html` in a browser, or for live reload in Cursor's terminal:

@@ -126,3 +126,11 @@ video/*/verify_*.png
 .env
 .env.*
 !.env.example
+
+# Python bytecode, written by the interpreter the moment one check script imports
+# another. check_site.py imports build_blog and build_ics, so running the checks
+# leaves scripts/__pycache__ behind and the tree stops being clean. There is no
+# reason to commit it, and the publish directory is the repository root, so
+# anything committed here is served.
+__pycache__/
+*.pyc
