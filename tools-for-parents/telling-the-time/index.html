@@ -190,6 +190,12 @@
      the site to carry two paragraphs in a row, so the second ran straight
      on under the first with no gap. */
   .tfp-copy p + p { margin-top: 14px; }
+
+  /* Phones and tablets: the site menu wraps to several lines here and, being
+     sticky, covered about a third of the screen (231px of 664 on an iPhone 13)
+     while a child was using the clock. On these pages it scrolls away instead.
+     Scoped to Tools for Parents; the rest of the site keeps its sticky nav. */
+  @media (max-width: 900px) { nav { position: static; } }
 </style>
 </head>
 <body class="resource-page">
