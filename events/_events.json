@@ -28,7 +28,8 @@
     "The URL moved with it, to /events/letting-someone-go/. The old slug 301s to the new one. subscribe.mjs answers to both names so an enquiry from a cached page cannot 500 during the deploy.",
     "10 November 2026: published. The 302! hold is lifted, the drills board links to it and the events index names it. alsoOn covers both, so the date cannot go stale on a surface the checker never looked at, which is how the 7 October drift happened.",
     "27 November 2026: every skill drill is 120 minutes, G's ruling. Letting Someone Go had no sign-ups for 30 November and moves to Tuesday 12 January 2027, the second Tuesday, same 11:00 UTC slot. Card payments are still not switched on, so there is no fee: people are asked to give what they like to G's wife's cancer recovery fundraiser instead.",
-    "27 November 2026: seven places left for 2 December, first come first served. netlify/functions/subscribe.mjs now counts bookings and refuses past the limit."
+    "27 November 2026: seven places left for 2 December, first come first served. netlify/functions/subscribe.mjs now counts bookings and refuses past the limit.",
+    "27 November 2026: G's ruling. 2 December is the last session with no fee, while Ewa's fundraiser runs. From January drills are back to EUR 50. Letting Someone Go on 12 January is EUR 50, invoiced by hand until card payments are on."
   ],
   "_howToCheck": "python scripts/check_event_facts.py  (the page)\npython scripts/build_ics.py --check   (the calendar file)",
   "events": {
@@ -81,7 +82,7 @@
       "retiredPlatforms": [
         "Zoom"
       ],
-      "priceEur": 0,
+      "priceEur": 50,
       "availability": "eight places",
       "retiredDurations": [
         "110 minutes",
@@ -96,8 +97,7 @@
       "alsoOn": [
         "skilldrills/index.html",
         "events/index.html"
-      ],
-      "priceNote": "pay what you like, to a fundraiser"
+      ]
     }
   }
 }
