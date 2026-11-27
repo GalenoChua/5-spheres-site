@@ -374,7 +374,7 @@ footer a:hover { color: var(--orange-soft); }
         <div><dt>Time</dt><dd>18:00 ICT, which is 12:00 in Warsaw and 19:00 in Kuala Lumpur</dd></div>
         <div><dt>Length</dt><dd>120 minutes</dd></div>
         <div><dt>Where</dt><dd>Google Meet</dd></div>
-        <div><dt>Cost</dt><dd>Pay what you like, eight places</dd></div>
+        <div><dt>Cost</dt><dd>Pay what you like, seven places</dd></div>
       </dl>
       <p class="facilitator">Facilitated by Galeno Chua</p>
 
@@ -397,7 +397,7 @@ footer a:hover { color: var(--orange-soft); }
          Event 2026-10-22 Public Speaking. MailerLite's own embedded widget is not used
          anywhere it matters on this site: it pulls in Google reCAPTCHA, which this site's
          CSP blocks, so the widget renders and then silently fails to submit. -->
-    <form class="drill-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/200050059381835246/subscribe" method="post" target="_blank" rel="noopener">
+    <form class="drill-form" action="#" method="post">
       <div class="field">
         <label for="name-top">First name</label>
         <input type="text" id="name-top" name="fields[name]" autocomplete="given-name" required>
@@ -416,6 +416,8 @@ footer a:hover { color: var(--orange-soft); }
       <!-- A field no person sees and no person fills in. Answered means a bot. -->
       <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
       <button type="submit">Take a place</button>
+      <p class="places-left" aria-live="polite"></p>
+      <noscript><p class="fineprint">Booking needs JavaScript. Or message me on WhatsApp, +48 792 417 093, and I will hold a place for you.</p></noscript>
       <p class="fineprint">There is no fee. If the session is worth something to you, give
       whatever you like to <a href="https://pomagam.pl/333a47" target="_blank" rel="noopener">my wife&rsquo;s
       cancer recovery fundraiser</a> instead. I will email you the Google Meet details.</p>
@@ -598,7 +600,7 @@ footer a:hover { color: var(--orange-soft); }
          Event 2026-10-22 Public Speaking. MailerLite's own embedded widget is not used
          anywhere it matters on this site: it pulls in Google reCAPTCHA, which this site's
          CSP blocks, so the widget renders and then silently fails to submit. -->
-    <form class="drill-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/200050059381835246/subscribe" method="post" target="_blank" rel="noopener">
+    <form class="drill-form" action="#" method="post">
       <div class="field">
         <label for="name-bottom">First name</label>
         <input type="text" id="name-bottom" name="fields[name]" autocomplete="given-name" required>
@@ -617,6 +619,8 @@ footer a:hover { color: var(--orange-soft); }
       <!-- A field no person sees and no person fills in. Answered means a bot. -->
       <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
       <button type="submit">Take a place</button>
+      <p class="places-left" aria-live="polite"></p>
+      <noscript><p class="fineprint">Booking needs JavaScript. Or message me on WhatsApp, +48 792 417 093, and I will hold a place for you.</p></noscript>
       <p class="fineprint">There is no fee. If the session is worth something to you, give
       whatever you like to <a href="https://pomagam.pl/333a47" target="_blank" rel="noopener">my wife&rsquo;s
       cancer recovery fundraiser</a> instead. I will email you the Google Meet details.</p>
@@ -674,6 +678,31 @@ footer a:hover { color: var(--orange-soft); }
     p.style.display = 'block';
   }
 
+  /* Places. The function counts bookings and refuses past the limit; this only
+     tells the visitor how many are left and closes the form when there are none. */
+  var FULL = 'Every place for this session has been taken. Message me on WhatsApp, ' +
+    '+48 792 417 093, and I will put you first in line for the next one.';
+  function closeForms(msg) {
+    document.querySelectorAll('form.drill-form').forEach(function (f) {
+      f.querySelectorAll('input, button').forEach(function (el) { el.disabled = true; });
+      var btn = f.querySelector('button[type="submit"]');
+      if (btn) { btn.textContent = 'Fully booked'; }
+      var pl = f.querySelector('.places-left');
+      if (pl) { pl.textContent = msg; pl.className = 'places-left gate-error'; }
+    });
+  }
+  function showLeft(n) {
+    document.querySelectorAll('.places-left').forEach(function (el) {
+      el.textContent = n === 1 ? 'One place left.' : n + ' places left.';
+    });
+  }
+  fetch('/.netlify/functions/subscribe?places=' + LIST, { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j || !j.capped) { return; }
+      if (j.left <= 0) { closeForms(FULL); } else { showLeft(j.left); }
+    }).catch(function () { /* the count is a courtesy; the function still enforces it */ });
+
   document.querySelectorAll('form.drill-form').forEach(function (form) {
     var sending = false;
     form.addEventListener('submit', function (e) {
@@ -712,6 +741,7 @@ footer a:hover { color: var(--orange-soft); }
         }).then(function (r) {
         return r.json().catch(function () { return { ok: false }; });
       }).then(function (j) {
+        if (j && j.full) { closeForms(j.error || FULL); return; }
         if (!j || !j.ok) {
           if (btn) { btn.disabled = false; btn.textContent = label; }
           fail(form, (j && j.error) || 'We could not hold your place just then. Please try again.');
