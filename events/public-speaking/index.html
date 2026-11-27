@@ -319,6 +319,25 @@ footer a:hover { color: var(--orange-soft); }
 .takeaways.grouped li { margin-bottom: 16px; }
 .takeaways.grouped strong { display: block; font-family: 'Fraunces', serif;
   font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+
+/* Stay close: the homepage's newsletter band. This page does not load styles.css,
+   so the band's rules are carried here in this page's own colours. */
+.newsletter-band { background: var(--navy); color: var(--offwhite); padding: 64px 0; }
+.newsletter-band .label { display: block; font-size: .78rem; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: #f2a03d; margin-bottom: 12px; }
+.newsletter-band h2 { color: var(--offwhite); max-width: 20ch; margin-bottom: 14px; }
+.newsletter-band p.sub { color: rgba(245,232,214,.85); max-width: 52ch; margin-bottom: 26px; }
+.newsletter-band .nl-row { display: flex; gap: 12px; max-width: 520px; flex-wrap: wrap; }
+.newsletter-band .nl-row .field { flex: 1; min-width: 180px; margin: 0; }
+.newsletter-band .nl-row input { width: 100%; box-sizing: border-box; padding: 14px 16px; font-size: 1rem;
+  font-family: inherit; border: 1.5px solid rgba(245,232,214,.35); border-radius: 10px;
+  background: rgba(245,232,214,.08); color: var(--offwhite); }
+.newsletter-band .nl-row input::placeholder { color: rgba(245,232,214,.6); }
+.newsletter-band .nl-row input:focus { outline: 2px solid var(--orange); border-color: transparent; }
+.newsletter-band .nl-btn { background: var(--orange); color: #fff; border: 0; border-radius: 99px;
+  padding: 14px 28px; font: inherit; font-weight: 700; cursor: pointer; flex: 0 0 auto; }
+.newsletter-band .fineprint { color: rgba(245,232,214,.65); margin-top: 12px; }
+.newsletter-band .row-success h3, .newsletter-band .row-success p { color: var(--offwhite); }
 </style>
 <script type="application/ld+json">
 {
@@ -430,6 +449,8 @@ footer a:hover { color: var(--orange-soft); }
       cancer recovery fundraiser</a> instead. I will send the Google Meet details before
       Wednesday 2 December. Start thinking about the
       ninety seconds you want to work on.</p>
+      <p class="intro">While you wait, you can <a href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">reserve
+      the field guide</a>, or <a href="#stay-close">join the letters</a> at the bottom of this page.</p>
       <div class="addcal">
         <span class="addcal-label">Add to calendar</span>
         <a class="addcal-btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Human%20Intelligence%3A%20The%20Public%20Speaking%20Drill&amp;dates=20261202T110000Z/20261202T130000Z&amp;details=A%20120-minute%20live%20session%20on%20holding%20a%20room.%20You%20deliver%2C%20you%20get%20read%20back%20against%20twelve%20delivery%20behaviours%2C%20and%20you%20deliver%20again.%0A%0ABring%20ninety%20seconds%20of%20something%20real%20you%20have%20to%20say%20soon.%0A%0ADetails%3A%20https%3A//5spheresofempathy.com/events/public-speaking/&amp;location=Google%20Meet&amp;ctz=Asia/Phnom_Penh" target="_blank" rel="noopener">Google Calendar</a>
@@ -633,6 +654,8 @@ footer a:hover { color: var(--orange-soft); }
       cancer recovery fundraiser</a> instead. I will send the Google Meet details before
       Wednesday 2 December. Start thinking about the
       ninety seconds you want to work on.</p>
+      <p class="intro">While you wait, you can <a href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">reserve
+      the field guide</a>, or <a href="#stay-close">join the letters</a> at the bottom of this page.</p>
       <div class="addcal">
         <span class="addcal-label">Add to calendar</span>
         <a class="addcal-btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Human%20Intelligence%3A%20The%20Public%20Speaking%20Drill&amp;dates=20261202T110000Z/20261202T130000Z&amp;details=A%20120-minute%20live%20session%20on%20holding%20a%20room.%20You%20deliver%2C%20you%20get%20read%20back%20against%20twelve%20delivery%20behaviours%2C%20and%20you%20deliver%20again.%0A%0ABring%20ninety%20seconds%20of%20something%20real%20you%20have%20to%20say%20soon.%0A%0ADetails%3A%20https%3A//5spheresofempathy.com/events/public-speaking/&amp;location=Google%20Meet&amp;ctz=Asia/Phnom_Penh" target="_blank" rel="noopener">Google Calendar</a>
@@ -641,6 +664,36 @@ footer a:hover { color: var(--orange-soft); }
     </div>
   </div>
 </div>
+
+<!-- ══════════ STAY CLOSE ══════════
+     Added 27 November 2026. The page had nowhere to go for anyone not booking, or anyone
+     who just had: no newsletter, no book. This is the homepage's newsletter block, same
+     form and same list, with the field guide line under it. -->
+<section class="newsletter-band" id="stay-close">
+  <div class="wrap">
+    <div class="row-form">
+      <span class="label">Stay close to the work</span>
+      <h2>Empathy as a practical skill, in your inbox.</h2>
+      <p class="sub">Occasional letters on the method, the trust economy, and building something that outlives you. Nothing automated pretending to be friendship. No spam.</p>
+      <form class="ml-block-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/189738547467519573/subscribe" method="post" target="_blank" rel="noopener" data-list="inbox">
+        <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+        <div class="nl-row">
+          <div class="field"><input type="text" name="fields[name]" placeholder="First name" autocomplete="given-name" aria-label="First name"></div>
+          <div class="field"><input type="email" name="fields[email]" placeholder="Email" autocomplete="email" aria-label="Email" required></div>
+          <input type="hidden" name="ml-submit" value="1">
+          <button type="submit" class="btn nl-btn">Join</button>
+          <input type="hidden" name="anticsrf" value="true">
+        </div>
+        <p class="fineprint">Unsubscribe any time, no hard feelings.</p>
+      </form>
+      <p class="sub" style="margin-top:28px;">And the book: all five spheres in one field guide. The first hundred to reserve a copy get a group coaching session. <a href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener" style="color:#f2a03d;font-weight:700;text-decoration:none;">Reserve a copy &#8594;</a></p>
+    </div>
+    <div class="row-success" style="display:none">
+      <h3>You're in.</h3>
+      <p>Welcome. The first letter will find you soon.</p>
+    </div>
+  </div>
+</section>
 
 <footer>
   <div class="wrap">
@@ -747,8 +800,8 @@ footer a:hover { color: var(--orange-soft); }
           fail(form, (j && j.error) || 'We could not hold your place just then. Please try again.');
           return;
         }
-        document.querySelectorAll('.row-form').forEach(function (el) { el.style.display = 'none'; });
-        document.querySelectorAll('.row-success').forEach(function (el) { el.style.display = 'block'; });
+        document.querySelectorAll('.signup .row-form').forEach(function (el) { el.style.display = 'none'; });
+        document.querySelectorAll('.signup .row-success').forEach(function (el) { el.style.display = 'block'; });
         var wrap = form.closest('.signup');
         if (wrap) { wrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
       }).catch(function () {
