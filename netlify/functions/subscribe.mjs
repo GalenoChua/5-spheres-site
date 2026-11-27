@@ -289,6 +289,34 @@ async function hold(list, email, name) {
 }
 
 
+/* ── TELL G ──────────────────────────────────────────────────────────────────────────
+ *
+ * 27 November 2026, G: "I don't think I'm getting notifications when people sign up."
+ * He was not. MailerLite's own new-subscriber alert fires only for people never on the
+ * list before, and most people booking a drill already are.
+ *
+ * So each new place held posts a Netlify Form, `booking-alert`, which Netlify emails
+ * to G the same way the parent feedback reaches him. The form exists in the page HTML
+ * (hidden) so Netlify detects it at deploy. A failure here never fails the booking.
+ */
+async function tellG(origin, fields) {
+  try {
+    const body = new URLSearchParams({ 'form-name': 'booking-alert', ...fields });
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 4000);
+    const r = await fetch(`${origin}/`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: body.toString(),
+      signal: ctrl.signal,
+    });
+    clearTimeout(t);
+    if (!r.ok) console.error('booking alert not accepted', r.status);
+  } catch (err) {
+    console.error('booking alert failed', String(err));
+  }
+}
+
 const handle = async (request) => {
   /* A page asks for a token as it loads. Cached nowhere: a cached token is a
      shared token, and single use would then refuse the second visitor. */
@@ -402,6 +430,19 @@ const handle = async (request) => {
       ok: false,
       error: 'We could not add you just then. Try again, or email hello@5spheresofempathy.com.',
       detail,
+    });
+  }
+
+  if (place && place.held && !place.again) {
+    const cap = PLACES[listName];
+    const left = await placesLeft(listName);
+    await tellG(new URL(request.url).origin, {
+      drill: listName,
+      session: cap.session,
+      name,
+      email,
+      what_they_bring: clean(extra.why_now, 1000),
+      places_left: `${left} of ${cap.places}`,
     });
   }
 
