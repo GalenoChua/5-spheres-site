@@ -695,6 +695,14 @@ footer a:hover { color: var(--orange-soft); }
   </div>
 </section>
 
+<!-- Netlify Form, never shown. Netlify reads it at deploy so the booking function can
+     post a `booking-alert` and Netlify emails G about each new place. See TELL G in
+     netlify/functions/subscribe.mjs. -->
+<form name="booking-alert" data-netlify="true" netlify-honeypot="website" hidden>
+  <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0"><input name="drill"><input name="session"><input name="name">
+  <input name="email"><textarea name="what_they_bring"></textarea><input name="places_left">
+</form>
+
 <footer>
   <div class="wrap">
     <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
