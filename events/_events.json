@@ -26,7 +26,8 @@
     "",
     "10 November 2026: 'Tough Conversations: Giving Feedback' is renamed 'Letting Someone Go'. G rewrote the page around the one scenario rather than the category, and all three practice scenarios are now variants of it. The URL stays /events/tough-conversations/ because the slug is in _redirects, the ics path and every link already shared.",
     "The URL moved with it, to /events/letting-someone-go/. The old slug 301s to the new one. subscribe.mjs answers to both names so an enquiry from a cached page cannot 500 during the deploy.",
-    "10 November 2026: published. The 302! hold is lifted, the drills board links to it and the events index names it. alsoOn covers both, so the date cannot go stale on a surface the checker never looked at, which is how the 7 October drift happened."
+    "10 November 2026: published. The 302! hold is lifted, the drills board links to it and the events index names it. alsoOn covers both, so the date cannot go stale on a surface the checker never looked at, which is how the 7 October drift happened.",
+    "27 November 2026: every skill drill is 120 minutes, G's ruling. Letting Someone Go had no sign-ups for 30 November and moves to Tuesday 12 January 2027, the second Tuesday, same 11:00 UTC slot. Card payments are still not switched on, so there is no fee: people are asked to give what they like to G's wife's cancer recovery fundraiser instead."
   ],
   "_howToCheck": "python scripts/check_event_facts.py  (the page)\npython scripts/build_ics.py --check   (the calendar file)",
   "events": {
@@ -34,62 +35,68 @@
       "name": "Human Intelligence: The Public Speaking Drill",
       "page": "events/public-speaking/index.html",
       "startsUtc": "2026-12-02T11:00:00Z",
-      "endsUtc": "2026-12-02T12:50:00Z",
+      "endsUtc": "2026-12-02T13:00:00Z",
       "displayZone": "Asia/Phnom_Penh",
       "displayZoneLabel": "ICT",
       "displayTime": "18:00 ICT",
       "displayDate": "Wednesday 2 December",
-      "lengthMinutes": 110,
-      "lengthLabel": "110 minutes",
+      "lengthMinutes": 120,
+      "lengthLabel": "120 minutes",
       "platform": "Google Meet",
       "retiredPlatforms": [
         "Zoom"
       ],
-      "priceEur": 50,
+      "priceEur": 0,
       "availability": "eight places",
       "retiredDurations": [
+        "110 minutes",
+        "110-minute",
         "90 minutes",
         "90-minute",
         "Ninety minutes",
         "ninety minutes"
       ],
       "icsPath": "events/public-speaking/public-speaking-drill.ics",
-      "icsDescription": "A 110-minute live session on holding a room. You deliver, you get read back against twelve delivery behaviours, and you deliver again.\n\nBring ninety seconds of something real you have to say soon.\n\nDetails: https://5spheresofempathy.com/events/public-speaking/",
+      "icsDescription": "A 120-minute live session on holding a room. You deliver, you get read back against twelve delivery behaviours, and you deliver again.\n\nBring ninety seconds of something real you have to say soon.\n\nDetails: https://5spheresofempathy.com/events/public-speaking/",
       "alsoOn": [
         "skilldrills/index.html",
         "index.html",
         "events/index.html"
-      ]
+      ],
+      "priceNote": "pay what you like, to a fundraiser"
     },
     "letting-someone-go": {
       "name": "Letting Someone Go",
       "page": "events/letting-someone-go/index.html",
-      "startsUtc": "2026-11-30T11:00:00Z",
-      "endsUtc": "2026-11-30T12:50:00Z",
+      "startsUtc": "2027-01-12T11:00:00Z",
+      "endsUtc": "2027-01-12T13:00:00Z",
       "displayZone": "Asia/Phnom_Penh",
       "displayZoneLabel": "ICT",
       "displayTime": "18:00 ICT",
-      "displayDate": "Monday 30 November",
-      "lengthMinutes": 110,
-      "lengthLabel": "110 minutes",
+      "displayDate": "Tuesday 12 January",
+      "lengthMinutes": 120,
+      "lengthLabel": "120 minutes",
       "platform": "Google Meet",
       "retiredPlatforms": [
         "Zoom"
       ],
-      "priceEur": 50,
+      "priceEur": 0,
       "availability": "eight places",
       "retiredDurations": [
+        "110 minutes",
+        "110-minute",
         "90 minutes",
         "90-minute",
         "Ninety minutes",
         "ninety minutes"
       ],
       "icsPath": "events/letting-someone-go/letting-someone-go.ics",
-      "icsDescription": "A 110-minute live session on delivering hard news so the other person still leaves feeling respected.\n\nYou deliver, somebody receives it, and both of you score it. Bring a real conversation you are avoiding, or use one of ours.\n\nDetails: https://5spheresofempathy.com/events/letting-someone-go/",
+      "icsDescription": "A 120-minute live session on delivering hard news so the other person still leaves feeling respected.\n\nYou deliver, somebody receives it, and both of you score it. Bring a real conversation you are avoiding, or use one of ours.\n\nDetails: https://5spheresofempathy.com/events/letting-someone-go/",
       "alsoOn": [
         "skilldrills/index.html",
         "events/index.html"
-      ]
+      ],
+      "priceNote": "pay what you like, to a fundraiser"
     }
   }
 }
