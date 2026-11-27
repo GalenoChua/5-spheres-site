@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tools for Parents | The 5 Spheres of Empathy</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+<meta name="description" content="Free tools to help you spend real, learning time with your children.">
+<meta property="og:title" content="Tools for Parents | The 5 Spheres of Empathy">
+<meta property="og:description" content="Free tools to help you spend real, learning time with your children.">
+<meta property="og:image" content="https://5spheresofempathy.com/og.png">
+<meta property="og:url" content="https://5spheresofempathy.com/tools-for-parents/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://5spheresofempathy.com/tools-for-parents/">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* Every selector here is prefixed fp-, because the site stylesheet owns the
+     bare names. The form rules are the ones the earlier feedback page used, so
+     the form looks the same as it did on its own page. */
+  .fp-crumb { font-size: .85rem; letter-spacing: .04em; color: rgba(250,246,239,.7); margin-bottom: 14px; }
+  .fp-crumb a { color: inherit; text-decoration: none; }
+  .fp-crumb a:hover { text-decoration: underline; }
+  .fp-copy p + p { margin-top: 14px; }
+  .fp-copy a { color: var(--ember); font-weight: 600; text-decoration: none; }
+  .fp-copy a:hover { text-decoration: underline; }
+  /* Same treatment as the field notes pull quote, which is the site's one rule
+     for lifting the author's own sentence out of the prose. */
+  .fp-pull {
+    margin: 32px 0; padding: 22px 0;
+    border-top: 2px solid var(--ember); border-bottom: 2px solid var(--ember);
+    font-family: 'Fraunces', Georgia, serif; font-weight: 500;
+    font-size: 1.4rem; line-height: 1.34; color: var(--ink); max-width: 30ch;
+  }
+  .fp-sources { font-size: .88rem; color: var(--muted); }
+  /* The shared .grid is three fixed columns, which strands a single tool at a
+     third of the width. Sized to content, a second tool changes nothing here. */
+  .fp-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 340px)); }
+  .fp-more { margin-top: 22px; color: var(--muted); }
+
+  .fp-form { max-width: 620px; margin-top: 26px; }
+  .fp-q { margin-top: 22px; }
+  .fp-q label { display: block; font-family: 'Fraunces', serif; font-size: 1.05rem;
+                font-weight: 700; color: var(--ink); }
+  .fp-field {
+    width: 100%; margin-top: 10px; border: 1.5px solid var(--line); border-radius: 12px;
+    background: var(--paper); color: var(--text); font: inherit; font-size: 1rem;
+    padding: 12px 14px; box-sizing: border-box;
+  }
+  textarea.fp-field { min-height: 108px; resize: vertical; }
+  .fp-note { font-size: .9rem; color: var(--muted); margin-top: 18px; }
+  .fp-send {
+    margin-top: 22px; border: 0; background: var(--ember); color: #2a1a06;
+    border-radius: 12px; padding: 14px 26px; font: inherit; font-size: 1rem;
+    font-weight: 700; cursor: pointer;
+  }
+  .fp-send[disabled] { opacity: .55; cursor: default; }
+  .fp-say { margin-top: 16px; font-size: .95rem; font-weight: 600; min-height: 1.4em; }
+  .fp-say.fp-bad { color: #9c3a28; }
+  .fp-hide { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .fp-actions { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .fp-actions .btn.ghost { margin-left: 0; }
+  button.btn { font: inherit; cursor: pointer; }
+  .fp-made { font-size: .9rem; margin-bottom: 10px; }
+</style>
+</head>
+<body class="resource-page">
+
+<nav>
+  <div class="wrap">
+    <a class="mark" href="/">The 5 Spheres<span>.</span></a>
+    <div class="nav-links">
+      <a class="cta" href="/the-method/">The Method</a>
+      <a class="cta" href="/coaching/">Coaching</a>
+      <div class="nav-group">
+        <a class="cta" href="/community/">Community</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/skilldrills/">Skill Drills<span>Two hours on one skill</span></a>
+            <a href="/agree-to-disagree/">Agree to Disagree<span>The live leadership roundtable</span></a>
+            <a href="/sustainability-tours/">Sustainability Tours<span>Behind the scenes, in person and virtual</span></a>
+            <a href="/events/">Events<span>Live sessions on the method</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta" href="/field-notes/">Field Notes</a>
+      <div class="nav-group">
+        <a class="cta" href="/resources/">Resources</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/resources/">Tools and downloads<span>Worksheets, checklists and reference sheets</span></a>
+            <a href="/bsfp-accelerator/">Business Sustainability<span>Free eighteen lesson course</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta" href="https://app.5spheresofempathy.com/start">Log in</a>
+      <a class="cta nav-primary" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">The Field Guide</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero-dark">
+  <div class="deco"></div>
+  <div class="wrap-narrow">
+    <div class="fp-crumb"><a href="/">5 Spheres of Empathy</a> &middot; For Parents</div>
+    <h1>Tools for Parents</h1>
+    <p>Free tools to help you spend real, learning time with your children.</p>
+  </div>
+</header>
+
+<section class="fp-copy">
+  <div class="wrap-narrow">
+    <h2>Why this is here</h2>
+    <p class="fp-pull">I believe parenting is the single greatest lever we have for bringing more empathy into the world.</p>
+    <p>Children learn empathy earliest and deepest in their first years, long before school. Decades of developmental research point the same way: empathy and the urge to help appear in the first two years of life, and children build them largely by watching the people who raise them.</p>
+    <p class="fp-sources">Sources: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5573613/" target="_blank" rel="noopener">Decety &amp; Cowell, on the early development of empathy</a>; <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9222107/" target="_blank" rel="noopener">systematic review on attachment and prosocial behaviour in children</a>.</p>
+    <p>They learn it by watching how the adults around them listen, stay patient, show kindness, handle being wrong, and generally just how they show up.</p>
+    <p class="fp-pull">And those moments need one thing above all: time together.</p>
+    <p>Unhurried, device-down, side-by-side time. That is getting harder for every parent I know, myself included.</p>
+    <p>So I started making small tools that give me a reason to sit down with my own children and learn something together. A clock to read. A language to practise. Little things that turn ten minutes into connection.</p>
+    <p>This is the beginning of something bigger. If these help, I want to understand how, and eventually to study properly whether tools like these, and the time they create, really do grow empathy in families. That starts with you telling me whether it worked.</p>
+  </div>
+</section>
+
+<section class="more">
+  <div class="wrap-narrow">
+    <h2>The tools</h2>
+    <div class="grid fp-grid">
+      <div class="rcard">
+        <h3>Telling the Time</h3>
+        <p>An interactive clock to learn to read the time together, analog and digital. Four levels, from o'clock to quarter-past and beyond, with a little history fact for each hour. In English, Polish, Mandarin (with pinyin), Bahasa Indonesia and French.</p>
+        <a href="/tools-for-parents/telling-the-time/">Open the clock</a>
+      </div>
+    </div>
+    <p class="fp-more">More tools coming. This section will grow as I make and test new ones with my own children.</p>
+  </div>
+</section>
+
+<section class="fp-copy" id="feedback">
+  <div class="wrap-narrow">
+    <h2>Did this help? Tell me.</h2>
+    <p>I don't track anything on these tools. No accounts, no analytics, nothing collected in the background. The only way I learn whether this matters is if you choose to tell me. If you have a minute, this means a great deal:</p>
+
+    <!-- Netlify Forms: Netlify reads this form at deploy time and emails each
+         submission to the address set in the Netlify UI (Forms, notifications).
+         There is no database of ours, no account and no cookie. The honeypot is
+         the only hidden field, and a person never sees or fills it. -->
+    <form class="fp-form" id="fp-form" name="parent-feedback" method="POST" action="/tools-for-parents/thanks/" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="parent-feedback">
+      <p class="fp-hide"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+
+      <div class="fp-q">
+        <label for="fp-tool">Which tool did you use?</label>
+        <select class="fp-field" id="fp-tool" name="tool">
+          <option value="Telling the Time">Telling the Time</option>
+        </select>
+      </div>
+
+      <div class="fp-q">
+        <label for="fp-time">Roughly how long did you spend with your child using it?</label>
+        <input class="fp-field" id="fp-time" name="time_spent" type="text" maxlength="200" placeholder="e.g. 20 minutes, a couple of sessions">
+      </div>
+
+      <div class="fp-q">
+        <label for="fp-learned">What did your child learn, or what happened?</label>
+        <textarea class="fp-field" id="fp-learned" name="what_happened" maxlength="3000" placeholder="Anything at all"></textarea>
+      </div>
+
+      <div class="fp-q">
+        <label for="fp-change">Anything you'd change, or want next?</label>
+        <textarea class="fp-field" id="fp-change" name="change_or_next" maxlength="3000"></textarea>
+      </div>
+
+      <p class="fp-note">Optional and anonymous. Leave your name only if you'd like me to reply.</p>
+      <button class="fp-send" id="fp-send" type="submit">Send feedback</button>
+      <div class="fp-say" id="fp-say" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+</section>
+
+<section class="more fp-copy">
+  <div class="wrap-narrow">
+    <h2>Support the work</h2>
+    <!-- Temporary, 27 November 2026, G's call: the Buy Me a Coffee page is not set
+         up yet, so the support block points at Ewa's fundraiser. Restore the approved
+         coffee wording and https://buymeacoffee.com/MrG.GalenoChua when it is. -->
+    <p>These tools are free and always will be. If one of them gave you a good moment with your child and you'd like to give something back, for now I'd ask you to give whatever you like to my wife Ewa's cancer recovery fundraiser. Only if it was worth it to you, and only if it's easy for you.</p>
+    <div class="fp-actions">
+      <a class="btn" href="https://pomagam.pl/333a47" target="_blank" rel="noopener">Support Ewa's fundraiser</a>
+      <button class="btn ghost" id="fp-share" type="button">Share these tools</button>
+    </div>
+    <div class="fp-say" id="fp-share-say" role="status" aria-live="polite"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p class="fp-made">Made by G (Galeno Chua), author of The 5 Spheres of Empathy. These tools collect no personal data. Feedback is voluntary and anonymous unless you choose to add your name.</p>
+      <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
+    </div>
+    <div><a href="/">Home</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@5spheresofempathy.com">Get in touch</a> &nbsp;&middot;&nbsp; <a href="/privacy/">Privacy</a></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id);};
+
+  /* Sent from the page rather than by a full page load, so the parent stays
+     where they are and is told the truth. A failed send leaves the button live
+     and says so, with the address to write to instead. The form still works
+     without this script: it posts natively to the thanks page. */
+  var form=$("fp-form"), send=$("fp-send"), say=$("fp-say");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    send.disabled=true; say.className="fp-say"; say.textContent="Sending...";
+    var body=new URLSearchParams(new FormData(form)).toString();
+    fetch("/", {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body:body})
+      .then(function(r){
+        if(!r.ok) throw new Error(r.status);
+        form.reset();
+        say.textContent="Thank you. That reached me.";
+        send.disabled=false;
+      })
+      .catch(function(){
+        send.disabled=false; say.className="fp-say fp-bad";
+        say.textContent="That did not send. Please try again, or write to hello@5spheresofempathy.com.";
+      });
+  });
+
+  var share=$("fp-share"), shareSay=$("fp-share-say");
+  var url="https://5spheresofempathy.com/tools-for-parents/";
+  share.addEventListener("click", function(){
+    if(navigator.share){
+      navigator.share({title:"Tools for Parents", url:url}).catch(function(){});
+      return;
+    }
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(url).then(function(){
+        shareSay.textContent="Link copied.";
+      }, function(){ shareSay.textContent=url; });
+    } else { shareSay.textContent=url; }
+  });
+})();
+</script>
+
+</body>
+</html>

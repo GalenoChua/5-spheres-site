@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telling the Time | The 5 Spheres of Empathy</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+<meta name="description" content="A free clock app for learning to tell the time. Four levels, draggable hands, five languages with pinyin you can switch off, and a history card for every hour.">
+<meta property="og:title" content="Telling the Time | The 5 Spheres of Empathy">
+<meta property="og:description" content="A free clock app for learning to tell the time. Four levels, draggable hands, five languages with pinyin you can switch off, and a history card for every hour.">
+<meta property="og:image" content="https://5spheresofempathy.com/og.png">
+<meta property="og:url" content="https://5spheresofempathy.com/tools-for-parents/telling-the-time/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://5spheresofempathy.com/tools-for-parents/telling-the-time/">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* ── Telling the Time ──────────────────────────────────────────────
+     Every selector and every id in this block is prefixed tt-.
+
+     The site stylesheet already defines .card, .prompt, .sub and .row,
+     and the app this was lifted from used all four as bare class names
+     along with a :root block that redefined --ink, --muted and --line.
+     Dropped in unprefixed it would have repainted the whole site from
+     this one page, so the app's palette is declared on .tt-app and the
+     app's names are its own.
+
+     Colours come from the site tokens rather than the app's original
+     warm cream, because this has to sit on the site rather than next
+     to it. The minute hand stays ember: the note under the clock tells
+     a child to drag the orange hand, and it has to be orange.
+
+     Contrast: the original filled its success and accent states with
+     white text on mid-tone orange and green, around 2.5:1. Text that
+     sits on a filled button here uses the deeper --tt-good, --tt-bad
+     and --tt-ink fills instead. ── */
+
+  .tt-app {
+    --tt-card: #fffdfa;
+    --tt-face: #fffdf9;
+    --tt-ink: var(--ink);
+    --tt-muted: var(--muted);
+    --tt-line: var(--line);
+    --tt-ember: var(--ember);
+    --tt-good: #46713a;
+    --tt-bad: #9c3a28;
+    --tt-try: #8a5a12;
+    --tt-shadow: 0 6px 22px rgba(29,42,82,.08);
+
+    max-width: 760px; margin: 0 auto; padding: 0 22px 10px;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  }
+
+  .tt-head { display: flex; align-items: center; justify-content: space-between;
+             gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .tt-apptitle { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700;
+                 color: var(--tt-ink); margin: 0; }
+
+  /* Five language pills, not three, as of 24 November 2026, and this rule is
+     unchanged on purpose. Measured in a browser at 320, 360 and 390px: all
+     five fit on one row with nothing clipped and no sideways scroll, because
+     .tt-head already wraps and drops the whole group onto its own line under
+     the title. A wrap and a narrower pill were added here and then taken back
+     out, because neither changed a single measurement. */
+  .tt-langs { display: flex; gap: 6px; }
+  .tt-langs button {
+    border: 1.5px solid var(--tt-line); background: var(--tt-card); color: var(--tt-muted);
+    border-radius: 999px; padding: 7px 14px; font: inherit; font-size: .95rem;
+    font-weight: 600; cursor: pointer;
+  }
+  .tt-langs button[aria-pressed="true"] { background: var(--tt-ink); border-color: var(--tt-ink); color: var(--paper); }
+
+  .tt-levels { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 4px; }
+  .tt-levels button {
+    flex: 1 1 auto; min-width: 76px; border: 1.5px solid var(--tt-line);
+    background: var(--tt-card); color: var(--tt-ink); border-radius: 12px;
+    padding: 10px 8px; font: inherit; font-size: .92rem; font-weight: 700;
+    cursor: pointer; line-height: 1.2;
+  }
+  .tt-levels button .tt-n { display: block; font-size: .72rem; color: var(--tt-muted); font-weight: 600; }
+  .tt-levels button[aria-pressed="true"] { background: var(--tt-good); border-color: var(--tt-good); color: var(--paper); }
+  .tt-levels button[aria-pressed="true"] .tt-n { color: rgba(250,246,239,.9); }
+
+  .tt-panel { background: var(--tt-card); border: 1.5px solid var(--tt-line);
+              border-radius: 18px; padding: 18px; box-shadow: var(--tt-shadow); margin-top: 12px; }
+  .tt-prompt { font-size: 1.15rem; font-weight: 700; text-align: center;
+               min-height: 1.6em; margin: 0 0 4px; color: var(--tt-ink); }
+  .tt-sub { font-size: .95rem; color: var(--tt-muted); text-align: center; margin: 0 0 10px; }
+  .tt-clockwrap { display: flex; justify-content: center; margin: 6px 0 10px; }
+  .tt-clockwrap svg { width: min(78vw, 320px); height: min(78vw, 320px); display: block; }
+  .tt-digital { text-align: center; font-variant-numeric: tabular-nums;
+                font-size: 2.1rem; font-weight: 800; letter-spacing: 1px;
+                margin: 6px 0; color: var(--tt-ink); }
+  .tt-digital small { font-size: 1rem; color: var(--tt-muted); font-weight: 600; }
+
+  .tt-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+  .tt-choice {
+    border: 1.5px solid var(--tt-line); background: var(--paper); color: var(--tt-ink);
+    border-radius: 14px; padding: 13px 16px; font: inherit; font-size: 1.2rem;
+    font-weight: 800; cursor: pointer; min-width: 94px; font-variant-numeric: tabular-nums;
+  }
+  .tt-choice.tt-good { background: var(--tt-good); border-color: var(--tt-good); color: var(--paper); }
+  .tt-choice.tt-bad  { background: var(--tt-bad);  border-color: var(--tt-bad);  color: var(--paper); }
+
+  .tt-controls { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+  .tt-controls button {
+    border: 1.5px solid var(--tt-line); background: var(--tt-card); color: var(--tt-ink);
+    border-radius: 12px; padding: 11px 18px; font: inherit; font-size: 1rem;
+    font-weight: 700; cursor: pointer;
+  }
+  .tt-controls button.tt-primary { background: var(--tt-ink); border-color: var(--tt-ink); color: var(--paper); }
+
+  .tt-feedback { text-align: center; font-size: 1.2rem; font-weight: 800;
+                 min-height: 1.5em; margin: 10px 0 2px; color: var(--tt-ink); }
+  .tt-feedback.tt-is-good { color: var(--tt-good); }
+  .tt-feedback.tt-is-try  { color: var(--tt-try); }
+  .tt-score { text-align: center; color: var(--tt-muted); font-size: .9rem; margin-top: 6px; }
+  .tt-hint { text-align: center; color: var(--tt-muted); font-size: .9rem; margin-top: 8px; line-height: 1.45; }
+
+  .tt-handle { cursor: grab; }
+  .tt-handle:active { cursor: grabbing; }
+
+  .tt-pytoggle { display: none; justify-content: center; align-items: center; gap: 8px;
+                 margin: 10px 0 2px; font-size: .9rem; color: var(--tt-muted); }
+  .tt-pytoggle.tt-show { display: flex; }
+  .tt-pytoggle button {
+    border: 1.5px solid var(--tt-line); background: var(--tt-card); color: var(--tt-ink);
+    border-radius: 999px; padding: 6px 14px; font: inherit; font-weight: 700;
+    cursor: pointer; font-size: .9rem;
+  }
+  .tt-pytoggle button[aria-pressed="true"] { background: var(--tt-ink); border-color: var(--tt-ink); color: var(--paper); }
+
+  .tt-trivia { margin-top: 18px; }
+  .tt-trivia-head { display: flex; align-items: center; justify-content: space-between;
+                    gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  #tt-trivialabel { font-weight: 800; color: var(--tt-ink); font-size: 1rem; }
+  .tt-tlangs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tt-tlangs button {
+    border: 1.5px solid var(--tt-line); background: var(--tt-card); color: var(--tt-muted);
+    border-radius: 999px; padding: 5px 11px; font: inherit; font-size: .82rem;
+    font-weight: 600; cursor: pointer;
+  }
+  .tt-tlangs button[aria-pressed="true"] { background: var(--tt-ink); border-color: var(--tt-ink); color: var(--paper); }
+
+  .tt-flip { display: block; width: 100%; border: 0; background: none; padding: 0;
+             cursor: pointer; perspective: 1200px; font: inherit; }
+  .tt-flip-inner { position: relative; width: 100%; min-height: 128px;
+                   transition: transform .5s; transform-style: preserve-3d; }
+  .tt-flip.tt-flipped .tt-flip-inner { transform: rotateY(180deg); }
+  .tt-flip-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border: 1.5px solid var(--tt-line); border-radius: 16px; padding: 16px;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    box-shadow: var(--tt-shadow);
+  }
+  .tt-flip-front { background: var(--tt-ink); color: var(--paper); font-weight: 800;
+                   font-size: 1.02rem; line-height: 1.35; flex-direction: column; gap: 6px; }
+  .tt-flip-front .tt-tt { font-size: 1.9rem; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+  .tt-flip-back { background: var(--tt-card); color: var(--tt-ink); transform: rotateY(180deg);
+                  font-size: .98rem; line-height: 1.5; flex-direction: column; gap: 4px; }
+  .tt-flip-back .tt-py { color: var(--tt-muted); font-size: .88rem; }
+  .tt-trivia-tip { text-align: center; color: var(--tt-muted); font-size: .82rem; margin: 8px 0 2px; }
+
+  .tt-note { text-align: center; color: var(--tt-muted); font-size: .85rem; margin: 18px 0 4px; }
+
+  /* The reveal animation on the rest of the site starts elements at opacity 0
+     and reveals them on scroll. This page does not load /script.js, so anything
+     inheriting .reveal here would stay invisible for good. Nothing in the app
+     carries that class; the note is here so nobody adds it. */
+
+  @media (max-width: 420px) {
+    .tt-apptitle { font-size: 1.1rem; }
+    .tt-digital { font-size: 1.8rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tt-flip-inner { transition: none; }
+  }
+
+  /* The site has no generic rule for a link in body copy, so one falls back
+     to browser blue and underline. The styled convention elsewhere on the
+     site is ember and semibold; scoped here rather than added globally,
+     because changing every bare link on the site is not this build's call. */
+  .tfp-copy a { color: var(--ember); font-weight: 600; text-decoration: none; }
+  .tfp-copy a:hover { text-decoration: underline; }
+  /* styles.css zeroes every margin, and these sections are the first on
+     the site to carry two paragraphs in a row, so the second ran straight
+     on under the first with no gap. */
+  .tfp-copy p + p { margin-top: 14px; }
+</style>
+</head>
+<body class="resource-page">
+
+<nav>
+  <div class="wrap">
+    <a class="mark" href="/">The 5 Spheres<span>.</span></a>
+    <div class="nav-links">
+      <a class="cta" href="/the-method/">The Method</a>
+      <a class="cta" href="/coaching/">Coaching</a>
+      <div class="nav-group">
+        <a class="cta" href="/community/">Community</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/skilldrills/">Skill Drills<span>Two hours on one skill</span></a>
+            <a href="/agree-to-disagree/">Agree to Disagree<span>The live leadership roundtable</span></a>
+            <a href="/sustainability-tours/">Sustainability Tours<span>Behind the scenes, in person and virtual</span></a>
+            <a href="/events/">Events<span>Live sessions on the method</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta" href="/field-notes/">Field Notes</a>
+      <div class="nav-group">
+        <a class="cta" href="/resources/">Resources</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/resources/">Tools and downloads<span>Worksheets, checklists and reference sheets</span></a>
+            <a href="/bsfp-accelerator/">Business Sustainability<span>Free eighteen lesson course</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta" href="https://app.5spheresofempathy.com/start">Log in</a>
+      <a class="cta nav-primary" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">The Field Guide</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero-dark">
+  <div class="deco"></div>
+  <div class="wrap-narrow">
+    <div class="kicker"><a href="/tools-for-parents/" style="color:inherit">Tools for Parents</a></div>
+    <h1>Telling the Time</h1>
+    <p>Four levels, from o'clock through to matching a clock face against a digital time. Drag the hands to set your own questions. Works on a phone, a tablet and a desktop, with nothing to install and nothing to sign up for.</p>
+  </div>
+</header>
+
+<section>
+  <div class="tt-app" id="tt-app">
+
+    <div class="tt-head">
+      <h2 class="tt-apptitle" id="tt-apptitle">Telling the Time</h2>
+      <div class="tt-langs" role="group" aria-label="App language">
+        <button type="button" data-tt-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-tt-lang="pl" aria-pressed="false">PL</button>
+        <button type="button" data-tt-lang="zh" aria-pressed="false">中文</button>
+        <button type="button" data-tt-lang="id" aria-pressed="false">ID</button>
+        <button type="button" data-tt-lang="fr" aria-pressed="false">FR</button>
+      </div>
+    </div>
+
+    <div class="tt-levels" role="group" aria-label="Level">
+      <button type="button" data-tt-level="1" aria-pressed="true"><span class="tt-lv"></span><span class="tt-n"></span></button>
+      <button type="button" data-tt-level="2" aria-pressed="false"><span class="tt-lv"></span><span class="tt-n"></span></button>
+      <button type="button" data-tt-level="3" aria-pressed="false"><span class="tt-lv"></span><span class="tt-n"></span></button>
+      <button type="button" data-tt-level="4" aria-pressed="false"><span class="tt-lv"></span><span class="tt-n"></span></button>
+    </div>
+
+    <div class="tt-panel">
+      <p class="tt-prompt" id="tt-prompt"></p>
+      <p class="tt-sub" id="tt-sub"></p>
+
+      <div class="tt-clockwrap">
+        <svg id="tt-clock" viewBox="0 0 200 200" role="img" aria-label="Clock face">
+          <circle cx="100" cy="100" r="96" fill="var(--tt-face)" stroke="var(--tt-line)" stroke-width="3"/>
+          <g id="tt-ticks"></g>
+          <g id="tt-nums"></g>
+          <line id="tt-hourhand" x1="100" y1="100" x2="100" y2="52" stroke="var(--tt-ink)" stroke-width="7" stroke-linecap="round" class="tt-handle"/>
+          <line id="tt-minhand"  x1="100" y1="100" x2="100" y2="26" stroke="var(--tt-ember)" stroke-width="5" stroke-linecap="round" class="tt-handle"/>
+          <circle cx="100" cy="100" r="6" fill="var(--tt-ink)"/>
+        </svg>
+      </div>
+
+      <div class="tt-digital" id="tt-digital"></div>
+      <div class="tt-row" id="tt-choices"></div>
+      <div class="tt-feedback" id="tt-feedback" role="status" aria-live="polite"></div>
+
+      <div class="tt-controls">
+        <button type="button" id="tt-newq" class="tt-primary"></button>
+        <button type="button" id="tt-reveal"></button>
+      </div>
+
+      <p class="tt-score" id="tt-score"></p>
+
+      <div class="tt-pytoggle" id="tt-pytoggle">
+        <span id="tt-pylabel">Pinyin</span>
+        <button type="button" id="tt-pyon" aria-pressed="true">On</button>
+        <button type="button" id="tt-pyoff" aria-pressed="false">Off</button>
+      </div>
+
+      <p class="tt-hint" id="tt-hint"></p>
+    </div>
+
+    <div class="tt-trivia">
+      <div class="tt-trivia-head">
+        <span id="tt-trivialabel">A moment in history</span>
+        <div class="tt-tlangs" id="tt-tlangs" role="group" aria-label="Trivia language">
+          <button type="button" data-tt-t="en" aria-pressed="true">EN</button>
+          <button type="button" data-tt-t="pl" aria-pressed="false">PL</button>
+          <button type="button" data-tt-t="zh" aria-pressed="false">中文</button>
+          <button type="button" data-tt-t="id" aria-pressed="false">ID</button>
+          <button type="button" data-tt-t="fr" aria-pressed="false">FR</button>
+        </div>
+      </div>
+      <button type="button" class="tt-flip" id="tt-flip" aria-label="Flip the card">
+        <div class="tt-flip-inner">
+          <div class="tt-flip-face tt-flip-front" id="tt-flipfront"></div>
+          <div class="tt-flip-face tt-flip-back" id="tt-flipback"></div>
+        </div>
+      </button>
+      <p class="tt-trivia-tip" id="tt-triviatip"></p>
+    </div>
+
+    <p class="tt-note" id="tt-note">Made for working through together. Drag the orange hand to set your own questions.</p>
+  </div>
+</section>
+
+<section class="more tfp-copy">
+  <div class="wrap-narrow">
+    <div class="label">How this works</div>
+    <h2>Nothing is collected</h2>
+    <p>No accounts, no adverts, no third party trackers and no analytics on this page. Nothing you or your child does here is sent anywhere. The app remembers four things in your own browser on your own device, the level, the app language, the trivia language and whether pinyin is showing, and it keeps them nowhere else. Clear your browser data and they are gone.</p>
+    <p>The one thing I would ask for is how it went. The <a href="/tools-for-parents/#feedback">feedback form</a> is anonymous, it asks for no personal details and you send it only if you want to.</p>
+    <p><a href="/tools-for-parents/">Back to Tools for Parents</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
+    <div><a href="/">Home</a> &nbsp;&middot;&nbsp; <a href="mailto:hello@5spheresofempathy.com">Get in touch</a> &nbsp;&middot;&nbsp; <a href="/privacy/">Privacy</a></div>
+  </div>
+</footer>
+
+<script>
+/* Telling the Time.
+
+   Lifted from the working version G corrected by hand on 24 November 2026.
+   The Polish and Mandarin forms below are not generated and must not be
+   regenerated: the hour is a feminine ordinal in Polish and takes the
+   genitive after "po" and "wpol do" and the nominative after "za", and two
+   o'clock in Mandarin is two (liang) rather than er while a two in the
+   minutes stays er. Both were wrong in the first draft and were fixed
+   against a native reading, so a rewrite costs that work rather than
+   repeating it.
+
+   Ids and classes are all tt- prefixed. See the note in the stylesheet.
+*/
+(function(){
+  "use strict";
+
+  var T = {
+    en:{
+      title:"Telling the Time",
+      oclock:function(h){return h+" o'clock";},
+      half:function(h){return "half past "+h;},
+      qpast:function(h){return "quarter past "+h;},
+      qto:function(h){return "quarter to "+h;},
+      minpast:function(m,h){return m+" minutes past "+h;},
+      minto:function(m,h){return m+" minutes to "+h;},
+      newq:"New question", reveal:"Show answer", gotIt:"Got it ✓", missed:"Missed ✗",
+      good:["Yes! Well done.","That's right!","Perfect.","Spot on!"],
+      try:["Not quite, try again.","Close! Have another go.","Look at the big hand."],
+      prompt1:"What time is it?",
+      prompt2:"Count round in fives. What time is it?",
+      prompt3:"What time is it?",
+      prompt4:"Which digital time matches the clock?",
+      hint1:"The short hand is the hour. The long hand points to 12 for o'clock, and to 6 for half past.",
+      hint2:"Each number is 5 minutes. Count 5, 10, 15 round the clock from the 12.",
+      hint3:"Quarter past is 15 minutes. Quarter to is 15 minutes before the next hour.",
+      hint4:"Read the clock, then tap the matching digital time.",
+      score:function(c,t){return "Correct: "+c+" of "+t;},
+      levels:[["Warm-up","o'clock & half past"],["Fives","count the minutes"],["Quarters","quarter past / to"],["Match","pick the time"]],
+      note:"Made for working through together. Drag the orange hand to set your own questions."
+    },
+    pl:{
+      title:"Nauka zegara",
+      oclock:function(h){return plNom(h);},
+      half:function(h){return "wpół do "+plGen(nextH(h));},
+      qpast:function(h){return "kwadrans po "+plGen(h);},
+      qto:function(h){return "za kwadrans "+plNom(nextH(h));},
+      minpast:function(m,h){return plMin(m)+" po "+plGen(h);},
+      minto:function(m,h){return "za "+plMin(m)+" "+plNom(nextH(h));},
+      newq:"Nowe pytanie", reveal:"Pokaż odpowiedź", gotIt:"Dobrze ✓", missed:"Źle ✗",
+      good:["Tak! Brawo.","Dobrze!","Świetnie.","Zgadza się!"],
+      try:["Nie do końca, spróbuj jeszcze raz.","Blisko! Spróbuj ponownie.","Popatrz na dużą wskazówkę."],
+      prompt1:"Która godzina?",
+      prompt2:"Licz po pięć. Która godzina?",
+      prompt3:"Która godzina?",
+      prompt4:"Który cyfrowy czas pasuje do zegara?",
+      hint1:"Krótka wskazówka to godzina. Długa wskazuje 12 dla pełnej godziny, a 6 dla wpół.",
+      hint2:"Każda liczba to 5 minut. Licz 5, 10, 15 wokół zegara od 12.",
+      hint3:"Kwadrans po to 15 minut. Za kwadrans to 15 minut przed następną godziną.",
+      hint4:"Odczytaj zegar, potem dotknij pasującego czasu cyfrowego.",
+      score:function(c,t){return "Poprawne: "+c+" z "+t;},
+      levels:[["Rozgrzewka","pełne i wpół"],["Po pięć","licz minuty"],["Kwadranse","kwadrans po / za"],["Dopasuj","wybierz czas"]],
+      note:"Do wspólnej nauki. Przeciągnij pomarańczową wskazówkę, aby ustawić własne pytania."
+    },
+    zh:{
+      title:"学看时间 (xué kàn shíjiān)",
+      oclock:function(h){return zhHr(h)+"点整";},
+      half:function(h){return zhHr(h)+"点半";},
+      qpast:function(h){return zhHr(h)+"点一刻";},
+      qto:function(h){return "差一刻"+zhHr(nextZh(h))+"点";},
+      minpast:function(m,h){return zhHr(h)+"点"+zhNum(m)+"分";},
+      minto:function(m,h){return "差"+zhNum(m)+"分"+zhHr(nextZh(h))+"点";},
+      poclock:function(h){return pyHr(h)+" diǎn zhěng";},
+      phalf:function(h){return pyHr(h)+" diǎn bàn";},
+      pqpast:function(h){return pyHr(h)+" diǎn yī kè";},
+      pqto:function(h){return "chà yī kè "+pyHr(nextZh(h))+" diǎn";},
+      pminpast:function(m,h){return pyHr(h)+" diǎn "+pyNum(m)+" fēn";},
+      pminto:function(m,h){return "chà "+pyNum(m)+" fēn "+pyHr(nextZh(h))+" diǎn";},
+      newq:"下一题 (xià yī tí)", reveal:"显示答案 (xiǎnshì dá'àn)", gotIt:"答对了 ✓ (dáduì le)", missed:"答错了 ✗ (dácuò le)",
+      good:["对了！很棒。(duì le! hěn bàng)","答对了！(dáduì le!)","完美。(wánměi)","没错！(méi cuò!)"],
+      try:["还不对，再试一次。(hái bú duì, zài shì yí cì)","很接近！再试试。(hěn jiējìn! zài shìshi)","看看长针。(kànkan cháng zhēn)"],
+      prompt1:"现在几点？(xiànzài jǐ diǎn?)",
+      prompt2:"五个五个数。现在几点？(wǔ gè wǔ gè shǔ. xiànzài jǐ diǎn?)",
+      prompt3:"现在几点？(xiànzài jǐ diǎn?)",
+      prompt4:"哪个电子时间和时钟一样？(nǎge diànzǐ shíjiān hé shízhōng yíyàng?)",
+      hint1:"短针是小时。长针指向12是整点，指向6是半点。(duǎn zhēn shì xiǎoshí. cháng zhēn zhǐxiàng 12 shì zhěngdiǎn, zhǐxiàng 6 shì bàndiǎn.)",
+      hint2:"每个数字是5分钟。从12开始数 5、10、15 绕一圈。(měi gè shùzì shì 5 fēnzhōng. cóng 12 kāishǐ shǔ 5, 10, 15 rào yì quān.)",
+      hint3:"一刻是15分钟。差一刻是下一个整点前的15分钟。(yí kè shì 15 fēnzhōng. chà yī kè shì xià yí gè zhěngdiǎn qián de 15 fēnzhōng.)",
+      hint4:"先读时钟，再点一样的电子时间。(xiān dú shízhōng, zài diǎn yíyàng de diànzǐ shíjiān.)",
+      score:function(c,t){return "答对 (dáduì)："+c+" / "+t;},
+      levels:[["热身 (rèshēn)","整点和半点 (zhěngdiǎn hé bàndiǎn)"],["数五 (shǔ wǔ)","数分钟 (shǔ fēnzhōng)"],["一刻 (yí kè)","几点一刻 / 差一刻 (jǐ diǎn yí kè / chà yī kè)"],["配对 (pèiduì)","选时间 (xuǎn shíjiān)"]],
+      note:"一起学习。拖动橙色指针来出题。(yìqǐ xuéxí. tuōdòng chéngsè zhǐzhēn lái chūtí.)"
+    },
+    /* Bahasa Indonesia and French, added 24 November 2026 to match reference
+       version 12. Both sets are machine translations and have not been read by
+       a native speaker. They are flagged as such in the review note and should
+       not go live unreviewed. */
+    id:{
+      title:"Belajar Membaca Jam",
+      oclock:function(h){return "pukul "+h;},
+      half:function(h){return "pukul "+h+" tiga puluh";},
+      qpast:function(h){return "pukul "+h+" lewat seperempat";},
+      qto:function(h){return "pukul "+nextH(h)+" kurang seperempat";},
+      minpast:function(m,h){return "pukul "+h+" lewat "+m;},
+      minto:function(m,h){return "pukul "+nextH(h)+" kurang "+m;},
+      newq:"Soal baru", reveal:"Tampilkan jawaban", gotIt:"Benar ✓", missed:"Salah ✗",
+      good:["Ya! Bagus sekali.","Benar!","Sempurna.","Tepat sekali!"],
+      try:["Belum tepat, coba lagi.","Hampir! Coba sekali lagi.","Lihat jarum panjangnya."],
+      prompt1:"Pukul berapa sekarang?",
+      prompt2:"Hitung lima-lima. Pukul berapa sekarang?",
+      prompt3:"Pukul berapa sekarang?",
+      prompt4:"Jam digital mana yang cocok dengan jam ini?",
+      hint1:"Jarum pendek menunjukkan jam. Jarum panjang ke 12 untuk tepat, ke 6 untuk setengah.",
+      hint2:"Setiap angka bernilai 5 menit. Hitung 5, 10, 15 mengelilingi jam dari angka 12.",
+      hint3:"Seperempat itu 15 menit. Kurang seperempat itu 15 menit sebelum jam berikutnya.",
+      hint4:"Baca jamnya, lalu ketuk waktu digital yang cocok.",
+      score:function(c,t){return "Benar: "+c+" dari "+t;},
+      levels:[["Pemanasan","tepat & setengah"],["Lima-lima","hitung menitnya"],["Seperempat","lewat / kurang seperempat"],["Cocokkan","pilih waktunya"]],
+      note:"Untuk dikerjakan bersama. Seret jarum oranye untuk membuat soal sendiri."
+    },
+    fr:{
+      title:"Lire l'heure",
+      oclock:function(h){return frH(h);},
+      half:function(h){return frH(h)+" et demie";},
+      qpast:function(h){return frH(h)+" et quart";},
+      qto:function(h){return frH(nextH(h))+" moins le quart";},
+      minpast:function(m,h){return frH(h)+" "+m;},
+      minto:function(m,h){return frH(nextH(h))+" moins "+m;},
+      newq:"Nouvelle question", reveal:"Montrer la réponse", gotIt:"Réussi ✓", missed:"Manqué ✗",
+      good:["Oui ! Bravo.","C'est juste !","Parfait.","Exactement !"],
+      try:["Pas tout à fait, réessaie.","Presque ! Encore une fois.","Regarde la grande aiguille."],
+      prompt1:"Quelle heure est-il ?",
+      prompt2:"Compte de cinq en cinq. Quelle heure est-il ?",
+      prompt3:"Quelle heure est-il ?",
+      prompt4:"Quelle heure numérique correspond à l'horloge ?",
+      hint1:"La petite aiguille donne l'heure. La grande pointe le 12 pour l'heure juste, et le 6 pour la demie.",
+      hint2:"Chaque chiffre vaut 5 minutes. Compte 5, 10, 15 autour de l'horloge depuis le 12.",
+      hint3:"Et quart, c'est 15 minutes. Moins le quart, c'est 15 minutes avant l'heure suivante.",
+      hint4:"Lis l'horloge, puis touche l'heure numérique qui correspond.",
+      score:function(c,t){return "Réussi : "+c+" sur "+t;},
+      levels:[["Échauffement","heure juste et demie"],["Les cinq","compte les minutes"],["Les quarts","et quart / moins le quart"],["Associe","choisis l'heure"]],
+      note:"À faire ensemble. Fais glisser l'aiguille orange pour créer tes propres questions."
+    }
+  };
+
+  function nextH(h){ return h===12?1:h+1; }
+  function nextZh(h){ return h===12?1:h+1; }
+
+  /* French: one hour is "une heure", the rest take the plural. Twelve stays
+     "douze heures" rather than "midi", because the clock face cannot tell a
+     parent whether it is noon or midnight and the app must not guess. */
+  function frH(h){ return h===1 ? "une heure" : h+" heures"; }
+
+  /* Polish: feminine ordinal, nominative. Nine o'clock is dziewiata, never godzina 9. */
+  function plNom(h){
+    var o=["","pierwsza","druga","trzecia","czwarta","piąta","szósta","siódma","ósma","dziewiąta","dziesiąta","jedenasta","dwunasta"];
+    return o[h];
+  }
+  /* Polish: feminine ordinal, genitive, used after po and wpol do. */
+  function plGen(h){
+    var o=["","pierwszej","drugiej","trzeciej","czwartej","piątej","szóstej","siódmej","ósmej","dziewiątej","dziesiątej","jedenastej","dwunastej"];
+    return o[h];
+  }
+  /* Polish: the afternoon and evening name for the same clock position, which
+     is what a Polish child hears outside school hours. The face shows 6 and
+     the answer at six in the evening is osiemnasta, not szosta, so a reveal
+     that only ever says szosta teaches half the language. Twelve is handled by
+     the caller, because dwunasta covers both midday and midnight. */
+  function plNom24(h){
+    var o=["","trzynasta","czternasta","piętnasta","szesnasta","siedemnasta","osiemnasta","dziewiętnasta","dwudziesta","dwudziesta pierwsza","dwudziesta druga","dwudziesta trzecia"];
+    return o[h];
+  }
+  function plMin(m){
+    var w={5:"pięć",10:"dziesięć",20:"dwadzieścia",25:"dwadzieścia pięć"};
+    return w[m]||(""+m);
+  }
+  function zhNum(n){
+    var d=["零","一","二","三","四","五","六","七","八","九"];
+    if(n<10) return d[n];
+    if(n===10) return "十";
+    if(n<20) return "十"+d[n-10];
+    var tens=Math.floor(n/10), ones=n%10;
+    return d[tens]+"十"+(ones?d[ones]:"");
+  }
+  /* Two as an hour is liang, not er. Twelve stays shi er. A two in the minutes stays er. */
+  function zhHr(h){ return h===2 ? "两" : zhNum(h); }
+  function pyHr(h){ return h===2 ? "liǎng" : pyNum(h); }
+  function pyNum(n){
+    var d=["líng","yī","èr","sān","sì","wǔ","liù","qī","bā","jiǔ"];
+    if(n<10) return d[n];
+    if(n===10) return "shí";
+    if(n<20) return "shí "+d[n-10];
+    var tens=Math.floor(n/10), ones=n%10;
+    return d[tens]+" shí"+(ones?" "+d[ones]:"");
+  }
+
+  /* One moment per o'clock hour, so the card is never blank, in five languages.
+     The source and the verdict for each of the twelve is recorded in
+     content/tools-for-parents/_telling-the-time-trivia-sources.md. */
+  var TRIVIA = {
+    1:{ en:"At 1 o'clock in the afternoon, ships' crews once set their clocks by a big red Time Ball that drops at exactly 1pm at Greenwich in London, every day since 1833.",
+        pl:"O godzinie pierwszej po południu załogi statków nastawiały zegary według wielkiej czerwonej kuli czasu, która w Greenwich w Londynie opada dokładnie o 13:00, codziennie od 1833 roku.",
+        zh:"下午一点整，格林尼治天文台的红色报时球会准时落下。从1833年起，伦敦的船员每天靠它对时。(xiàwǔ yì diǎn zhěng, gélínnízhì tiānwéntái de hóngsè bàoshí qiú huì zhǔnshí luòxià. cóng 1833 nián qǐ, lúndūn de chuányuán měitiān kào tā duìshí.)",
+        id:"Pukul satu siang, awak kapal dulu menyetel jam mereka dengan Bola Waktu merah besar yang jatuh tepat pukul 1 siang di Greenwich, London, setiap hari sejak 1833.",
+        fr:"À une heure de l'après-midi, les équipages réglaient leurs montres sur une grande boule de temps rouge qui tombe à 13h précises à Greenwich, à Londres, chaque jour depuis 1833." },
+    2:{ en:"In Poland and across Europe, the clocks go back one hour on an autumn night, so 2 o'clock in the morning comes round twice and everybody gets an extra hour of sleep.",
+        pl:"W Polsce i w całej Europie jednej jesiennej nocy cofa się zegary o godzinę, więc druga w nocy wypada dwa razy i wszyscy zyskują dodatkową godzinę snu.",
+        zh:"在波兰和欧洲各地，秋天有一个晚上时钟会往回拨一个小时，所以凌晨两点会出现两次，每个人都能多睡一个小时。(zài bōlán hé ōuzhōu gèdì, qiūtiān yǒu yí gè wǎnshang shízhōng huì wǎng huí bō yí gè xiǎoshí, suǒyǐ língchén liǎng diǎn huì chūxiàn liǎng cì, měi gèrén dōu néng duō shuì yí gè xiǎoshí.)",
+        id:"Di Polandia dan seluruh Eropa, pada satu malam di musim gugur jam diputar mundur satu jam, jadi pukul dua dini hari datang dua kali dan semua orang mendapat tambahan satu jam tidur.",
+        fr:"En Pologne et partout en Europe, une nuit d'automne, on recule les horloges d'une heure : deux heures du matin arrive donc deux fois et tout le monde gagne une heure de sommeil." },
+    3:{ en:"Many schools around the world ring the bell to go home at about 3 o'clock in the afternoon.",
+        pl:"W wielu szkołach na świecie dzwonek na koniec lekcji dzwoni około godziny trzeciej po południu.",
+        zh:"世界上很多学校大约在下午三点打放学铃。(shìjiè shàng hěn duō xuéxiào dàyuē zài xiàwǔ sān diǎn dǎ fàngxué líng.)",
+        id:"Banyak sekolah di dunia membunyikan bel pulang sekitar pukul tiga sore.",
+        fr:"Dans beaucoup d'écoles du monde, la cloche de la sortie sonne vers trois heures de l'après-midi." },
+    4:{ en:"In Britain, 4 o'clock is the traditional time for afternoon tea, a habit said to have started in the 1840s so people would not get hungry before dinner.",
+        pl:"W Wielkiej Brytanii godzina czwarta to tradycyjna pora popołudniowej herbaty, zwyczaj, który ponoc zaczął się w latach 40. XIX wieku, żeby nie zgłodnieć przed kolacją.",
+        zh:"在英国，下午四点是传统的下午茶时间。据说这个习惯始于1840年代，为了让人们晚饭前不饿。(zài yīngguó, xiàwǔ sì diǎn shì chuántǒng de xiàwǔchá shíjiān. jùshuō zhège xíguàn shǐyú 1840 niándài, wèile ràng rénmen wǎnfàn qián bú è.)",
+        id:"Di Inggris, pukul empat adalah waktu tradisional untuk teh sore, kebiasaan yang konon dimulai pada tahun 1840-an agar orang tidak lapar sebelum makan malam.",
+        fr:"Au Royaume-Uni, quatre heures est l'heure traditionnelle du thé de l'après-midi, une habitude qui aurait commencé dans les années 1840 pour ne pas avoir faim avant le dîner." },
+    5:{ en:"\"Five o'clock\" is a common end to the working day, and the phrase \"it's five o'clock somewhere\" means it is always time to relax in some part of the world.",
+        pl:"Godzina piąta to częsty koniec dnia pracy, a powiedzenie \"gdzieś jest piąta\" znaczy, że gdzieś na świecie zawsze jest pora na odpoczynek.",
+        zh:"五点常常是下班的时间。有句话说“某个地方总是五点”，意思是世界上总有一处正好到了放松的时候。(wǔ diǎn chángcháng shì xiàbān de shíjiān. yǒu jù huà shuō “mǒu gè dìfāng zǒngshì wǔ diǎn”, yìsi shì shìjiè shàng zǒng yǒu yí chù zhènghǎo dàole fàngsōng de shíhòu.)",
+        id:"Pukul lima sering menjadi akhir hari kerja, dan ungkapan \"sudah pukul lima di suatu tempat\" berarti selalu ada tempat di dunia yang waktunya bersantai.",
+        fr:"Cinq heures marque souvent la fin de la journée de travail, et l'expression « il est cinq heures quelque part » signifie qu'il est toujours l'heure de se détendre dans un coin du monde." },
+    6:{ en:"At 6 o'clock in the morning, the sun rises near this time in many places, and lots of roosters crow to greet the day.",
+        pl:"O godzinie szóstej rano słońce w wielu miejscach wschodzi mniej więcej o tej porze, a wiele kogutów pieje, by powitać dzień.",
+        zh:"早上六点，很多地方的太阳大约在这个时候升起，许多公鸡会打鸣迎接新的一天。(zǎoshang liù diǎn, hěn duō dìfāng de tàiyáng dàyuē zài zhège shíhòu shēngqǐ, xǔduō gōngjī huì dǎmíng yíngjiē xīn de yì tiān.)",
+        id:"Pukul enam pagi, matahari terbit sekitar waktu ini di banyak tempat, dan banyak ayam jantan berkokok menyambut hari.",
+        fr:"À six heures du matin, le soleil se lève à peu près à cette heure dans bien des endroits, et beaucoup de coqs chantent pour saluer le jour." },
+    7:{ en:"7 o'clock in the morning is a common time for breakfast before school or work.",
+        pl:"Godzina siódma rano to częsta pora na śniadanie przed szkołą lub pracą.",
+        zh:"早上七点是上学或上班前吃早饭的常见时间。(zǎoshang qī diǎn shì shàngxué huò shàngbān qián chī zǎofàn de chángjiàn shíjiān.)",
+        id:"Pukul tujuh pagi adalah waktu umum untuk sarapan sebelum sekolah atau bekerja.",
+        fr:"Sept heures du matin est une heure courante pour le petit-déjeuner avant l'école ou le travail." },
+    8:{ en:"Many schools around the world start the day at about 8 o'clock in the morning.",
+        pl:"Wiele szkół na świecie zaczyna dzień około godziny ósmej rano.",
+        zh:"世界上很多学校大约在早上八点开始上课。(shìjiè shàng hěn duō xuéxiào dàyuē zài zǎoshang bā diǎn kāishǐ shàngkè.)",
+        id:"Banyak sekolah di dunia memulai hari sekitar pukul delapan pagi.",
+        fr:"Beaucoup d'écoles dans le monde commencent la journée vers huit heures du matin." },
+    9:{ en:"Every evening at 9 o'clock, a cannon called the Nine O'Clock Gun is fired in Stanley Park in Vancouver, Canada. It has gone off almost every night for more than a hundred years.",
+        pl:"Każdego wieczoru o godzinie dziewiątej w parku Stanley w Vancouver, w Kanadzie, wystrzeliwuje armata nazywana Działem Dziewiątej. Strzela niemal co wieczór od ponad stu lat.",
+        zh:"每天晚上九点，加拿大温哥华的斯坦利公园都会响起一声炮响，这门炮叫“九点炮”。一百多年来，它几乎每晚都会准时开炮。(měitiān wǎnshang jiǔ diǎn, jiānádà wēngēhuá de sītǎnlì gōngyuán dōu huì xiǎngqǐ yì shēng pào xiǎng, zhè mén pào jiào “jiǔ diǎn pào”. yì bǎi duō nián lái, tā jīhū měi wǎn dōu huì zhǔnshí kāipào.)",
+        id:"Setiap malam pukul sembilan, sebuah meriam bernama Nine O'Clock Gun ditembakkan di Taman Stanley di Vancouver, Kanada. Meriam itu sudah berbunyi hampir setiap malam selama lebih dari seratus tahun.",
+        fr:"Chaque soir à neuf heures, un canon appelé le « Nine O'Clock Gun » tire dans le parc Stanley, à Vancouver, au Canada. Il tonne presque chaque soir depuis plus de cent ans." },
+    10:{ en:"By 10 o'clock at night most children are fast asleep, and the first few hours of deep sleep are when the body does much of its growing.",
+        pl:"O godzinie dziesiątej wieczorem większość dzieci już mocno śpi, a pierwsze godziny głębokiego snu to czas, kiedy organizm najbardziej rośnie.",
+        zh:"晚上十点，大多数孩子已经睡熟了。刚睡着后那几个小时的深度睡眠，正是身体长个子最多的时候。(wǎnshang shí diǎn, dà duōshù háizi yǐjīng shuì shú le. gāng shuìzháo hòu nà jǐ gè xiǎoshí de shēndù shuìmián, zhèng shì shēntǐ zhǎng gèzi zuì duō de shíhòu.)",
+        id:"Pada pukul sepuluh malam, sebagian besar anak sudah tidur nyenyak, dan beberapa jam pertama tidur lelap adalah saat tubuh paling banyak tumbuh.",
+        fr:"À dix heures du soir, la plupart des enfants dorment profondément, et c'est pendant les premières heures de sommeil profond que le corps grandit le plus." },
+    11:{ en:"At 11 o'clock in the morning on 11 November 1918, the guns fell silent and the First World War ended. People still pause at this time each year to remember.",
+        pl:"O godzinie jedenastej rano 11 listopada 1918 roku umilkły działa i zakończyła się pierwsza wojna światowa. Co roku o tej porze ludzie milkną, by pamiętać.",
+        zh:"1918年11月11日上午十一点，炮声停了，第一次世界大战结束。每年这个时候，人们仍会默哀纪念。(1918 nián 11 yuè 11 rì shàngwǔ shíyī diǎn, pàoshēng tíng le, dì-yī cì shìjiè dàzhàn jiéshù. měi nián zhège shíhòu, rénmen réng huì mò'āi jìniàn.)",
+        id:"Pukul sebelas pagi pada 11 November 1918, meriam terdiam dan Perang Dunia Pertama berakhir. Orang masih berhenti sejenak pada waktu ini setiap tahun untuk mengenang.",
+        fr:"À onze heures du matin, le 11 novembre 1918, les canons se sont tus et la Première Guerre mondiale a pris fin. Chaque année, à cette heure, on observe un silence pour se souvenir." },
+    12:{ en:"12 o'clock in the day is noon, when the sun is at its highest. 12 o'clock at night is midnight, when a new day begins.",
+        pl:"Godzina dwunasta w dzień to południe, gdy słońce jest najwyżej. Godzina dwunasta w nocy to północ, gdy zaczyna się nowy dzień.",
+        zh:"白天十二点是正午，太阳升得最高。夜里十二点是午夜，新的一天开始了。(báitiān shí'èr diǎn shì zhèngwǔ, tàiyáng shēng de zuì gāo. yèlǐ shí'èr diǎn shì wǔyè, xīn de yì tiān kāishǐ le.)",
+        id:"Pukul dua belas siang adalah tengah hari, saat matahari paling tinggi. Pukul dua belas malam adalah tengah malam, saat hari baru dimulai.",
+        fr:"Midi, à douze heures, c'est quand le soleil est au plus haut. Minuit, à douze heures du soir, c'est quand un nouveau jour commence." }
+  };
+  var TLABEL = { en:"A moment in history", pl:"Chwila w historii", zh:"历史上的一刻 (lìshǐ shàng de yí kè)", id:"Sepenggal sejarah", fr:"Un moment d'histoire" };
+  var TTIP   = { en:"Tap the card to flip it", pl:"Dotknij kartę, aby ją odwrócić", zh:"点一下卡片翻面 (diǎn yíxià kǎpiàn fānmiàn)", id:"Ketuk kartu untuk membaliknya", fr:"Touche la carte pour la retourner" };
+  var TFRONT = { en:"Something famous happened at", pl:"Coś słynnego wydarzyło się o", zh:"这个时间发生过一件大事", id:"Sesuatu yang terkenal terjadi pada", fr:"Un événement célèbre s'est produit à" };
+
+  var $=function(id){return document.getElementById(id);};
+
+  /* Local only, and nothing else is stored. Reads are wrapped because a browser
+     with site data blocked throws on access rather than returning null. */
+  function load(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } }
+  function save(key,val){ try{ localStorage.setItem(key,val); }catch(e){} }
+
+  var lang="en", level=1, correct=0, total=0, pyOn=true, tlang="en";
+  var cur={h:3,m:0};
+  var dragging=null;
+
+  var sl=load("clock-lang");   if(sl && T[sl]) lang=sl;
+  var sv=load("clock-level");  if(sv && /^[1-4]$/.test(sv)) level=parseInt(sv,10);
+  var sp=load("clock-pyon");   if(sp==="0") pyOn=false;
+  var st=load("clock-tlang");  if(st && TRIVIA[1][st]) tlang=st;
+
+  /* The Chinese UI strings carry their pinyin in a trailing bracket, so the
+     toggle strips the bracket rather than keeping a second set of strings. */
+  function stripPy(s){
+    if(pyOn || lang!=="zh" || typeof s!=="string") return s;
+    return s.replace(/\s*\([^()]*\)\s*$/,"").trim();
+  }
+
+  (function drawFace(){
+    var ticks=$("tt-ticks"), nums=$("tt-nums");
+    for(var i=0;i<60;i++){
+      var a=i*6*Math.PI/180, r1=i%5===0?82:87, r2=92;
+      var l=document.createElementNS("http://www.w3.org/2000/svg","line");
+      l.setAttribute("x1",100+r1*Math.sin(a)); l.setAttribute("y1",100-r1*Math.cos(a));
+      l.setAttribute("x2",100+r2*Math.sin(a)); l.setAttribute("y2",100-r2*Math.cos(a));
+      l.setAttribute("stroke","var(--tt-line)"); l.setAttribute("stroke-width",i%5===0?2:1);
+      ticks.appendChild(l);
+    }
+    for(var n=1;n<=12;n++){
+      var ang=n*30*Math.PI/180, rr=70;
+      var t=document.createElementNS("http://www.w3.org/2000/svg","text");
+      t.setAttribute("x",100+rr*Math.sin(ang)); t.setAttribute("y",100-rr*Math.cos(ang)+5);
+      t.setAttribute("text-anchor","middle"); t.setAttribute("font-size","15");
+      t.setAttribute("font-weight","700"); t.setAttribute("fill","var(--tt-ink)");
+      t.textContent=n; nums.appendChild(t);
+    }
+  })();
+
+  function place(line,angleDeg,len){
+    var a=angleDeg*Math.PI/180;
+    line.setAttribute("x2",100+len*Math.sin(a));
+    line.setAttribute("y2",100-len*Math.cos(a));
+  }
+  function setHands(h,m){
+    place($("tt-minhand"), m*6, 74);
+    place($("tt-hourhand"), (h%12)*30 + m*0.5, 48);
+  }
+
+  function phrase(h,m){
+    var t=T[lang];
+    if(m===0)  return t.oclock(h);
+    if(m===30) return t.half(h);
+    if(m===15) return t.qpast(h);
+    if(m===45) return t.qto(h);
+    if(m<=30)  return t.minpast(m,h);
+    return t.minto(60-m,h);
+  }
+  function pinyin(h,m){
+    if(lang!=="zh" || !pyOn) return "";
+    var t=T.zh;
+    if(m===0)  return t.poclock(h);
+    if(m===30) return t.phalf(h);
+    if(m===15) return t.pqpast(h);
+    if(m===45) return t.pqto(h);
+    if(m<=30)  return t.pminpast(m,h);
+    return t.pminto(60-m,h);
+  }
+  function digital(h,m){ return (h<10?"0"+h:h)+":"+(m<10?"0"+m:m); }
+
+  function rndHour(){ return 1+Math.floor(Math.random()*12); }
+  function makeQuestion(){
+    var h=rndHour(), m;
+    if(level===1) m = Math.random()<0.5?0:30;
+    else if(level===2){ var o2=[0,5,10,20,25,35,40,50,55]; m=o2[Math.floor(Math.random()*o2.length)]; }
+    else if(level===3) m = [15,45,0,30][Math.floor(Math.random()*4)];
+    else { var o4=[0,15,30,45,10,20,40,50]; m=o4[Math.floor(Math.random()*o4.length)]; }
+    cur={h:h,m:m};
+    setHands(h,m);
+    render();
+  }
+
+  function shuffle(a){ for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;} }
+
+  function render(){
+    var t=T[lang];
+    $("tt-apptitle").textContent=stripPy(t.title);
+    $("tt-prompt").textContent=stripPy(t["prompt"+level]);
+    $("tt-newq").textContent=stripPy(t.newq);
+    $("tt-reveal").textContent=stripPy(t.reveal);
+    $("tt-hint").textContent=stripPy(t["hint"+level]);
+    $("tt-feedback").textContent=""; $("tt-feedback").className="tt-feedback";
+    $("tt-score").textContent=stripPy(t.score(correct,total));
+    $("tt-note").textContent=stripPy(t.note);
+    $("tt-pylabel").textContent="Pinyin";
+    $("tt-pytoggle").className = "tt-pytoggle" + (lang==="zh" ? " tt-show" : "");
+
+    var lvBtns=document.querySelectorAll(".tt-levels button");
+    for(var i=0;i<lvBtns.length;i++){
+      lvBtns[i].querySelector(".tt-lv").textContent=stripPy(t.levels[i][0]);
+      lvBtns[i].querySelector(".tt-n").textContent=stripPy(t.levels[i][1]);
+    }
+
+    renderTrivia();
+
+    var choices=$("tt-choices"), digi=$("tt-digital"), sub=$("tt-sub");
+    choices.innerHTML=""; delete choices.dataset.done; digi.textContent=""; sub.textContent="";
+
+    if(level===4){
+      digi.innerHTML="&nbsp;";
+      var right=digital(cur.h,cur.m);
+      var set={}; set[right]=true; var arr=[right];
+      while(arr.length<4){
+        var hh=rndHour(), mm=[0,15,30,45,10,20,40,50][Math.floor(Math.random()*8)];
+        var d=digital(hh,mm);
+        if(!set[d]){ set[d]=true; arr.push(d); }
+      }
+      shuffle(arr);
+      arr.forEach(function(d){
+        var b=document.createElement("button");
+        b.type="button"; b.className="tt-choice"; b.textContent=d;
+        b.addEventListener("click",function(){
+          if(b.classList.contains("tt-good")||b.classList.contains("tt-bad")) return;
+          total++;
+          if(d===right){ b.classList.add("tt-good"); correct++; feedback(true); }
+          else { b.classList.add("tt-bad"); feedback(false); }
+          $("tt-score").textContent=stripPy(T[lang].score(correct,total));
+        });
+        choices.appendChild(b);
+      });
+    } else {
+      /* Levels 1 to 3 get "Got it" and "Missed" at the same moment as the
+         clock face. Gating them behind "Show answer" meant a parent working
+         through a question out loud had to tap a button they did not want,
+         just to record what the child had already said. */
+      showMark();
+    }
+  }
+
+  function feedback(ok){
+    var t=T[lang], f=$("tt-feedback");
+    var list=ok?t.good:t.try;
+    f.textContent=stripPy(list[Math.floor(Math.random()*list.length)]);
+    f.className="tt-feedback "+(ok?"tt-is-good":"tt-is-try");
+  }
+
+  /* Polish only: the morning and the evening name for the hour the answer is
+     about, e.g. "szósta / osiemnasta". Which hour that is depends on the
+     phrasing: wpół do, za kwadrans and za X all name the NEXT hour, so pairing
+     the hour under the hand would print the wrong word in those three cases. */
+  function plHourPair(h,m){
+    var usesNext = (m===30 || m===45 || m>30);
+    var hh = usesNext ? nextH(h) : h;
+    /* Twelve has no second name here: dwunasta is both midday and midnight. */
+    return plNom(hh) + (hh===12 ? "" : " / " + plNom24(hh));
+  }
+
+  function reveal(){
+    var py=pinyin(cur.h,cur.m);
+    var pyBit = py ? ' <small>&nbsp;('+py+')</small>' : '';
+    var pl24 = (lang==="pl") ? ' <small>&nbsp;('+plHourPair(cur.h,cur.m)+')</small>' : '';
+    $("tt-digital").innerHTML = digital(cur.h,cur.m)+' <small>&nbsp;'+phrase(cur.h,cur.m)+'</small>'+pl24+pyBit;
+    if(level!==4){
+      var plBit = (lang==="pl") ? "  ("+plHourPair(cur.h,cur.m)+")" : "";
+      $("tt-feedback").textContent = phrase(cur.h,cur.m) + plBit + (py ? "  ·  "+py : "");
+      $("tt-feedback").className="tt-feedback";
+      /* The marking buttons are already on the page from render(). Rebuilding
+         them here wiped which one the parent had tapped, and left two buttons
+         that looked live and were not, because the done flag lives on the
+         container and survived the rebuild. */
+    }
+  }
+
+  /* Levels 1 to 3 have no machine-markable answer, so the score moves on a
+     parent's say-so. Without these two buttons the score never moved at all.
+     Called from render(), so they appear with the question and a reveal is
+     optional. A new question calls render() again, which clears the done flag
+     and rebuilds them unmarked. */
+  function showMark(){
+    var t=T[lang], c=$("tt-choices");
+    c.innerHTML="";
+    var yes=document.createElement("button");
+    yes.type="button"; yes.className="tt-choice tt-good"; yes.textContent=stripPy(t.gotIt);
+    var no=document.createElement("button");
+    no.type="button"; no.className="tt-choice"; no.textContent=stripPy(t.missed);
+    function mark(ok){
+      if(c.dataset.done) return; c.dataset.done="1";
+      total++; if(ok) correct++;
+      feedback(ok);
+      $("tt-score").textContent=stripPy(T[lang].score(correct,total));
+      yes.disabled=no.disabled=true;
+      yes.style.opacity=ok?"1":".45"; no.style.opacity=ok?".45":"1";
+    }
+    yes.addEventListener("click",function(){mark(true);});
+    no.addEventListener("click",function(){mark(false);});
+    c.appendChild(yes); c.appendChild(no);
+  }
+
+  function renderTrivia(){
+    var h=cur.h;
+    var fact=TRIVIA[h][tlang] || TRIVIA[h].en;
+    $("tt-trivialabel").textContent=TLABEL[tlang];
+    $("tt-triviatip").textContent=TTIP[tlang];
+    $("tt-flipfront").innerHTML='<span>'+TFRONT[tlang]+'</span><span class="tt-tt">'+((h<10?"0"+h:h)+":00")+'</span>';
+    if(tlang==="zh"){
+      var mB=fact.match(/^(.*?)\s*\(([^()]*)\)\s*$/);
+      if(mB){
+        $("tt-flipback").innerHTML='<span>'+mB[1]+'</span>'+(pyOn?'<span class="tt-py">'+mB[2]+'</span>':'');
+      } else {
+        $("tt-flipback").textContent=fact;
+      }
+    } else {
+      $("tt-flipback").textContent=fact;
+    }
+    $("tt-flip").classList.remove("tt-flipped");
+  }
+
+  /* Draggable hands, so a parent can set a question by hand rather than
+     waiting for the generator to produce the one they want. */
+  function angleFromEvent(ev){
+    var r=$("tt-clock").getBoundingClientRect();
+    var pt=ev.touches?ev.touches[0]:ev;
+    var dx=pt.clientX-(r.left+r.width/2), dy=pt.clientY-(r.top+r.height/2);
+    var a=Math.atan2(dx,-dy)*180/Math.PI;
+    return a<0 ? a+360 : a;
+  }
+  function startDrag(which){ return function(ev){ ev.preventDefault(); dragging=which; }; }
+  function moveDrag(ev){
+    if(!dragging) return;
+    ev.preventDefault();
+    var a=angleFromEvent(ev);
+    if(dragging==="min"){
+      cur.m=Math.round(a/6)%60;
+    } else {
+      var h=Math.round(a/30)%12; cur.h = h===0 ? 12 : h;
+    }
+    setHands(cur.h,cur.m);
+    $("tt-digital").textContent=""; $("tt-feedback").textContent="";
+  }
+  function endDrag(){ dragging=null; }
+
+  $("tt-minhand").addEventListener("mousedown",startDrag("min"));
+  $("tt-hourhand").addEventListener("mousedown",startDrag("hour"));
+  $("tt-minhand").addEventListener("touchstart",startDrag("min"),{passive:false});
+  $("tt-hourhand").addEventListener("touchstart",startDrag("hour"),{passive:false});
+  window.addEventListener("mousemove",moveDrag);
+  window.addEventListener("touchmove",moveDrag,{passive:false});
+  window.addEventListener("mouseup",endDrag);
+  window.addEventListener("touchend",endDrag);
+
+  $("tt-newq").addEventListener("click",makeQuestion);
+  $("tt-reveal").addEventListener("click",reveal);
+
+  Array.prototype.forEach.call(document.querySelectorAll(".tt-langs button"),function(b){
+    b.addEventListener("click",function(){
+      lang=b.getAttribute("data-tt-lang");
+      Array.prototype.forEach.call(document.querySelectorAll(".tt-langs button"),function(x){
+        x.setAttribute("aria-pressed", x===b ? "true":"false");
+      });
+      save("clock-lang",lang);
+      render();
+    });
+    b.setAttribute("aria-pressed", b.getAttribute("data-tt-lang")===lang ? "true":"false");
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll(".tt-levels button"),function(b){
+    b.addEventListener("click",function(){
+      level=parseInt(b.getAttribute("data-tt-level"),10);
+      Array.prototype.forEach.call(document.querySelectorAll(".tt-levels button"),function(x){
+        x.setAttribute("aria-pressed", x===b ? "true":"false");
+      });
+      save("clock-level",""+level);
+      makeQuestion();
+    });
+    b.setAttribute("aria-pressed", parseInt(b.getAttribute("data-tt-level"),10)===level ? "true":"false");
+  });
+
+  function setPy(on){
+    pyOn=on;
+    $("tt-pyon").setAttribute("aria-pressed", on?"true":"false");
+    $("tt-pyoff").setAttribute("aria-pressed", on?"false":"true");
+    save("clock-pyon", on?"1":"0");
+    render();
+  }
+  $("tt-pyon").addEventListener("click",function(){setPy(true);});
+  $("tt-pyoff").addEventListener("click",function(){setPy(false);});
+
+  $("tt-flip").addEventListener("click",function(){ $("tt-flip").classList.toggle("tt-flipped"); });
+
+  Array.prototype.forEach.call(document.querySelectorAll(".tt-tlangs button"),function(b){
+    b.addEventListener("click",function(ev){
+      ev.stopPropagation();
+      tlang=b.getAttribute("data-tt-t");
+      Array.prototype.forEach.call(document.querySelectorAll(".tt-tlangs button"),function(x){
+        x.setAttribute("aria-pressed", x===b ? "true":"false");
+      });
+      save("clock-tlang",tlang);
+      renderTrivia();
+    });
+    b.setAttribute("aria-pressed", b.getAttribute("data-tt-t")===tlang ? "true":"false");
+  });
+
+  setPy(pyOn);
+  makeQuestion();
+})();
+</script>
+
+</body>
+</html>

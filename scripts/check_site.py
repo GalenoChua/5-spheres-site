@@ -186,6 +186,23 @@ BEACON_HOST = "static.cloudflareinsights.com"
 REPORT_HOST = "cloudflareinsights.com"
 
 
+# Pages that deliberately carry NO analytics beacon, each with the reason.
+# Every other page must have it, and a page added without it is a page nobody
+# can see the traffic for, which is what this list has to stay short enough to
+# keep catching.
+#
+# The Tools for Parents pages tell a parent, in their own copy, that there are
+# no trackers and no analytics on them. A beacon here would make the page say
+# something untrue, which is worse than the missing measurement. Ruled from
+# G's brief of 24 November 2026: no analytics, no ads, no third-party
+# trackers, no accounts, local storage only, stated plainly on the page.
+NO_BEACON = {
+    "tools-for-parents/index.html": "the page promises no trackers",
+    "tools-for-parents/telling-the-time/index.html": "the page promises no trackers",
+    "tools-for-parents/thanks/index.html": "the page promises no trackers",
+}
+
+
 def check_analytics():
     """Every page carries the beacon, and the CSP lets it through.
 
@@ -208,10 +225,22 @@ def check_analytics():
     """
     missing = []
     for path in pages():
+        if rel(path) in NO_BEACON:
+            continue
         if BEACON_HOST not in io.open(path, encoding="utf-8").read():
             missing.append(rel(path))
     check(not missing, "%d page(s) carry no analytics beacon" % len(missing),
           ", ".join(sorted(missing)[:5]))
+
+    # An excluded page that quietly grew a beacon back is the other half of
+    # this check. The promise on the page is the thing being protected, and a
+    # beacon added by a later copy-paste would break it without failing
+    # anything.
+    gained = [p for p in sorted(NO_BEACON)
+              if os.path.exists(os.path.join(ROOT, p))
+              and BEACON_HOST in io.open(os.path.join(ROOT, p), encoding="utf-8").read()]
+    check(not gained, "%d page(s) promise no analytics and carry a beacon" % len(gained),
+          ", ".join(gained))
 
     headers = io.open(os.path.join(ROOT, "_headers"), encoding="utf-8").read()
     csp = ""
@@ -236,6 +265,40 @@ def check_analytics():
 
 
 # ------------------------------------------------------------------ blog ---
+def check_parent_feedback():
+    """The parent feedback form emails G and stores nothing of ours.
+
+    From 27 November 2026 the form is a Netlify Form: Netlify reads it at deploy
+    and emails each submission to the address set in the Netlify UI. G's brief
+    ruled out a database and accounts, and the page promises nothing is
+    collected, so the checks are about keeping that promise true:
+
+    * the form opts in to Netlify Forms, or nothing is captured at all;
+    * the only hidden inputs are the two Netlify needs, so a later edit cannot
+      quietly start sending something the parent never typed;
+    * the page loads no script from anywhere but itself.
+    """
+    path = os.path.join(ROOT, "tools-for-parents", "index.html")
+    if not os.path.exists(path):
+        check(False, "the For Parents page is missing", rel(path))
+        return
+    html = strip_comments(io.open(path, encoding="utf-8").read())
+    form = re.search(r'<form[^>]*name="parent-feedback"[^>]*>(.*?)</form>', html, re.S)
+    check(form, "the For Parents page has no parent-feedback form")
+    if not form:
+        return
+    tag = form.group(0)[:form.group(0).index(">")]
+    check('data-netlify="true"' in tag, "the parent feedback form is not a Netlify Form",
+          "without data-netlify Netlify never sees the form and every answer is lost")
+    check('netlify-honeypot="bot-field"' in tag, "the parent feedback form has no honeypot")
+    hidden = re.findall(r'<input type="hidden" name="([^"]+)"', form.group(1))
+    check(hidden == ["form-name"], "the parent feedback form carries an unexpected hidden field",
+          ", ".join(hidden))
+    check('value="parent-feedback"' in form.group(1),
+          "form-name does not match the form, so Netlify drops the submission")
+    check(not re.search(r'<script[^>]+src=', html), "the For Parents page loads an outside script")
+
+
 def check_blog():
     """The rendered site has to match the markdown and the pages on disk.
 
@@ -460,6 +523,7 @@ def main():
     check_forms()
     check_lists()
     check_analytics()
+    check_parent_feedback()
     check_blog()
     check_links()
     check_calendar()

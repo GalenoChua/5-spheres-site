@@ -31,3 +31,12 @@
 # The old slug, for links shared before 10 November. 301, because the move is permanent.
 /events/tough-conversations/*   /events/letting-someone-go/:splat  301
 /events/tough-conversations     /events/letting-someone-go  301
+
+# For Parents. The page lives at /tools-for-parents/, which is where the clock app
+# and every existing link already point, and /for-parents is the short name the
+# page itself uses. The old standalone feedback page folded into the main page on
+# 27 November 2026, so a bookmarked link lands on the form rather than a 404.
+/for-parents                  /tools-for-parents/           301
+/for-parents/                 /tools-for-parents/           301
+/tools-for-parents/feedback   /tools-for-parents/#feedback  301
+/tools-for-parents/feedback/  /tools-for-parents/#feedback  301
