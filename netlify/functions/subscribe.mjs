@@ -205,10 +205,101 @@ async function spend(token) {
 }
 
 
+/* ── PLACES ───────────────────────────────────────────────────────────────────────────
+ *
+ * 27 November 2026, G: "there's only 7 spots left. First come first served, and stop
+ * allowing more people to sign up." Until now nothing counted: every submission went
+ * to MailerLite and every visitor was told their place was held.
+ *
+ * One session per list at a time. When a drill moves to a new date, change `session`
+ * here, which starts a fresh count, and change `places`.
+ *
+ * HOW IT STAYS FIRST COME FIRST SERVED WITHOUT A LOCK. @netlify/blobs 8.2 has no
+ * conditional write, so two people pressing the button in the same second could both
+ * read "six taken" and both write. Instead each booking WRITES FIRST, then lists every
+ * booking for the session and sorts them by time. Anyone who lands past the last place
+ * deletes their own row and is told the session is full. Both of two simultaneous
+ * bookers see both rows (strong consistency), sort them the same way, and agree on who
+ * is seventh, so the session cannot go over.
+ *
+ * The same email twice is one booking, so a double click or a second visit holds one
+ * place and is simply told it is held.
+ */
+const PLACES = {
+  'public-speaking': { session: '2026-12-02', places: 7 },
+};
+const BOOKINGS = 'bookings';
+const SETTLE_MS = Number(globalThis.__SETTLE_MS__ ?? 800);
+const FULL_MESSAGE =
+  'Sorry, every place for this session has been taken. Message me on WhatsApp, ' +
+  '+48 792 417 093, and I will put you first in line for the next one.';
+
+function bookings() {
+  return getStore({ name: BOOKINGS, consistency: 'strong' });
+}
+
+async function emailKey(email) {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(email));
+  return [...new Uint8Array(d)].slice(0, 16).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/* Every row for the session, oldest first. Ties on the millisecond fall back to the
+   key, so every instance sorts the same rows into the same order. */
+async function ordered(prefix) {
+  const kv = bookings();
+  const { blobs } = await kv.list({ prefix });
+  const rows = [];
+  for (const b of blobs) {
+    const v = await kv.get(b.key, { type: 'json' });
+    if (v) rows.push({ key: b.key, at: Number(v.at) || 0 });
+  }
+  rows.sort((a, b) => (a.at - b.at) || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
+  return rows;
+}
+
+async function placesLeft(list) {
+  const cap = PLACES[list];
+  if (!cap) return null;
+  const rows = await ordered(`${list}/${cap.session}/`);
+  return Math.max(0, cap.places - rows.length);
+}
+
+/* Returns { held: true, key } or { full: true }. */
+async function hold(list, email, name) {
+  const cap = PLACES[list];
+  const prefix = `${list}/${cap.session}/`;
+  const key = prefix + (await emailKey(email));
+  const kv = bookings();
+  if (await kv.get(key)) return { held: true, key, again: true };
+  /* A full session turns people away before writing anything. */
+  if ((await ordered(prefix)).length >= cap.places) return { full: true };
+  await kv.setJSON(key, { at: Date.now(), email, name });
+  /* Wait before counting. The time is stamped a moment before the write lands, so
+     without this a booking stamped slightly EARLIER but written LATER could be missed
+     by one that counts itself in first, and both would keep a place. A simulation of
+     thirty races of twelve people overbooked once in thirty without the wait and never
+     with it. The visitor waits under a second, once. */
+  await new Promise((r) => setTimeout(r, SETTLE_MS));
+  const rank = (await ordered(prefix)).findIndex((r) => r.key === key);
+  if (rank < 0 || rank >= cap.places) {
+    await kv.delete(key);
+    return { full: true };
+  }
+  return { held: true, key };
+}
+
+
 const handle = async (request) => {
   /* A page asks for a token as it loads. Cached nowhere: a cached token is a
      shared token, and single use would then refuse the second visitor. */
   if (request.method === 'GET') {
+    /* ?places=<list> answers how many places are left, so the page can say so and
+       close the form when there are none. Anything else is a token request. */
+    const asked = new URL(request.url).searchParams.get('places');
+    if (asked) {
+      const left = await placesLeft(clean(asked, 40));
+      return json(200, left === null ? { capped: false } : { capped: true, left });
+    }
     return json(200, { token: await issue() });
   }
   if (request.method !== 'POST') return json(405, { ok: false, error: 'POST only' });
@@ -249,6 +340,15 @@ const handle = async (request) => {
     return json(400, { ok: false, error: 'That email does not look right.', field: 'email' });
   }
 
+  /* Take the place before telling MailerLite, so a full session never reaches the
+     list and never triggers the confirmation email. */
+  const listName = clean(body.list, 40);
+  let place = null;
+  if (PLACES[listName]) {
+    place = await hold(listName, email, name);
+    if (place.full) return json(409, { ok: false, full: true, error: FULL_MESSAGE });
+  }
+
   const payload = new URLSearchParams();
   payload.set('fields[name]', name);
   payload.set('fields[email]', email);
@@ -279,6 +379,7 @@ const handle = async (request) => {
     });
     text = await res.text();
   } catch {
+    if (place && place.key && !place.again) await bookings().delete(place.key);
     return json(502, { ok: false, error: 'The list is not answering. Try again in a minute.' });
   }
 
@@ -295,6 +396,8 @@ const handle = async (request) => {
     /* Logged so a refusal is visible in the function log rather than only to the visitor,
        which is how "reCAPTCHA failed" went unseen from July to October. */
     console.error('mailerlite refused', { list: body.list, formId, status: res.status, detail });
+    /* MailerLite said no, so the place goes back. */
+    if (place && place.key && !place.again) await bookings().delete(place.key);
     return json(502, {
       ok: false,
       error: 'We could not add you just then. Try again, or email hello@5spheresofempathy.com.',

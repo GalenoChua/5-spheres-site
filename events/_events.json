@@ -27,7 +27,8 @@
     "10 November 2026: 'Tough Conversations: Giving Feedback' is renamed 'Letting Someone Go'. G rewrote the page around the one scenario rather than the category, and all three practice scenarios are now variants of it. The URL stays /events/tough-conversations/ because the slug is in _redirects, the ics path and every link already shared.",
     "The URL moved with it, to /events/letting-someone-go/. The old slug 301s to the new one. subscribe.mjs answers to both names so an enquiry from a cached page cannot 500 during the deploy.",
     "10 November 2026: published. The 302! hold is lifted, the drills board links to it and the events index names it. alsoOn covers both, so the date cannot go stale on a surface the checker never looked at, which is how the 7 October drift happened.",
-    "27 November 2026: every skill drill is 120 minutes, G's ruling. Letting Someone Go had no sign-ups for 30 November and moves to Tuesday 12 January 2027, the second Tuesday, same 11:00 UTC slot. Card payments are still not switched on, so there is no fee: people are asked to give what they like to G's wife's cancer recovery fundraiser instead."
+    "27 November 2026: every skill drill is 120 minutes, G's ruling. Letting Someone Go had no sign-ups for 30 November and moves to Tuesday 12 January 2027, the second Tuesday, same 11:00 UTC slot. Card payments are still not switched on, so there is no fee: people are asked to give what they like to G's wife's cancer recovery fundraiser instead.",
+    "27 November 2026: seven places left for 2 December, first come first served. netlify/functions/subscribe.mjs now counts bookings and refuses past the limit."
   ],
   "_howToCheck": "python scripts/check_event_facts.py  (the page)\npython scripts/build_ics.py --check   (the calendar file)",
   "events": {
@@ -47,7 +48,7 @@
         "Zoom"
       ],
       "priceEur": 0,
-      "availability": "eight places",
+      "availability": "seven places",
       "retiredDurations": [
         "110 minutes",
         "110-minute",
