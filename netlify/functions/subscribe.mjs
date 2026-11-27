@@ -226,7 +226,10 @@ async function spend(token) {
  * place and is simply told it is held.
  */
 const PLACES = {
-  'public-speaking': { session: '2026-12-02', places: 7 },
+  /* 8, not 7: G booked once as a test on 27 November (galeno.chua@gmail.com), which
+     holds a slot, and there is no way to remove one booking from outside the function.
+     Seven real places, plus his. */
+  'public-speaking': { session: '2026-12-02', places: 8 },
 };
 const BOOKINGS = 'bookings';
 const SETTLE_MS = Number(globalThis.__SETTLE_MS__ ?? 800);
