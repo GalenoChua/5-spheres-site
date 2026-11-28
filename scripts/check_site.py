@@ -110,7 +110,10 @@ def check_forms():
         # 2. it has to reach something that answers. Either the page has its own
         #    handler, or it opts its forms in to the shared one.
         own = "/.netlify/functions/subscribe" in html
-        shared = "/subscribe.js" in html and html.count('data-list=') >= forms
+        # Hidden Netlify Forms (booking-alert, book-reservation) are not sign-ups: the
+        # function posts them to email G, and no visitor ever sees one.
+        signup_forms = forms - html.count('data-netlify="true"')
+        shared = "/subscribe.js" in html and html.count('data-list=') >= signup_forms
         check(own or shared,
               "%s: does not go through the subscribe function" % name,
               "no own handler, and %d of %d form(s) carry data-list"
