@@ -336,6 +336,18 @@ const GROUPS = {
   book: '203850948282419004',   // Book pre-registration
 };
 
+/* The book form asks "Would you like to receive updates on book related events?"
+   and about a third of people answer no. Those people go to their own group and
+   never to Book pre-registration, which is what campaigns are sent to. This is the
+   same line scripts/import_book_list.py drew for the Google Form answers: only a
+   clear yes joins the main list. */
+const BOOK_PREORDER_ONLY = '205377502108976169';
+function groupFor(listName, extra) {
+  if (listName !== 'book') return GROUPS[listName];
+  const said = String((extra && extra.book_updates) || '').trim().toLowerCase();
+  return said.startsWith('yes') ? GROUPS.book : BOOK_PREORDER_ONLY;
+}
+
 async function addToGroup(groupId, name, email, extra) {
   const fields = { name };
   for (const [k, v] of Object.entries(extra || {})) {
@@ -417,7 +429,7 @@ const handle = async (request) => {
   if (GROUPS[listName] && process.env.MAILERLITE_API_KEY) {
     let refused;
     try {
-      refused = await addToGroup(GROUPS[listName], name, email, body.fields);
+      refused = await addToGroup(groupFor(listName, body.fields), name, email, body.fields);
     } catch {
       refused = 'network';
     }
