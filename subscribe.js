@@ -130,7 +130,11 @@
       var extra = {};
       data.forEach(function (v, k) {
         var m = /^fields\[([a-z][a-z0-9_]*)\]$/.exec(k);
-        if (m && m[1] !== 'name' && m[1] !== 'email') { extra[m[1]] = v; }
+        /* A group of checkboxes sends one value per box ticked. Joined, so
+           "tick all that apply" keeps all of them and not only the last. */
+        if (m && m[1] !== 'name' && m[1] !== 'email') {
+          extra[m[1]] = extra[m[1]] ? extra[m[1]] + ', ' + v : v;
+        }
       });
 
       window.signupToken().then(function (token) {
