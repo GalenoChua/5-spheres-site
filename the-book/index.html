@@ -173,6 +173,14 @@
   </div>
 </section>
 
+<!-- Netlify Form, never shown. Netlify reads it at deploy so the subscribe function can
+     post a `book-reservation` and Netlify emails G about each new reservation. -->
+<form name="book-reservation" data-netlify="true" netlify-honeypot="website" hidden>
+  <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+  <input name="name"><input name="email"><input name="edition"><input name="heard_from">
+  <input name="updates"><input name="first_100_session"><textarea name="question"></textarea>
+</form>
+
 <footer>
   <div class="wrap">
     <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>

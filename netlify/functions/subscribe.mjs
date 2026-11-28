@@ -305,9 +305,9 @@ async function hold(list, email, name) {
  * to G the same way the parent feedback reaches him. The form exists in the page HTML
  * (hidden) so Netlify detects it at deploy. A failure here never fails the booking.
  */
-async function tellG(origin, fields) {
+async function tellG(origin, fields, formName = 'booking-alert') {
   try {
-    const body = new URLSearchParams({ 'form-name': 'booking-alert', ...fields });
+    const body = new URLSearchParams({ 'form-name': formName, ...fields });
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), 4000);
     const r = await fetch(`${origin}/`, {
@@ -439,6 +439,20 @@ const handle = async (request) => {
         ok: false,
         error: 'We could not add you just then. Try again, or email hello@5spheresofempathy.com.',
       });
+    }
+    /* 28 November 2026, G reserved a copy and heard nothing. Every reservation now
+       emails him through the hidden Netlify Form `book-reservation` on /the-book/. */
+    if (listName === 'book') {
+      const f = body.fields || {};
+      await tellG(new URL(request.url).origin, {
+        name: `${name} ${clean(f.last_name, 120)}`.trim(),
+        email,
+        edition: clean(f.book_edition, 80),
+        heard_from: clean(f.heard_from, 300),
+        updates: clean(f.book_updates, 80),
+        first_100_session: clean(f.first_100_session, 40),
+        question: clean(f.question_for_the_author, 1000),
+      }, 'book-reservation');
     }
     return json(200, { ok: true });
   }
