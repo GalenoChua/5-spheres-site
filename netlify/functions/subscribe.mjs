@@ -69,6 +69,9 @@ const FORMS = {
   'empathy-coach': '189443333940053728',
   'inbox': '189738547467519573',
   'apply': '189808223124980825',
+  /* Added 28 November 2026. The book reservation moved off a Google Form and onto
+     the homepage, so it is branded and lands straight in Book pre-registration. */
+  'book': '205376864628245675',
 };
 const ACCOUNT = '2409610';
 
@@ -320,6 +323,37 @@ async function tellG(origin, fields) {
   }
 }
 
+/* ── STRAIGHT INTO A GROUP ───────────────────────────────────────────────────────────
+ *
+ * 28 November 2026. The book reservation moved off a Google Form. MailerLite created
+ * its new embedded form inactive, empty and with double opt-in, any of which can turn
+ * a public form submission away. So for lists named here the function adds the person
+ * to the group through the API, with the MAILERLITE_API_KEY already set on this site
+ * (scripts/import_book_list.py uses the same key). If the key is absent it falls back
+ * to the public form like every other list.
+ */
+const GROUPS = {
+  book: '203850948282419004',   // Book pre-registration
+};
+
+async function addToGroup(groupId, name, email, extra) {
+  const fields = { name };
+  for (const [k, v] of Object.entries(extra || {})) {
+    if (/^[a-z][a-z0-9_]{0,39}$/.test(k) && k !== 'name' && k !== 'email') fields[k] = clean(v, 1000);
+  }
+  const res = await fetch('https://connect.mailerlite.com/api/subscribers', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      accept: 'application/json',
+      authorization: `Bearer ${process.env.MAILERLITE_API_KEY}`,
+    },
+    body: JSON.stringify({ email, fields, groups: [groupId] }),
+  });
+  if (res.status === 200 || res.status === 201) return null;
+  return `${res.status} ${(await res.text()).slice(0, 200)}`;
+}
+
 const handle = async (request) => {
   /* A page asks for a token as it loads. Cached nowhere: a cached token is a
      shared token, and single use would then refuse the second visitor. */
@@ -378,6 +412,23 @@ const handle = async (request) => {
   if (PLACES[listName]) {
     place = await hold(listName, email, name);
     if (place.full) return json(409, { ok: false, full: true, error: FULL_MESSAGE });
+  }
+
+  if (GROUPS[listName] && process.env.MAILERLITE_API_KEY) {
+    let refused;
+    try {
+      refused = await addToGroup(GROUPS[listName], name, email, body.fields);
+    } catch {
+      refused = 'network';
+    }
+    if (refused) {
+      console.error('mailerlite api refused', { list: listName, refused });
+      return json(502, {
+        ok: false,
+        error: 'We could not add you just then. Try again, or email hello@5spheresofempathy.com.',
+      });
+    }
+    return json(200, { ok: true });
   }
 
   const payload = new URLSearchParams();

@@ -62,6 +62,12 @@
   .fg-copy h2 { max-width: 20ch; margin-bottom: 14px; }
   .fg-copy p { max-width: 58ch; margin-bottom: 0; }
   .fg-copy .btn { margin-top: 22px; }
+  .fg-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; max-width: 560px; }
+  .fg-row input { flex: 1 1 160px; min-width: 0; padding: 13px 15px; font: inherit; font-size: 1rem;
+    border: 1.5px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
+  .fg-row input:focus { outline: 2px solid var(--ember); border-color: transparent; }
+  .fg-row .btn { margin-top: 0; flex: 0 0 auto; }
+  .fg-reserve .row-success p { margin-top: 22px; }
   .fg-note { font-size: .88rem; color: var(--muted); margin-top: 14px; }
   @media (max-width: 760px) {
     .fg-band { padding: 44px 0; }
@@ -79,31 +85,44 @@
   <div class="wrap">
     <a class="mark" href="#top">The 5 Spheres<span>.</span></a>
     <div class="nav-links">
-      <a class="cta" href="/the-method/">The Method</a>
-      <a class="cta" href="/coaching/">Coaching</a>
       <div class="nav-group">
-        <a class="cta" href="/community/">Community</a>
+        <a class="cta" href="/#field-guide">The Book</a>
         <div class="nav-menu">
           <div class="nav-menu-inner">
-            <a href="/skilldrills/">Skill Drills<span>Two hours on one skill</span></a>
-            <a href="/agree-to-disagree/">Agree to Disagree<span>The live leadership roundtable</span></a>
-            <a href="/sustainability-tours/">Sustainability Tours<span>Behind the scenes, in person and virtual</span></a>
-            <a href="/events/">Events<span>Live sessions on the method</span></a>
-          </div>
-        </div>
-      </div>
-      <a class="cta" href="/field-notes/">Field Notes</a>
-      <div class="nav-group">
-        <a class="cta" href="/resources/">Resources</a>
-        <div class="nav-menu">
-          <div class="nav-menu-inner">
+            <a href="/#field-guide">Reserve the Field Guide<span>The first hundred get a group coaching session</span></a>
+            <a href="/the-method/">The Method<span>The five spheres, and how they work</span></a>
             <a href="/resources/">Tools and downloads<span>Worksheets, checklists and reference sheets</span></a>
             <a href="/bsfp-accelerator/">Business Sustainability<span>Free eighteen lesson course</span></a>
           </div>
         </div>
       </div>
+      <div class="nav-group">
+        <a class="cta" href="/skilldrills/">Work with me</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="mailto:hello@5spheresofempathy.com?subject=Speaking">Speaking<span>Talks and team workshops</span></a>
+            <a href="/coaching/">Coaching<span>Human Intelligence, run one to one</span></a>
+            <a href="/skilldrills/">Skill Drills<span>Two hours on one skill</span></a>
+            <a href="/events/">Events<span>Live sessions on the method</span></a>
+            <a href="/agree-to-disagree/">Agree to Disagree<span>The live leadership roundtable</span></a>
+            <a href="/sustainability-tours/">Sustainability Tours<span>Behind the scenes, in person and virtual</span></a>
+          </div>
+        </div>
+      </div>
+      <a class="cta" href="/tools-for-parents/">For Parents</a>
+      <div class="nav-group">
+        <a class="cta" href="/#about">About + Contact</a>
+        <div class="nav-menu">
+          <div class="nav-menu-inner">
+            <a href="/#about">About G<span>Galeno Chua, Mr. G to most rooms</span></a>
+            <a href="/community/">Community<span>Three ways to be in the room</span></a>
+            <a href="/field-notes/">Field Notes<span>Recaps, field reports and research</span></a>
+            <a href="mailto:hello@5spheresofempathy.com">Contact<span>hello@5spheresofempathy.com</span></a>
+          </div>
+        </div>
+      </div>
       <a class="cta" href="https://app.5spheresofempathy.com/start">Log in</a>
-      <a class="cta nav-primary" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">The Field Guide</a>
+      <a class="cta nav-primary" href="/#field-guide">Reserve the book</a>
     </div>
   </div>
 </nav>
@@ -119,7 +138,7 @@
     <h1 class="reveal">Almost every business problem is a people problem. Empathy is intelligence about people, <em>starting with you.</em></h1>
     <p class="lede reveal">Most people think empathy means being nice, or feeling what other people feel. That version is useless in a meeting. Real empathy is intelligence about people: understanding what is actually going on, in yourself first and then in everyone around you. It is the skill underneath the rest, and most of us learned it backwards. Learn it properly and you stop guessing expensively.</p>
     <div class="reveal">
-      <a class="btn" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">Reserve the Field Guide</a>
+      <a class="btn" href="/#field-guide">Reserve the Field Guide</a>
       <a class="btn ghost" href="#begin">Coach yourself through a real decision</a>
     </div>
   </div>
@@ -151,9 +170,9 @@
 
 <!-- The field guide waitlist. It sits directly under the credibility strip, which ends on
      "Author of The 5 Spheres of Empathy", so the claim and the offer are adjacent. -->
-<section class="fg-band">
+<section class="fg-band" id="field-guide">
   <div class="wrap fg-inner">
-    <a class="fg-cover" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">
+    <a class="fg-cover" href="#reserve">
       <img src="/images/field-guide-cover.jpg" width="1000" height="1600"
            alt="The 5 Spheres of Empathy field guide, front cover">
     </a>
@@ -163,8 +182,24 @@
       <p>All five spheres in one book, with the question each one asks, the tools that go
       with it and the exercises to practise them. Reserve a copy and you go on the list for
       the session, which you can keep or give to somebody who needs it more than you do.</p>
-      <a class="btn" href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">Reserve a copy &#8594;</a>
-      <p class="fg-note">A minute to register. You choose the edition nearer the time.</p>
+      <div class="fg-reserve" id="reserve">
+        <div class="row-form">
+          <form class="fg-form" action="https://assets.mailerlite.com/jsonp/2409610/forms/205376864628245675/subscribe" method="post" target="_blank" rel="noopener" data-list="book">
+            <input class="nothanks" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+            <div class="fg-row">
+              <input type="text" name="fields[name]" placeholder="First name" autocomplete="given-name" aria-label="First name" required>
+              <input type="email" name="fields[email]" placeholder="Email" autocomplete="email" aria-label="Email" required>
+              <button type="submit" class="btn">Reserve a copy &#8594;</button>
+            </div>
+            <input type="hidden" name="ml-submit" value="1">
+            <input type="hidden" name="anticsrf" value="true">
+          </form>
+          <p class="fg-note">A minute to register. You choose the edition nearer the time. I&rsquo;ll email you about the book, your coaching session and, now and then, the work. Unsubscribe any time.</p>
+        </div>
+        <div class="row-success" style="display:none">
+          <p><strong>You&rsquo;re on the list.</strong> I&rsquo;ll be in touch about your copy and the coaching session.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -387,7 +422,7 @@
 <footer>
   <div class="wrap">
     <div>The 5 Spheres of Empathy &middot; Galeno Chua &middot; Warsaw</div>
-    <div><a href="/field-notes/">Field Notes</a> &nbsp;&middot;&nbsp; <a href="/resources/">Resources</a> &nbsp;&middot;&nbsp; <a href="https://www.linkedin.com/in/mr-g-galeno-chua-7692b792/">LinkedIn</a> &nbsp;&middot;&nbsp; <a href="https://forms.gle/4CFNNYry3RKsAX9h6" target="_blank" rel="noopener">The Field Guide</a> &nbsp;&middot;&nbsp; <a href="/privacy/">Privacy</a></div>
+    <div><a href="/field-notes/">Field Notes</a> &nbsp;&middot;&nbsp; <a href="/resources/">Resources</a> &nbsp;&middot;&nbsp; <a href="https://www.linkedin.com/in/mr-g-galeno-chua-7692b792/">LinkedIn</a> &nbsp;&middot;&nbsp; <a href="/#field-guide">The Field Guide</a> &nbsp;&middot;&nbsp; <a href="/privacy/">Privacy</a></div>
   </div>
 </footer>
 
